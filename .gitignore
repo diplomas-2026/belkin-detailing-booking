@@ -1,0 +1,11 @@
+.DS_Store
+
+product-api/target/
+product-api/data/
+
+product-web/node_modules/
+product-web/dist/
+product-web/test-results/
+product-web/playwright-report/
+
+*.log
