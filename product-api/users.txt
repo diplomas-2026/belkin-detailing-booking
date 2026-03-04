@@ -1,0 +1,8 @@
+email=admin@detailing.local; password=Admin123!; role=ADMIN
+email=master1@detailing.local; password=Master123!; role=MASTER
+email=master2@detailing.local; password=Master123!; role=MASTER
+email=master3@detailing.local; password=Master123!; role=MASTER
+email=client1@detailing.local; password=Client123!; role=CLIENT
+email=client2@detailing.local; password=Client123!; role=CLIENT
+email=client3@detailing.local; password=Client123!; role=CLIENT
+email=client4@detailing.local; password=Client123!; role=CLIENT

@@ -1,0 +1,33 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: detailing-postgres
+    environment:
+      POSTGRES_DB: detaling
+      POSTGRES_USER: detaling
+      POSTGRES_PASSWORD: detaling
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U detaling -d detaling"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: product-api/Dockerfile
+    container_name: detailing-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/detaling
+      SPRING_DATASOURCE_USERNAME: detaling
+      SPRING_DATASOURCE_PASSWORD: detaling
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./product-api/users.txt:/app/users.txt

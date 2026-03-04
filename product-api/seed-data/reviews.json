@@ -1,0 +1,11 @@
+[
+  {
+    "clientEmail":"client3@detailing.local",
+    "appointmentClientEmail":"client3@detailing.local",
+    "targetType":"WORKSHOP",
+    "workshopName":"Михайлов Detailing Север",
+    "rating":5,
+    "comment":"Отличная работа, салон как новый",
+    "visible":true
+  }
+]

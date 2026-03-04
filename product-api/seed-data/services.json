@@ -1,0 +1,9 @@
+[
+  {"workshopName":"Михайлов Detailing Центр", "name":"Комплексная мойка", "description":"Кузов, коврики, пылесос салона", "durationMinutes":90, "price":2800, "active":true},
+  {"workshopName":"Михайлов Detailing Центр", "name":"Полировка кузова", "description":"Абразивная полировка ЛКП", "durationMinutes":240, "price":12500, "active":true},
+  {"workshopName":"Михайлов Detailing Центр", "name":"Керамическое покрытие", "description":"Защита кузова керамикой", "durationMinutes":360, "price":22000, "active":true},
+  {"workshopName":"Михайлов Detailing Юг", "name":"Экспресс мойка", "description":"Быстрая внешняя мойка", "durationMinutes":45, "price":1400, "active":true},
+  {"workshopName":"Михайлов Detailing Юг", "name":"Полировка фар", "description":"Восстановление прозрачности фар", "durationMinutes":60, "price":3500, "active":true},
+  {"workshopName":"Михайлов Detailing Север", "name":"Химчистка салона", "description":"Глубокая чистка салона", "durationMinutes":300, "price":15000, "active":true},
+  {"workshopName":"Михайлов Detailing Север", "name":"Антидождь", "description":"Нанесение состава на стекла", "durationMinutes":40, "price":2200, "active":true}
+]

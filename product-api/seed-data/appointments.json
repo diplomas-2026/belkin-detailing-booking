@@ -1,0 +1,32 @@
+[
+  {
+    "clientEmail":"client1@detailing.local",
+    "carPlate":"A111AA163",
+    "workshopName":"Михайлов Detailing Центр",
+    "serviceName":"Полировка кузова",
+    "masterEmail":"master1@detailing.local",
+    "scheduledStart":"2026-03-06T10:00:00",
+    "status":"CONFIRMED",
+    "clientComment":"Подготовить кузов после зимы"
+  },
+  {
+    "clientEmail":"client2@detailing.local",
+    "carPlate":"B222BB163",
+    "workshopName":"Михайлов Detailing Юг",
+    "serviceName":"Экспресс мойка",
+    "masterEmail":"master2@detailing.local",
+    "scheduledStart":"2026-03-06T11:00:00",
+    "status":"NEW",
+    "clientComment":"Нужно быстро"
+  },
+  {
+    "clientEmail":"client3@detailing.local",
+    "carPlate":"C333CC163",
+    "workshopName":"Михайлов Detailing Север",
+    "serviceName":"Химчистка салона",
+    "masterEmail":"master3@detailing.local",
+    "scheduledStart":"2026-03-04T08:00:00",
+    "status":"COMPLETED",
+    "clientComment":"Сильные загрязнения"
+  }
+]
