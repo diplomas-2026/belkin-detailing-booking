@@ -53,6 +53,10 @@ jobs:
 
           rsync -az --delete \
             --exclude '.git/' \
+            --exclude 'product-web/node_modules/' \
+            --exclude 'product-web/dist/' \
+            --exclude 'product-web/test-results/' \
+            --exclude 'product-web/artifacts/' \
             "$GITHUB_WORKSPACE/" \
             -e "ssh -p $SSH_PORT" \
             "$SSH_USER@$SSH_HOST:/opt/belkin-detailing-booking/"
@@ -63,4 +67,3 @@ jobs:
             "$SSH_USER@$SSH_HOST:/var/www/projects/belkin-detailing-booking.matstart.ru/"
 
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" 'cd /opt/belkin-detailing-booking && docker compose -p belkin-detailing-booking -f compose.vps.yml up -d --build'
-
