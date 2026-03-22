@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import { getStoredUser, logout } from '../utils/auth'
 
 const navByRole = {
@@ -25,6 +25,12 @@ const navByRole = {
   ],
 }
 
+const ROLE_LABELS = {
+  ADMIN: 'Администратор',
+  MASTER: 'Мастер',
+  CLIENT: 'Клиент',
+}
+
 export default function Layout({ children }) {
   const user = getStoredUser()
   const navigate = useNavigate()
@@ -36,13 +42,17 @@ export default function Layout({ children }) {
         <div className="brand">MikhaDetail</div>
         <div className="user-box">
           <p>{user?.fullName}</p>
-          <span>{user?.role}</span>
+          <span>{ROLE_LABELS[user?.role] || user?.role}</span>
         </div>
         <nav>
           {nav.map((item) => (
-            <Link key={item.to} to={item.to} className="nav-link">
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}
+            >
               {item.label}
-            </Link>
+            </NavLink>
           ))}
         </nav>
         <button

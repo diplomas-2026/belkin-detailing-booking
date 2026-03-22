@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react'
 import api from '../api'
 
+const STATUS_LABELS = {
+  NEW: 'Новая',
+  CONFIRMED: 'Подтверждена',
+  IN_PROGRESS: 'В работе',
+  COMPLETED: 'Выполнена',
+  CANCELED: 'Отменена',
+}
+
 export default function AdminAppointmentsPage() {
   const [appointments, setAppointments] = useState([])
   const [masters, setMasters] = useState([])
@@ -31,7 +39,12 @@ export default function AdminAppointmentsPage() {
             <h4>{a.serviceName}</h4>
             <p>{a.workshopName}</p>
             <p>Клиент: {a.carLabel}</p>
-            <p>Статус: {a.status}</p>
+            <p>
+              Статус:{' '}
+              <span className={`badge badge-${a.status?.toLowerCase?.() || 'unknown'}`}>
+                {STATUS_LABELS[a.status] || a.status}
+              </span>
+            </p>
             {a.masterId ? <p>Мастер: {a.masterName}</p> : <p>Мастер не назначен</p>}
             {!a.masterId && (
               <select onChange={(e) => assign(a.id, e.target.value)} defaultValue="">

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
 
 export default function LoginPage() {
@@ -24,12 +24,14 @@ export default function LoginPage() {
 
   return (
     <div className="auth-wrap">
-      <form className="card" onSubmit={submit}>
-        <h1>Онлайн-запись на детейлинг</h1>
-        <p>ИП Михайлов Р.Ю.</p>
+      <form className="card auth-card" onSubmit={submit}>
+        <div className="auth-head">
+          <h1>Вход</h1>
+          <p>Онлайн-запись на детейлинг</p>
+        </div>
         <label>
           Email
-          <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@mail.ru" />
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@mail.ru" autoComplete="email" />
         </label>
         <label>
           Пароль
@@ -39,6 +41,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Введите пароль"
+              autoComplete="current-password"
             />
             <button
               type="button"
@@ -64,6 +67,9 @@ export default function LoginPage() {
         </label>
         {error && <p className="error">{error}</p>}
         <button type="submit">Войти</button>
+        <p className="muted">
+          Нет аккаунта? <Link to="/register">Зарегистрироваться</Link>
+        </p>
       </form>
     </div>
   )
