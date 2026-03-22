@@ -5,6 +5,7 @@ import com.company.product.api.entity.*;
 import com.company.product.api.repository.*;
 import com.company.product.api.ai.FeedbackSummaryService;
 import com.company.product.api.ai.ReviewAiModerationService;
+import com.company.product.api.ai.TargetFeedbackService;
 import com.company.product.api.ai.TokenBudgetService;
 import com.company.product.api.service.*;
 import jakarta.validation.Valid;
@@ -14,7 +15,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/admin")
@@ -35,6 +42,7 @@ public class AdminController {
     private final AppointmentWorkflowService workflowService;
     private final ReviewAiModerationService moderationService;
     private final FeedbackSummaryService feedbackSummaryService;
+    private final TargetFeedbackService targetFeedbackService;
     private final TokenBudgetService tokenBudgetService;
 
     public AdminController(CurrentUserService currentUserService,
@@ -51,6 +59,7 @@ public class AdminController {
                            AppointmentWorkflowService workflowService,
                            ReviewAiModerationService moderationService,
                            FeedbackSummaryService feedbackSummaryService,
+                           TargetFeedbackService targetFeedbackService,
                            TokenBudgetService tokenBudgetService) {
         this.currentUserService = currentUserService;
         this.workshopRepository = workshopRepository;
@@ -66,6 +75,7 @@ public class AdminController {
         this.workflowService = workflowService;
         this.moderationService = moderationService;
         this.feedbackSummaryService = feedbackSummaryService;
+        this.targetFeedbackService = targetFeedbackService;
         this.tokenBudgetService = tokenBudgetService;
     }
 
@@ -242,6 +252,22 @@ public class AdminController {
         return List.of(runModeration(), runFeedback());
     }
 
+    @PostMapping("/ai/feedback/workshops/{id}/run")
+    public AiDtos.RunResult runWorkshopFeedback(@PathVariable Long id) {
+        TargetFeedbackService.RunResult result = targetFeedbackService.updateWorkshop(id, true);
+        TokenBudgetService.TokenBudgetView b = tokenBudgetService.getBudget();
+        return new AiDtos.RunResult("feedback:workshop", result.updated(), result.llmCalls(), result.note(),
+                new AiDtos.TokenBudgetView(b.date(), b.limit(), b.used(), b.remaining()));
+    }
+
+    @PostMapping("/ai/feedback/masters/{id}/run")
+    public AiDtos.RunResult runMasterFeedback(@PathVariable Long id) {
+        TargetFeedbackService.RunResult result = targetFeedbackService.updateMaster(id, true);
+        TokenBudgetService.TokenBudgetView b = tokenBudgetService.getBudget();
+        return new AiDtos.RunResult("feedback:master", result.updated(), result.llmCalls(), result.note(),
+                new AiDtos.TokenBudgetView(b.date(), b.limit(), b.used(), b.remaining()));
+    }
+
     @GetMapping("/dashboard")
     public DashboardDtos.DashboardView dashboard() {
         List<AppointmentEntity> appointments = appointmentRepository.findAll();
@@ -254,6 +280,48 @@ public class AdminController {
                 .map(AppointmentEntity::getTotalPrice)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         return new DashboardDtos.DashboardView(total, created, inProgress, completed, revenue);
+    }
+
+    @GetMapping("/analytics/appointments/daily")
+    public List<DashboardDtos.DailyAppointmentsView> daily(@RequestParam(defaultValue = "30") int days) {
+        int safeDays = Math.max(7, Math.min(days, 120));
+        ZoneId zone = ZoneId.of("Europe/Samara");
+        LocalDate to = LocalDate.now(zone);
+        LocalDate from = to.minusDays(safeDays - 1L);
+
+        Map<LocalDate, Acc> acc = new HashMap<>();
+        for (AppointmentEntity a : appointmentRepository.findAll()) {
+            LocalDate d = a.getScheduledStart().toLocalDate();
+            if (d.isBefore(from) || d.isAfter(to)) continue;
+            Acc x = acc.computeIfAbsent(d, k -> new Acc());
+            switch (a.getStatus()) {
+                case NEW -> x.newCount++;
+                case CONFIRMED -> x.confirmedCount++;
+                case IN_PROGRESS -> x.inProgressCount++;
+                case COMPLETED -> {
+                    x.completedCount++;
+                    x.revenue = x.revenue.add(a.getTotalPrice());
+                }
+                case CANCELLED -> x.cancelledCount++;
+            }
+        }
+
+        List<DashboardDtos.DailyAppointmentsView> out = new ArrayList<>();
+        for (LocalDate d = from; !d.isAfter(to); d = d.plusDays(1)) {
+            Acc x = acc.getOrDefault(d, new Acc());
+            out.add(new DashboardDtos.DailyAppointmentsView(d, x.newCount, x.confirmedCount, x.inProgressCount, x.completedCount, x.cancelledCount, x.revenue));
+        }
+        out.sort(Comparator.comparing(DashboardDtos.DailyAppointmentsView::date));
+        return out;
+    }
+
+    private static class Acc {
+        long newCount;
+        long confirmedCount;
+        long inProgressCount;
+        long completedCount;
+        long cancelledCount;
+        BigDecimal revenue = BigDecimal.ZERO;
     }
 
     private void applyWorkshop(WorkshopEntity workshop, WorkshopDtos.WorkshopCreateRequest request) {

@@ -18,6 +18,7 @@ public class WorkshopDtos {
                                Double longitude,
                                String phone,
                                String workingHours,
+                               boolean active,
                                List<WorkshopPhotoView> photos) {}
 
     public record WorkshopCreateRequest(@NotBlank String name,

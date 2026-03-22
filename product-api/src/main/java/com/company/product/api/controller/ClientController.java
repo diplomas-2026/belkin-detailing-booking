@@ -144,25 +144,48 @@ public class ClientController {
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
         CarEntity car = carRepository.findById(request.carId())
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Автомобиль не найден"));
-        ServiceEntity service = serviceRepository.findById(request.serviceId())
-                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
+        List<Long> serviceIds = request.serviceIds() == null ? List.of() : request.serviceIds().stream().filter(x -> x != null && x > 0).distinct().toList();
+        if (serviceIds.isEmpty()) {
+            if (request.serviceId() == null) {
+                throw new BusinessException(HttpStatus.BAD_REQUEST, "Нужно выбрать хотя бы одну услугу");
+            }
+            serviceIds = List.of(request.serviceId());
+        }
+        if (serviceIds.size() > 5) {
+            throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Можно выбрать максимум 5 услуг");
+        }
+
+        List<ServiceEntity> services = serviceIds.stream()
+                .map(id -> serviceRepository.findById(id)
+                        .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена")))
+                .toList();
 
         if (!car.getClient().getId().equals(user.getId())) {
             throw new BusinessException(HttpStatus.FORBIDDEN, "Автомобиль не принадлежит пользователю");
         }
-        if (!service.getWorkshop().getId().equals(workshop.getId())) {
-            throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Услуга не принадлежит выбранной точке");
+        for (ServiceEntity s : services) {
+            if (!s.getWorkshop().getId().equals(workshop.getId())) {
+                throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Услуга не принадлежит выбранной точке");
+            }
+            if (!s.isActive()) {
+                throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Нельзя записаться на неактивную услугу");
+            }
         }
+
+        ServiceEntity primaryService = services.getFirst();
+        int totalMinutes = services.stream().mapToInt(ServiceEntity::getDurationMinutes).sum();
+        BigDecimal totalPrice = services.stream().map(ServiceEntity::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
 
         AppointmentEntity appointment = new AppointmentEntity();
         appointment.setClient(user);
         appointment.setWorkshop(workshop);
         appointment.setCar(car);
-        appointment.setService(service);
+        appointment.setService(primaryService);
+        appointment.setServices(services);
         appointment.setScheduledStart(request.scheduledStart());
-        appointment.setScheduledEnd(request.scheduledStart().plusMinutes(service.getDurationMinutes()));
+        appointment.setScheduledEnd(request.scheduledStart().plusMinutes(totalMinutes));
         appointment.setStatus(AppointmentStatus.NEW);
-        appointment.setTotalPrice(service.getPrice());
+        appointment.setTotalPrice(totalPrice);
         appointment.setClientComment(request.clientComment());
 
         AppointmentEntity saved = appointmentRepository.save(appointment);
@@ -198,6 +221,50 @@ public class ClientController {
         AppointmentEntity saved = appointmentRepository.save(appointment);
         addStatusHistory(saved, previous, AppointmentStatus.CANCELLED, user, request.reason());
         return mapper.toAppointmentView(saved);
+    }
+
+    @PostMapping("/appointments/{id}/payment/pay-now")
+    @PreAuthorize("hasRole('CLIENT')")
+    public AppointmentDtos.AppointmentView payNow(@PathVariable Long id, @Valid @RequestBody AppointmentDtos.PayNowRequest request) {
+        UserEntity user = currentUserService.requireUser();
+        AppointmentEntity appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Запись не найдена"));
+        if (!appointment.getClient().getId().equals(user.getId())) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "Нет доступа к записи");
+        }
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new BusinessException(HttpStatus.CONFLICT, "Нельзя оплатить отменённую запись");
+        }
+        if (appointment.getPaymentStatus() == PaymentStatus.PAID) {
+            throw new BusinessException(HttpStatus.CONFLICT, "Запись уже оплачена");
+        }
+
+        // Данные карты не сохраняем и никуда не отправляем (демо-оплата)
+        appointment.setPaymentMethod(PaymentMethod.NOW);
+        appointment.setPaymentStatus(PaymentStatus.PAID);
+        appointment.setPaidAt(LocalDateTime.now());
+        return mapper.toAppointmentView(appointmentRepository.save(appointment));
+    }
+
+    @PostMapping("/appointments/{id}/payment/in-workshop")
+    @PreAuthorize("hasRole('CLIENT')")
+    public AppointmentDtos.AppointmentView payInWorkshop(@PathVariable Long id) {
+        UserEntity user = currentUserService.requireUser();
+        AppointmentEntity appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Запись не найдена"));
+        if (!appointment.getClient().getId().equals(user.getId())) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "Нет доступа к записи");
+        }
+        if (appointment.getStatus() == AppointmentStatus.CANCELLED) {
+            throw new BusinessException(HttpStatus.CONFLICT, "Нельзя оплатить отменённую запись");
+        }
+        if (appointment.getPaymentStatus() == PaymentStatus.PAID) {
+            throw new BusinessException(HttpStatus.CONFLICT, "Запись уже оплачена");
+        }
+        appointment.setPaymentMethod(PaymentMethod.IN_WORKSHOP);
+        appointment.setPaymentStatus(PaymentStatus.UNPAID);
+        appointment.setPaidAt(null);
+        return mapper.toAppointmentView(appointmentRepository.save(appointment));
     }
 
     @PostMapping("/reviews")

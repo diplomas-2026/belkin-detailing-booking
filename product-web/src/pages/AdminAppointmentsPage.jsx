@@ -30,6 +30,7 @@ export default function AdminAppointmentsPage() {
         {appointments.map((a) => (
           <div key={a.id} className="card">
             <h4>{a.serviceName}</h4>
+            {a.services?.length > 1 && <p className="muted">+ ещё {a.services.length - 1} услуг</p>}
             <p>{a.workshopName}</p>
             <p>Клиент: {a.carLabel}</p>
             <p>
@@ -39,6 +40,13 @@ export default function AdminAppointmentsPage() {
               </span>
             </p>
             {a.masterId ? <p>Мастер: {a.masterName}</p> : <p>Мастер не назначен</p>}
+            <p>
+              Оплата:{' '}
+              <span className={`badge ${a.paymentStatus === 'PAID' ? 'badge-approved' : 'badge-pending'}`}>
+                {a.paymentStatus === 'PAID' ? 'Оплачено' : 'Не оплачено'}
+              </span>
+            </p>
+            {a.paymentMethod && <p className="muted">Способ: {a.paymentMethod === 'NOW' ? 'оплатить сейчас' : 'оплатить в салоне'}</p>}
             {!a.masterId && (
               <select onChange={(e) => assign(a.id, e.target.value)} defaultValue="">
                 <option value="" disabled>Назначить мастера</option>

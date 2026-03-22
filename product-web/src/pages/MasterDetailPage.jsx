@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import api from '../api'
+import { getStoredUser } from '../utils/auth'
 
 function Stars({ value }) {
   const v = Number(value) || 0
@@ -15,15 +16,39 @@ function Stars({ value }) {
 
 export default function MasterDetailPage() {
   const { id, masterId } = useParams()
+  const user = getStoredUser()
   const [master, setMaster] = useState(null)
   const [reviews, setReviews] = useState([])
+  const [aiFeedback, setAiFeedback] = useState('')
+  const [budget, setBudget] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     api.get(`/masters/${masterId}`).then((r) => setMaster(r.data))
     api.get(`/masters/${masterId}/reviews`).then((r) => setReviews(r.data)).catch(() => setReviews([]))
+    api.get(`/masters/${masterId}/feedback`).then((r) => setAiFeedback(r.data?.summary || '')).catch(() => setAiFeedback(''))
+    if (user?.role === 'ADMIN') {
+      api.get('/admin/ai/budget').then((r) => setBudget(r.data)).catch(() => setBudget(null))
+    }
   }, [masterId])
 
   if (!master) return <p className="muted">Загрузка…</p>
+
+  const runFeedback = async () => {
+    if (loading || user?.role !== 'ADMIN') return
+    setLoading(true)
+    try {
+      await api.post(`/admin/ai/feedback/masters/${masterId}/run`)
+      const [fb, b] = await Promise.all([
+        api.get(`/masters/${masterId}/feedback`).catch(() => ({ data: { summary: '' } })),
+        api.get('/admin/ai/budget').catch(() => ({ data: null })),
+      ])
+      setAiFeedback(fb.data?.summary || '')
+      setBudget(b.data)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="stack">
@@ -63,6 +88,18 @@ export default function MasterDetailPage() {
 
       <section className="card">
         <h2>Отзывы о мастере</h2>
+        {aiFeedback && <p className="muted">AI‑фидбэк: {aiFeedback}</p>}
+        {user?.role === 'ADMIN' && (
+          <div className="card">
+            <div className="section-head">
+              <h3>AI‑фидбэк мастера</h3>
+              {budget && <span className="muted">Лимит на сегодня: <strong className="text-white">{budget.used}/{budget.limit}</strong> (осталось <strong className="text-white">{budget.remaining}</strong>)</span>}
+            </div>
+            <button type="button" onClick={runFeedback} disabled={loading}>
+              {loading ? 'Запуск…' : 'Обновить AI‑фидбэк мастера'}
+            </button>
+          </div>
+        )}
         {!reviews.length ? (
           <p className="muted">Пока нет отзывов.</p>
         ) : (

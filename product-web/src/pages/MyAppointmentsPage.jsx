@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../api'
 import { appointmentStatusLabel } from '../utils/appointmentStatus'
 
-const initial = { workshopId: '', carId: '', serviceId: '', scheduledStart: '', clientComment: '' }
+const initial = { workshopId: '', carId: '', serviceIds: [], scheduledStart: '', clientComment: '' }
 
 export default function MyAppointmentsPage() {
   const [searchParams] = useSearchParams()
@@ -45,7 +45,7 @@ export default function MyAppointmentsPage() {
     setForm((prev) => ({
       ...prev,
       workshopId: wid ? String(wid) : prev.workshopId,
-      serviceId: sid ? String(sid) : prev.serviceId,
+      serviceIds: sid ? [String(sid)] : prev.serviceIds,
       carId: cid ? String(cid) : prev.carId,
     }))
   }, [searchParams])
@@ -57,7 +57,13 @@ export default function MyAppointmentsPage() {
 
   const create = async (e) => {
     e.preventDefault()
-    await api.post('/appointments', { ...form, workshopId: Number(form.workshopId), carId: Number(form.carId), serviceId: Number(form.serviceId) })
+    await api.post('/appointments', {
+      workshopId: Number(form.workshopId),
+      carId: Number(form.carId),
+      serviceIds: (form.serviceIds || []).map((x) => Number(x)).filter(Boolean),
+      scheduledStart: form.scheduledStart,
+      clientComment: form.clientComment,
+    })
     setForm(initial)
     loadAppointments()
   }
@@ -72,7 +78,7 @@ export default function MyAppointmentsPage() {
       <h1>Мои записи</h1>
       <div className="stack">
         <form className="card form-grid" onSubmit={create}>
-          <select value={form.workshopId} onChange={(e) => setForm({ ...form, workshopId: e.target.value, serviceId: '' })}>
+          <select value={form.workshopId} onChange={(e) => setForm({ ...form, workshopId: e.target.value, serviceIds: [] })}>
             <option value="">Выберите салон</option>
             {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
@@ -80,8 +86,11 @@ export default function MyAppointmentsPage() {
             <option value="">Выберите авто</option>
             {cars.map((c) => <option key={c.id} value={c.id}>{c.brand} {c.model} ({c.plateNumber})</option>)}
           </select>
-          <select value={form.serviceId} onChange={(e) => setForm({ ...form, serviceId: e.target.value })}>
-            <option value="">Выберите услугу</option>
+          <select
+            multiple
+            value={form.serviceIds}
+            onChange={(e) => setForm({ ...form, serviceIds: Array.from(e.target.selectedOptions).map((o) => o.value) })}
+          >
             {services.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
           </select>
           <input type="datetime-local" value={form.scheduledStart} onChange={(e) => setForm({ ...form, scheduledStart: e.target.value })} />
@@ -102,12 +111,19 @@ export default function MyAppointmentsPage() {
               }}
             >
               <h4>{a.serviceName}</h4>
+              {a.services?.length > 1 && <p className="muted">+ ещё {a.services.length - 1} услуг</p>}
               <p>{a.workshopName}</p>
               <p>{new Date(a.scheduledStart).toLocaleString('ru-RU')}</p>
               <p>
                 Статус:{' '}
                 <span className={`badge badge-${a.status?.toLowerCase?.() || 'unknown'}`}>
                   {appointmentStatusLabel(a.status)}
+                </span>
+              </p>
+              <p>
+                Оплата:{' '}
+                <span className={`badge ${a.paymentStatus === 'PAID' ? 'badge-approved' : 'badge-pending'}`}>
+                  {a.paymentStatus === 'PAID' ? 'Оплачено' : 'Не оплачено'}
                 </span>
               </p>
               {(a.status === 'NEW' || a.status === 'CONFIRMED') && (

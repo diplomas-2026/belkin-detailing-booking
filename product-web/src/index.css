@@ -238,6 +238,12 @@
   .bar-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
   .bar-track { height: 10px; border-radius: 9999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
   .bar-fill { height: 100%; background: linear-gradient(180deg, var(--accent-strong) 0%, var(--accent) 100%); }
+
+  .chart-wrap { width: 100%; overflow-x: auto; padding-bottom: 6px; }
+  .chart { width: 100%; max-width: 100%; height: auto; display: block; }
+  .chart-legend { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+  .legend-item { display: inline-flex; gap: 8px; align-items: center; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 9999px; }
 }
 
 @layer utilities {

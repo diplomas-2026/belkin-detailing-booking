@@ -1,14 +1,19 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import api from '../api'
+import { getStoredUser } from '../utils/auth'
 
 export default function WorkshopDetailPage() {
   const { id } = useParams()
+  const user = getStoredUser()
   const [workshop, setWorkshop] = useState(null)
   const [services, setServices] = useState([])
   const [masters, setMasters] = useState([])
   const [reviews, setReviews] = useState([])
   const [stats, setStats] = useState(null)
+  const [aiFeedback, setAiFeedback] = useState('')
+  const [budget, setBudget] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     api.get(`/workshops/${id}`).then((r) => setWorkshop(r.data))
@@ -16,9 +21,29 @@ export default function WorkshopDetailPage() {
     api.get(`/workshops/${id}/services`).then((r) => setServices(r.data))
     api.get(`/workshops/${id}/masters`).then((r) => setMasters(r.data)).catch(() => setMasters([]))
     api.get(`/workshops/${id}/reviews`).then((r) => setReviews(r.data))
+    api.get(`/workshops/${id}/feedback`).then((r) => setAiFeedback(r.data?.summary || '')).catch(() => setAiFeedback(''))
+    if (user?.role === 'ADMIN') {
+      api.get('/admin/ai/budget').then((r) => setBudget(r.data)).catch(() => setBudget(null))
+    }
   }, [id])
 
   if (!workshop) return <p>Загрузка...</p>
+
+  const runFeedback = async () => {
+    if (loading || user?.role !== 'ADMIN') return
+    setLoading(true)
+    try {
+      await api.post(`/admin/ai/feedback/workshops/${id}/run`)
+      const [fb, b] = await Promise.all([
+        api.get(`/workshops/${id}/feedback`).catch(() => ({ data: { summary: '' } })),
+        api.get('/admin/ai/budget').catch(() => ({ data: null })),
+      ])
+      setAiFeedback(fb.data?.summary || '')
+      setBudget(b.data)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="stack">
@@ -101,6 +126,18 @@ export default function WorkshopDetailPage() {
 
       <section className="card">
         <h2>Отзывы</h2>
+        {aiFeedback && <p className="muted">AI‑фидбэк: {aiFeedback}</p>}
+        {user?.role === 'ADMIN' && (
+          <div className="card">
+            <div className="section-head">
+              <h3>AI‑фидбэк салона</h3>
+              {budget && <span className="muted">Лимит на сегодня: <strong className="text-white">{budget.used}/{budget.limit}</strong> (осталось <strong className="text-white">{budget.remaining}</strong>)</span>}
+            </div>
+            <button type="button" onClick={runFeedback} disabled={loading}>
+              {loading ? 'Запуск…' : 'Обновить AI‑фидбэк салона'}
+            </button>
+          </div>
+        )}
         <div className="grid">
           {reviews.map((review) => (
             <div key={review.id} className="card">

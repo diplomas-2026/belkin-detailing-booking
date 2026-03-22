@@ -18,16 +18,68 @@ function BarRow({ label, value, total }) {
   )
 }
 
+function LineChart({ title, labels, series, height = 220 }) {
+  const width = 760
+  const pad = 28
+  const pointsCount = labels.length
+  const maxY = Math.max(1, ...series.flatMap((s) => s.values))
+
+  const xFor = (i) => {
+    if (pointsCount <= 1) return pad
+    return pad + (i * (width - pad * 2)) / (pointsCount - 1)
+  }
+  const yFor = (v) => {
+    const k = v / maxY
+    return height - pad - k * (height - pad * 2)
+  }
+
+  return (
+    <div className="card">
+      <h2>{title}</h2>
+      <div className="chart-wrap">
+        <svg viewBox={`0 0 ${width} ${height}`} className="chart">
+          <line x1={pad} y1={height - pad} x2={width - pad} y2={height - pad} stroke="rgba(255,255,255,0.10)" />
+          <line x1={pad} y1={pad} x2={pad} y2={height - pad} stroke="rgba(255,255,255,0.10)" />
+
+          {series.map((s) => {
+            const pts = s.values.map((v, i) => `${xFor(i)},${yFor(v)}`).join(' ')
+            return <polyline key={s.name} fill="none" stroke={s.color} strokeWidth="3" points={pts} />
+          })}
+
+          {labels.map((l, i) => (
+            i % Math.ceil(pointsCount / 6) === 0 ? (
+              <text key={l} x={xFor(i)} y={height - 10} textAnchor="middle" fontSize="10" fill="rgba(255,255,255,0.55)">
+                {l}
+              </text>
+            ) : null
+          ))}
+        </svg>
+      </div>
+      <div className="chart-legend">
+        {series.map((s) => (
+          <div key={s.name} className="legend-item">
+            <span className="legend-dot" style={{ background: s.color }} />
+            <span className="muted">{s.name}</span>
+          </div>
+        ))}
+        <span className="muted">Макс: {maxY}</span>
+      </div>
+    </div>
+  )
+}
+
 export default function DashboardPage() {
   const user = getStoredUser()
   const [stats, setStats] = useState(null)
   const [recentReviews, setRecentReviews] = useState([])
   const [tasks, setTasks] = useState([])
   const [feedback, setFeedback] = useState([])
+  const [daily, setDaily] = useState([])
 
   useEffect(() => {
     if (user?.role === 'ADMIN') {
       api.get('/admin/dashboard').then((res) => setStats(res.data))
+      api.get('/admin/analytics/appointments/daily?days=30').then((r) => setDaily(r.data)).catch(() => setDaily([]))
     }
     if (user?.role === 'CLIENT') {
       api.get('/public/reviews/recent?limit=12').then((res) => setRecentReviews(res.data)).catch(() => setRecentReviews([]))
@@ -67,6 +119,29 @@ export default function DashboardPage() {
               <BarRow label="Выполнено" value={stats.completedAppointments} total={stats.totalAppointments} />
             </div>
           </div>
+
+          {!!daily.length && (
+            <LineChart
+              title="Записи по дням (статусы)"
+              labels={daily.map((d) => new Date(d.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }))}
+              series={[
+                { name: 'Новые', color: 'rgba(56,189,248,0.95)', values: daily.map((d) => d.newCount) },
+                { name: 'Подтверждены', color: 'rgba(245,158,11,0.95)', values: daily.map((d) => d.confirmedCount) },
+                { name: 'В работе', color: 'rgba(249,115,22,0.95)', values: daily.map((d) => d.inProgressCount) },
+                { name: 'Выполнено', color: 'rgba(16,185,129,0.95)', values: daily.map((d) => d.completedCount) },
+              ]}
+            />
+          )}
+
+          {!!daily.length && (
+            <LineChart
+              title="Выручка по дням"
+              labels={daily.map((d) => new Date(d.date).toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }))}
+              series={[
+                { name: 'Выручка, ₽', color: 'rgba(251,191,36,0.95)', values: daily.map((d) => Number(d.revenue || 0)) },
+              ]}
+            />
+          )}
         </>
       )}
 

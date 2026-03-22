@@ -1,6 +1,7 @@
 package com.company.product.api.controller;
 
 import com.company.product.api.ai.ReviewModerationRules;
+import com.company.product.api.ai.TargetFeedbackService;
 import com.company.product.api.dto.FeedbackDtos;
 import com.company.product.api.dto.MasterDtos;
 import com.company.product.api.dto.PublicDtos;
@@ -32,6 +33,7 @@ public class PublicController {
     private final ReviewRepository reviewRepository;
     private final AppointmentRepository appointmentRepository;
     private final AiFeedbackSummaryRepository aiFeedbackSummaryRepository;
+    private final TargetFeedbackService targetFeedbackService;
     private final DtoMapperService mapper;
 
     public PublicController(WorkshopRepository workshopRepository,
@@ -40,6 +42,7 @@ public class PublicController {
                             ReviewRepository reviewRepository,
                             AppointmentRepository appointmentRepository,
                             AiFeedbackSummaryRepository aiFeedbackSummaryRepository,
+                            TargetFeedbackService targetFeedbackService,
                             DtoMapperService mapper) {
         this.workshopRepository = workshopRepository;
         this.serviceRepository = serviceRepository;
@@ -47,6 +50,7 @@ public class PublicController {
         this.reviewRepository = reviewRepository;
         this.appointmentRepository = appointmentRepository;
         this.aiFeedbackSummaryRepository = aiFeedbackSummaryRepository;
+        this.targetFeedbackService = targetFeedbackService;
         this.mapper = mapper;
     }
 
@@ -155,5 +159,21 @@ public class PublicController {
         WorkshopEntity workshop = workshopRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
         return masterRepository.findByWorkshopAndActiveTrueOrderByIdAsc(workshop).stream().map(mapper::toMasterView).toList();
+    }
+
+    @GetMapping("/workshops/{id}/feedback")
+    public FeedbackDtos.TargetFeedbackView workshopFeedback(@PathVariable Long id) {
+        WorkshopEntity workshop = workshopRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
+        String summary = targetFeedbackService.getWorkshopSummary(workshop.getId());
+        return new FeedbackDtos.TargetFeedbackView(summary);
+    }
+
+    @GetMapping("/masters/{id}/feedback")
+    public FeedbackDtos.TargetFeedbackView masterFeedback(@PathVariable Long id) {
+        MasterEntity master = masterRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Мастер не найден"));
+        String summary = targetFeedbackService.getMasterSummary(master.getId());
+        return new FeedbackDtos.TargetFeedbackView(summary);
     }
 }

@@ -10,5 +10,6 @@ public class FeedbackDtos {
                                      LocalDateTime updatedAt,
                                      LocalDateTime basedOnReviewCreatedAt) {
     }
-}
 
+    public record TargetFeedbackView(String summary) {}
+}

@@ -11,6 +11,10 @@ export default function MyAppointmentDetailPage() {
   const [submitting, setSubmitting] = useState(false)
   const [workshopForm, setWorkshopForm] = useState({ rating: 5, comment: '' })
   const [masterForm, setMasterForm] = useState({ rating: 5, comment: '' })
+  const [paymentOpen, setPaymentOpen] = useState(false)
+  const [paymentBusy, setPaymentBusy] = useState(false)
+  const [paymentError, setPaymentError] = useState('')
+  const [payForm, setPayForm] = useState({ cardNumber: '', exp: '', cvc: '', holder: '' })
 
   useEffect(() => {
     setError('')
@@ -18,6 +22,8 @@ export default function MyAppointmentDetailPage() {
       .then((r) => setAppointment(r.data))
       .catch(() => setError('Не удалось загрузить запись'))
   }, [id])
+
+  const reloadAppointment = () => api.get(`/appointments/${id}`).then((r) => setAppointment(r.data)).catch(() => {})
 
   const loadReviews = () => api.get(`/appointments/${id}/reviews`).then((r) => setReviews(r.data)).catch(() => setReviews([]))
 
@@ -67,6 +73,38 @@ export default function MyAppointmentDetailPage() {
     }
   }
 
+  const payNow = async () => {
+    if (paymentBusy || !appointment) return
+    setPaymentError('')
+    setPaymentBusy(true)
+    try {
+      await api.post(`/appointments/${appointment.id}/payment/pay-now`, payForm)
+      setPaymentOpen(false)
+      setPayForm({ cardNumber: '', exp: '', cvc: '', holder: '' })
+      reloadAppointment()
+      alert('Оплата принята. Статус обновлён на "Оплачено".')
+    } catch (e) {
+      setPaymentError('Не удалось выполнить оплату')
+    } finally {
+      setPaymentBusy(false)
+    }
+  }
+
+  const payInWorkshop = async () => {
+    if (paymentBusy || !appointment) return
+    setPaymentError('')
+    setPaymentBusy(true)
+    try {
+      await api.post(`/appointments/${appointment.id}/payment/in-workshop`)
+      reloadAppointment()
+      alert('Отметили способ оплаты: в салоне.')
+    } catch {
+      setPaymentError('Не удалось обновить способ оплаты')
+    } finally {
+      setPaymentBusy(false)
+    }
+  }
+
   return (
     <div className="stack">
       <div className="page-head">
@@ -86,7 +124,12 @@ export default function MyAppointmentDetailPage() {
         <>
           <div className="card">
             <div className="section-head">
-              <h2>{appointment.serviceName}</h2>
+              <div>
+                <h2>{appointment.serviceName}</h2>
+                {appointment.services?.length > 1 && (
+                  <p className="muted">Услуги: {appointment.services.map((s) => s.name).join(', ')}</p>
+                )}
+              </div>
               <span className={`badge badge-${appointment.status?.toLowerCase?.() || 'unknown'}`}>
                 {appointmentStatusLabel(appointment.status)}
               </span>
@@ -107,6 +150,46 @@ export default function MyAppointmentDetailPage() {
                 <h4>Стоимость</h4>
                 <p>{appointment.totalPrice} ₽</p>
                 <p className="muted">Комментарий: {appointment.clientComment || '—'}</p>
+              </div>
+              <div className="card">
+                <div className="section-head">
+                  <h4>Оплата</h4>
+                  <span className={`badge ${appointment.paymentStatus === 'PAID' ? 'badge-approved' : 'badge-pending'}`}>
+                    {appointment.paymentStatus === 'PAID' ? 'Оплачено' : 'Не оплачено'}
+                  </span>
+                </div>
+                {appointment.paymentMethod && (
+                  <p className="muted">
+                    Способ: {appointment.paymentMethod === 'NOW' ? 'оплатить сейчас' : 'оплатить в салоне'}
+                  </p>
+                )}
+                {appointment.paymentStatus !== 'PAID' && appointment.status !== 'CANCELLED' && (
+                  <div className="stack">
+                    <div className="flex gap-2 flex-wrap">
+                      <button type="button" onClick={() => setPaymentOpen((v) => !v)} disabled={paymentBusy}>
+                        {paymentOpen ? 'Скрыть форму' : 'Оплатить сейчас'}
+                      </button>
+                      <button type="button" className="secondary" onClick={payInWorkshop} disabled={paymentBusy}>
+                        Оплатить в салоне
+                      </button>
+                    </div>
+                    {paymentError && <p className="error">{paymentError}</p>}
+                    {paymentOpen && (
+                      <div className="card">
+                        <h4>Данные карты (не сохраняем)</h4>
+                        <div className="form-grid">
+                          <input placeholder="Номер карты" value={payForm.cardNumber} onChange={(e) => setPayForm({ ...payForm, cardNumber: e.target.value })} />
+                          <input placeholder="MM/YY" value={payForm.exp} onChange={(e) => setPayForm({ ...payForm, exp: e.target.value })} />
+                          <input placeholder="CVC" value={payForm.cvc} onChange={(e) => setPayForm({ ...payForm, cvc: e.target.value })} />
+                          <input placeholder="Держатель" value={payForm.holder} onChange={(e) => setPayForm({ ...payForm, holder: e.target.value })} />
+                          <button type="button" onClick={payNow} disabled={paymentBusy || !payForm.cardNumber || !payForm.exp || !payForm.cvc || !payForm.holder}>
+                            {paymentBusy ? 'Оплата…' : 'Подтвердить оплату'}
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

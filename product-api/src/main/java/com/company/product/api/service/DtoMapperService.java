@@ -24,7 +24,7 @@ public class DtoMapperService {
 
         return new WorkshopDtos.WorkshopView(
                 workshop.getId(), workshop.getName(), workshop.getDescription(), workshop.getAddress(), workshop.getCity(),
-                workshop.getLatitude(), workshop.getLongitude(), workshop.getPhone(), workshop.getWorkingHours(), photos
+                workshop.getLatitude(), workshop.getLongitude(), workshop.getPhone(), workshop.getWorkingHours(), workshop.isActive(), photos
         );
     }
 
@@ -49,6 +49,9 @@ public class DtoMapperService {
         String carLabel = appointment.getCar().getBrand() + " " + appointment.getCar().getModel() + " (" + appointment.getCar().getPlateNumber() + ")";
         String masterName = appointment.getMaster() == null ? null : appointment.getMaster().getUser().getFullName();
         Long masterId = appointment.getMaster() == null ? null : appointment.getMaster().getId();
+        var services = appointment.getServices() == null ? List.<AppointmentDtos.AppointmentServiceView>of() : appointment.getServices().stream()
+                .map(s -> new AppointmentDtos.AppointmentServiceView(s.getId(), s.getName(), s.getDurationMinutes(), s.getPrice()))
+                .toList();
 
         return new AppointmentDtos.AppointmentView(
                 appointment.getId(),
@@ -58,11 +61,14 @@ public class DtoMapperService {
                 carLabel,
                 appointment.getService().getId(),
                 appointment.getService().getName(),
+                services,
                 masterId,
                 masterName,
                 appointment.getScheduledStart(),
                 appointment.getScheduledEnd(),
                 appointment.getStatus(),
+                appointment.getPaymentStatus(),
+                appointment.getPaymentMethod(),
                 appointment.getTotalPrice(),
                 appointment.getClientComment(),
                 appointment.getResultComment()
