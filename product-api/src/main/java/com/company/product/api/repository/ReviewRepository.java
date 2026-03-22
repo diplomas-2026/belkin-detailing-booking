@@ -32,4 +32,6 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
     List<ReviewEntity> findByTargetTypeAndModerationStatusOrderByCreatedAtDesc(ReviewTargetType targetType, ReviewModerationStatus status, Pageable pageable);
 
     ReviewEntity findTopByTargetTypeAndModerationStatusOrderByCreatedAtDesc(ReviewTargetType targetType, ReviewModerationStatus status);
+
+    List<ReviewEntity> findByAppointmentAndClientOrderByCreatedAtDesc(AppointmentEntity appointment, UserEntity client);
 }

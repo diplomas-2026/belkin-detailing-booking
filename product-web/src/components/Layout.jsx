@@ -7,7 +7,6 @@ const navByRole = {
     { to: '/workshops', label: 'Салоны' },
     { to: '/my-cars', label: 'Мои автомобили' },
     { to: '/my-appointments', label: 'Мои записи' },
-    { to: '/reviews/new', label: 'Оставить отзыв' },
   ],
   MASTER: [
     { to: '/dashboard', label: 'Главная' },

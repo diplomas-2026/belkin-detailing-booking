@@ -2,6 +2,7 @@ package com.company.product.api.controller;
 
 import com.company.product.api.ai.ReviewModerationRules;
 import com.company.product.api.dto.FeedbackDtos;
+import com.company.product.api.dto.MasterDtos;
 import com.company.product.api.dto.PublicDtos;
 import com.company.product.api.dto.ReviewDtos;
 import com.company.product.api.dto.ServiceDtos;
@@ -125,9 +126,7 @@ public class PublicController {
 
     @GetMapping("/services/{id}/reviews")
     public List<ReviewDtos.ReviewView> serviceReviews(@PathVariable Long id) {
-        ServiceEntity service = serviceRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
-        return reviewRepository.findByServiceAndModerationStatusOrderByCreatedAtDesc(service, ReviewModerationStatus.APPROVED).stream().map(mapper::toReviewView).toList();
+        throw new BusinessException(HttpStatus.GONE, "Отзывы об услугах отключены");
     }
 
     @GetMapping("/masters/{id}/reviews")
@@ -137,10 +136,24 @@ public class PublicController {
         return reviewRepository.findByMasterAndModerationStatusOrderByCreatedAtDesc(master, ReviewModerationStatus.APPROVED).stream().map(mapper::toReviewView).toList();
     }
 
+    @GetMapping("/masters/{id}")
+    public MasterDtos.MasterView master(@PathVariable Long id) {
+        MasterEntity master = masterRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Мастер не найден"));
+        return mapper.toMasterView(master);
+    }
+
     @GetMapping("/workshops/{id}/reviews")
     public List<ReviewDtos.ReviewView> workshopReviews(@PathVariable Long id) {
         WorkshopEntity workshop = workshopRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
         return reviewRepository.findByWorkshopAndModerationStatusOrderByCreatedAtDesc(workshop, ReviewModerationStatus.APPROVED).stream().map(mapper::toReviewView).toList();
+    }
+
+    @GetMapping("/workshops/{id}/masters")
+    public List<MasterDtos.MasterView> workshopMasters(@PathVariable Long id) {
+        WorkshopEntity workshop = workshopRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
+        return masterRepository.findByWorkshopAndActiveTrueOrderByIdAsc(workshop).stream().map(mapper::toMasterView).toList();
     }
 }

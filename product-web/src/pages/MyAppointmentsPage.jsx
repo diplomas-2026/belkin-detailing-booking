@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../api'
 import { appointmentStatusLabel } from '../utils/appointmentStatus'
 
@@ -7,6 +7,7 @@ const initial = { workshopId: '', carId: '', serviceId: '', scheduledStart: '', 
 
 export default function MyAppointmentsPage() {
   const [searchParams] = useSearchParams()
+  const navigate = useNavigate()
   const [appointments, setAppointments] = useState([])
   const [workshops, setWorkshops] = useState([])
   const [cars, setCars] = useState([])
@@ -90,7 +91,16 @@ export default function MyAppointmentsPage() {
 
         <div className="grid">
           {appointments.map((a) => (
-            <div className="card" key={a.id}>
+            <div
+              className="card card-link"
+              key={a.id}
+              role="button"
+              tabIndex={0}
+              onClick={() => navigate(`/my-appointments/${a.id}`)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') navigate(`/my-appointments/${a.id}`)
+              }}
+            >
               <h4>{a.serviceName}</h4>
               <p>{a.workshopName}</p>
               <p>{new Date(a.scheduledStart).toLocaleString('ru-RU')}</p>
@@ -100,9 +110,17 @@ export default function MyAppointmentsPage() {
                   {appointmentStatusLabel(a.status)}
                 </span>
               </p>
-              <Link className="btn secondary" to={`/my-appointments/${a.id}`}>Открыть</Link>
               {(a.status === 'NEW' || a.status === 'CONFIRMED') && (
-                <button className="danger" onClick={() => cancel(a.id)}>Отменить</button>
+                <button
+                  className="danger"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    cancel(a.id)
+                  }}
+                >
+                  Отменить
+                </button>
               )}
             </div>
           ))}

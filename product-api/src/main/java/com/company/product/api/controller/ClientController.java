@@ -214,9 +214,20 @@ public class ClientController {
             throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Отзыв можно оставить только после выполнения услуги");
         }
 
+        if (request.targetType() == ReviewTargetType.SERVICE) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Отзывы об услугах отключены");
+        }
+
         ServiceEntity service = request.serviceId() == null ? null : serviceRepository.findById(request.serviceId()).orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
         MasterEntity master = request.masterId() == null ? null : masterRepository.findById(request.masterId()).orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Мастер не найден"));
         WorkshopEntity workshop = request.workshopId() == null ? null : workshopRepository.findById(request.workshopId()).orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
+
+        if (request.targetType() == ReviewTargetType.MASTER && master == null) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Для отзыва о мастере нужно указать мастера");
+        }
+        if (request.targetType() == ReviewTargetType.WORKSHOP && workshop == null) {
+            throw new BusinessException(HttpStatus.BAD_REQUEST, "Для отзыва о салоне нужно указать салон");
+        }
 
         if (reviewRepository.existsByAppointmentAndTargetTypeAndServiceAndMasterAndWorkshop(appointment, request.targetType(), service, master, workshop)) {
             throw new BusinessException(HttpStatus.CONFLICT, "Отзыв уже оставлен");
@@ -244,6 +255,18 @@ public class ClientController {
     public List<ReviewDtos.ReviewView> myReviews() {
         UserEntity user = currentUserService.requireUser();
         return reviewRepository.findByClientOrderByCreatedAtDesc(user).stream().map(mapper::toReviewView).toList();
+    }
+
+    @GetMapping("/appointments/{id}/reviews")
+    @PreAuthorize("hasRole('CLIENT')")
+    public List<ReviewDtos.ReviewView> appointmentReviews(@PathVariable Long id) {
+        UserEntity user = currentUserService.requireUser();
+        AppointmentEntity appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Запись не найдена"));
+        if (!appointment.getClient().getId().equals(user.getId())) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "Нет доступа к записи");
+        }
+        return reviewRepository.findByAppointmentAndClientOrderByCreatedAtDesc(appointment, user).stream().map(mapper::toReviewView).toList();
     }
 
     private void addStatusHistory(AppointmentEntity appointment,

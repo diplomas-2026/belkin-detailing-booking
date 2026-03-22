@@ -13,25 +13,19 @@ function Stars({ value }) {
 }
 
 export default function PublicReviewsPage() {
-  const [mode, setMode] = useState('WORKSHOP')
   const [workshops, setWorkshops] = useState([])
-  const [services, setServices] = useState([])
   const [selectedId, setSelectedId] = useState('')
   const [reviews, setReviews] = useState([])
   const [feedback, setFeedback] = useState([])
 
   useEffect(() => {
     api.get('/workshops').then((r) => setWorkshops(r.data)).catch(() => {})
-    api.get('/services').then((r) => setServices(r.data)).catch(() => {})
     api.get('/public/feedback').then((r) => setFeedback(r.data)).catch(() => setFeedback([]))
   }, [])
 
   const options = useMemo(() => {
-    if (mode === 'SERVICE') {
-      return services.map((s) => ({ id: s.id, label: `${s.name} — ${s.workshopName}` }))
-    }
     return workshops.map((w) => ({ id: w.id, label: w.name }))
-  }, [mode, services, workshops])
+  }, [workshops])
 
   useEffect(() => {
     if (!selectedId && options[0]) setSelectedId(String(options[0].id))
@@ -39,12 +33,12 @@ export default function PublicReviewsPage() {
 
   useEffect(() => {
     if (!selectedId) return
-    const url = mode === 'SERVICE' ? `/services/${selectedId}/reviews` : `/workshops/${selectedId}/reviews`
+    const url = `/workshops/${selectedId}/reviews`
     api.get(url).then((r) => setReviews(r.data)).catch(() => setReviews([]))
-  }, [mode, selectedId])
+  }, [selectedId])
 
-  const title = mode === 'SERVICE' ? 'Отзывы об услугах' : 'Отзывы о салонах'
-  const aiSummary = feedback.find((f) => f.targetType === mode)?.summary
+  const title = 'Отзывы о салонах'
+  const aiSummary = feedback.find((f) => f.targetType === 'WORKSHOP')?.summary
 
   return (
     <div className="stack">
@@ -54,10 +48,6 @@ export default function PublicReviewsPage() {
           <p className="muted">Показываем только опубликованные отзывы клиентов.</p>
         </div>
         <div className="page-controls">
-          <select value={mode} onChange={(e) => { setMode(e.target.value); setSelectedId('') }}>
-            <option value="WORKSHOP">О салонах</option>
-            <option value="SERVICE">Об услугах</option>
-          </select>
           <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} disabled={!options.length}>
             {options.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
           </select>

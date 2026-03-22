@@ -6,6 +6,7 @@ export default function WorkshopDetailPage() {
   const { id } = useParams()
   const [workshop, setWorkshop] = useState(null)
   const [services, setServices] = useState([])
+  const [masters, setMasters] = useState([])
   const [reviews, setReviews] = useState([])
   const [stats, setStats] = useState(null)
 
@@ -13,6 +14,7 @@ export default function WorkshopDetailPage() {
     api.get(`/workshops/${id}`).then((r) => setWorkshop(r.data))
     api.get(`/workshops/${id}/stats`).then((r) => setStats(r.data)).catch(() => setStats(null))
     api.get(`/workshops/${id}/services`).then((r) => setServices(r.data))
+    api.get(`/workshops/${id}/masters`).then((r) => setMasters(r.data)).catch(() => setMasters([]))
     api.get(`/workshops/${id}/reviews`).then((r) => setReviews(r.data))
   }, [id])
 
@@ -65,6 +67,26 @@ export default function WorkshopDetailPage() {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="card">
+        <h2>Мастера</h2>
+        {!masters.length ? (
+          <p className="muted">Пока нет мастеров.</p>
+        ) : (
+          <div className="grid">
+            {masters.map((m) => (
+              <Link
+                key={m.id}
+                to={`/workshops/${workshop.id}/masters/${m.id}`}
+                className="card card-link"
+              >
+                <h4 className="text-white">{m.fullName}</h4>
+                <p className="muted">{m.specialization} • {m.experienceYears} лет опыта</p>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="card">

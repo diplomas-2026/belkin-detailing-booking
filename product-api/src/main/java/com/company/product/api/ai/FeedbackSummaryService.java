@@ -52,7 +52,7 @@ public class FeedbackSummaryService {
         int llmCalls = 0;
         Map<ReviewTargetType, String> notes = new EnumMap<>(ReviewTargetType.class);
 
-        for (ReviewTargetType type : ReviewTargetType.values()) {
+        for (ReviewTargetType type : List.of(ReviewTargetType.WORKSHOP, ReviewTargetType.MASTER)) {
             ReviewEntity latest = reviewRepository.findTopByTargetTypeAndModerationStatusOrderByCreatedAtDesc(type, ReviewModerationStatus.APPROVED);
             if (latest == null) {
                 notes.put(type, "Нет одобренных отзывов");
