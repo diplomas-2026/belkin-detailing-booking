@@ -59,8 +59,15 @@
     @apply rounded-[18px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-soft;
     padding: 18px;
   }
-  .grid { @apply grid gap-4; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
-  .stack { @apply grid gap-4; }
+  .grid {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .stack {
+    display: grid;
+    gap: 16px;
+  }
 
   /* Buttons / inputs */
   button, .btn {
