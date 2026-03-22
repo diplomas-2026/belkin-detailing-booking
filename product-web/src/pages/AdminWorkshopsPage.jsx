@@ -28,7 +28,19 @@ export default function AdminWorkshopsPage() {
   const [editingId, setEditingId] = useState(null)
   const [busy, setBusy] = useState(false)
 
-  const load = () => api.get('/admin/workshops').then((r) => setItems(r.data))
+  const normalizeWorkshop = (w) => ({
+    ...w,
+    active: w?.active === true || w?.active === 'true' || w?.active === 1 || w?.active === '1',
+    photos: Array.isArray(w?.photos) ? w.photos : [],
+    latitude: w?.latitude == null ? null : Number(w.latitude),
+    longitude: w?.longitude == null ? null : Number(w.longitude),
+  })
+
+  const load = () =>
+    api.get('/admin/workshops').then((r) => {
+      const data = Array.isArray(r.data) ? r.data : []
+      setItems(data.map(normalizeWorkshop))
+    })
 
   useEffect(() => { load() }, [])
 
@@ -81,13 +93,13 @@ export default function AdminWorkshopsPage() {
         description: w.description,
         address: w.address,
         city: w.city,
-        latitude: w.latitude,
-        longitude: w.longitude,
+        latitude: Number(w.latitude),
+        longitude: Number(w.longitude),
         phone: w.phone,
         workingHours: w.workingHours,
-        active: !w.active,
+        active: !normalizeWorkshop(w).active,
       })
-      load()
+      await load()
     } finally {
       setBusy(false)
     }
