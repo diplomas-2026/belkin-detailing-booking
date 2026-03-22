@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
+import Field from '../components/ui/Field'
 
 export default function LoginPage() {
   const navigate = useNavigate()
@@ -29,12 +30,10 @@ export default function LoginPage() {
           <h1>Вход</h1>
           <p>Онлайн-запись на детейлинг</p>
         </div>
-        <label>
-          Email
+        <Field label="Email" value={email}>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@mail.ru" autoComplete="email" />
-        </label>
-        <label>
-          Пароль
+        </Field>
+        <Field label="Пароль" value={password}>
           <div className="password-field">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -64,7 +63,7 @@ export default function LoginPage() {
               )}
             </button>
           </div>
-        </label>
+        </Field>
         {error && <p className="error">{error}</p>}
         <button type="submit">Войти</button>
         <p className="muted">

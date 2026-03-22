@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../api'
+import Field from '../components/ui/Field'
 
 const initial = { appointmentId: '', targetType: 'WORKSHOP', workshopId: '', serviceId: '', masterId: '', rating: 5, comment: '' }
 
@@ -73,7 +74,9 @@ export default function ReviewsNewPage() {
           <option value="MASTER">О мастере</option>
         </select>
           <input type="number" min="1" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
-          <textarea placeholder="Комментарий" value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} />
+          <Field label="Комментарий" value={form.comment}>
+            <textarea placeholder="Комментарий" value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} />
+          </Field>
           <button type="submit">Отправить отзыв</button>
         </form>
 

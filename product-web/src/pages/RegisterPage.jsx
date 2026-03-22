@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import api from '../api'
+import Field from '../components/ui/Field'
 
 export default function RegisterPage() {
   const navigate = useNavigate()
@@ -50,18 +51,15 @@ export default function RegisterPage() {
           <p>Онлайн-запись на детейлинг</p>
         </div>
 
-        <label>
-          Имя и фамилия
+        <Field label="Имя и фамилия" value={fullName}>
           <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Например: Иван Петров" autoComplete="name" />
-        </label>
+        </Field>
 
-        <label>
-          Email
+        <Field label="Email" value={email}>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="example@mail.ru" autoComplete="email" />
-        </label>
+        </Field>
 
-        <label>
-          Пароль
+        <Field label="Пароль" value={password}>
           <div className="password-field">
             <input
               type={showPassword ? 'text' : 'password'}
@@ -91,10 +89,9 @@ export default function RegisterPage() {
               )}
             </button>
           </div>
-        </label>
+        </Field>
 
-        <label>
-          Повторите пароль
+        <Field label="Повторите пароль" value={confirmPassword}>
           <div className="password-field">
             <input
               type={showConfirmPassword ? 'text' : 'password'}
@@ -125,7 +122,7 @@ export default function RegisterPage() {
               )}
             </button>
           </div>
-        </label>
+        </Field>
 
         {error && <p className="error">{error}</p>}
 

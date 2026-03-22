@@ -19,6 +19,7 @@ function BarRow({ label, value, total }) {
 }
 
 function LineChart({ title, labels, series, height = 220 }) {
+  const [selected, setSelected] = useState(null)
   const width = 760
   const pad = 28
   const pointsCount = labels.length
@@ -33,18 +34,48 @@ function LineChart({ title, labels, series, height = 220 }) {
     return height - pad - k * (height - pad * 2)
   }
 
+  const ticks = [0, 0.25, 0.5, 0.75, 1].map((k) => ({
+    value: Math.round(maxY * k),
+    y: yFor(Math.round(maxY * k)),
+  }))
+
   return (
     <div className="card">
       <h2>{title}</h2>
       <div className="chart-wrap">
         <svg viewBox={`0 0 ${width} ${height}`} className="chart">
-          <line x1={pad} y1={height - pad} x2={width - pad} y2={height - pad} stroke="rgba(255,255,255,0.10)" />
-          <line x1={pad} y1={pad} x2={pad} y2={height - pad} stroke="rgba(255,255,255,0.10)" />
+          <line x1={pad} y1={height - pad} x2={width - pad} y2={height - pad} stroke="rgba(255,255,255,0.12)" />
+          <line x1={pad} y1={pad} x2={pad} y2={height - pad} stroke="rgba(255,255,255,0.12)" />
+
+          {ticks.map((t) => (
+            <g key={t.value}>
+              <line x1={pad} y1={t.y} x2={width - pad} y2={t.y} stroke="rgba(255,255,255,0.06)" />
+              <text x={pad - 8} y={t.y + 4} textAnchor="end" fontSize="10" fill="rgba(255,255,255,0.55)">
+                {t.value}
+              </text>
+            </g>
+          ))}
 
           {series.map((s) => {
             const pts = s.values.map((v, i) => `${xFor(i)},${yFor(v)}`).join(' ')
             return <polyline key={s.name} fill="none" stroke={s.color} strokeWidth="3" points={pts} />
           })}
+
+          {series.map((s) => (
+            s.values.map((v, i) => (
+              <circle
+                key={`${s.name}-${i}`}
+                cx={xFor(i)}
+                cy={yFor(v)}
+                r="4"
+                fill={s.color}
+                stroke="rgba(0,0,0,0.45)"
+                strokeWidth="1"
+                style={{ cursor: 'pointer' }}
+                onClick={() => setSelected({ series: s.name, label: labels[i], value: v })}
+              />
+            ))
+          ))}
 
           {labels.map((l, i) => (
             i % Math.ceil(pointsCount / 6) === 0 ? (
@@ -55,6 +86,16 @@ function LineChart({ title, labels, series, height = 220 }) {
           ))}
         </svg>
       </div>
+      {selected && (
+        <div className="card" style={{ marginTop: 10 }}>
+          <div className="section-head">
+            <strong className="text-white">Точка</strong>
+            <button type="button" className="secondary" onClick={() => setSelected(null)}>Скрыть</button>
+          </div>
+          <p className="muted">{selected.label} • {selected.series}</p>
+          <p className="text-white"><strong>{selected.value}</strong></p>
+        </div>
+      )}
       <div className="chart-legend">
         {series.map((s) => (
           <div key={s.name} className="legend-item">

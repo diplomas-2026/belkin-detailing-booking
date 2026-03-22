@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../api'
 import { appointmentStatusLabel } from '../utils/appointmentStatus'
+import Field from '../components/ui/Field'
 
 const initial = { workshopId: '', carId: '', serviceIds: [], scheduledStart: '', clientComment: '' }
 
@@ -15,6 +16,18 @@ export default function MyAppointmentsPage() {
   const [form, setForm] = useState(initial)
   const [serviceItemsById, setServiceItemsById] = useState({})
   const [selectedItemIdsByServiceId, setSelectedItemIdsByServiceId] = useState({})
+
+  const groupLabel = (key) => {
+    const map = {
+      ceramic: 'Керамика',
+      paste: 'Паста и круги',
+      film: 'Плёнка',
+      zone: 'Зона нанесения',
+      materials: 'Материалы',
+      chem: 'Химия',
+    }
+    return map[key] || key
+  }
 
   const loadAppointments = () => api.get('/appointments/my').then((r) => setAppointments(r.data))
 
@@ -226,7 +239,7 @@ export default function MyAppointmentsPage() {
                         <div className="stack">
                           {Object.entries(groups).map(([gk, opts]) => (
                             <div key={gk} className="card">
-                              <p className="muted">Выбор: <strong className="text-white">{gk}</strong></p>
+                              <p className="muted">Выбор: <strong className="text-white">{groupLabel(gk)}</strong></p>
                               <div className="stack">
                                 {opts.map((it) => (
                                   <label key={it.id} className="flex items-center justify-between gap-3">
@@ -281,7 +294,9 @@ export default function MyAppointmentsPage() {
             </div>
           )}
           <input type="datetime-local" value={form.scheduledStart} onChange={(e) => setForm({ ...form, scheduledStart: e.target.value })} />
-          <input placeholder="Комментарий" value={form.clientComment} onChange={(e) => setForm({ ...form, clientComment: e.target.value })} />
+          <Field label="Комментарий" value={form.clientComment}>
+            <input placeholder="Комментарий" value={form.clientComment} onChange={(e) => setForm({ ...form, clientComment: e.target.value })} />
+          </Field>
           <button type="submit">Записаться</button>
         </form>
 

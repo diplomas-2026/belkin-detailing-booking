@@ -83,12 +83,16 @@ export default function WorkshopDetailPage() {
               <h4>{service.name}</h4>
               {service.description && <p>{service.description}</p>}
               <p>{service.durationMinutes} мин • {service.price} ₽</p>
-              <Link
-                className="btn secondary"
-                to={`/my-appointments?workshopId=${workshop.id}&serviceId=${service.id}`}
-              >
-                Записаться
-              </Link>
+              {user?.role === 'CLIENT' ? (
+                <Link
+                  className="btn secondary"
+                  to={`/my-appointments?workshopId=${workshop.id}&serviceId=${service.id}`}
+                >
+                  Записаться
+                </Link>
+              ) : (
+                <p className="muted">Запись доступна только клиенту.</p>
+              )}
             </div>
           ))}
         </div>

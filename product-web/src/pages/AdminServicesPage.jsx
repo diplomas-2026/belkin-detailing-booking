@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../api'
+import Field from '../components/ui/Field'
 
 const initial = { workshopId: '', name: '', description: '', durationMinutes: 60, price: 2000, active: true }
 const initialItem = { kind: 'OPTIONAL', name: '', description: '', price: 0, choiceGroupKey: '', defaultSelected: false, sortOrder: 0 }
@@ -11,6 +12,9 @@ export default function AdminServicesPage() {
   const [selectedServiceId, setSelectedServiceId] = useState(null)
   const [items, setItems] = useState([])
   const [itemForm, setItemForm] = useState(initialItem)
+  const [choiceGroupMode, setChoiceGroupMode] = useState('none') // none | preset | custom
+  const [choiceGroupPreset, setChoiceGroupPreset] = useState('')
+  const [choiceGroupCustom, setChoiceGroupCustom] = useState('')
   const [busy, setBusy] = useState(false)
 
   const load = () => {
@@ -47,6 +51,9 @@ export default function AdminServicesPage() {
   const selectService = async (serviceId) => {
     setSelectedServiceId(serviceId)
     setItemForm(initialItem)
+    setChoiceGroupMode('none')
+    setChoiceGroupPreset('')
+    setChoiceGroupCustom('')
     await loadItems(serviceId)
   }
 
@@ -56,18 +63,52 @@ export default function AdminServicesPage() {
     if (!itemForm.name || !itemForm.kind) return
     setBusy(true)
     try {
+      const nextGroupKey =
+        itemForm.kind !== 'CHOICE_OPTION'
+          ? null
+          : choiceGroupMode === 'custom'
+            ? (choiceGroupCustom || '').trim() || null
+            : (choiceGroupPreset || '').trim() || null
       await api.post(`/admin/services/${selectedServiceId}/items`, {
         ...itemForm,
         price: Number(itemForm.price),
         sortOrder: Number(itemForm.sortOrder),
-        choiceGroupKey: itemForm.choiceGroupKey?.trim() ? itemForm.choiceGroupKey.trim() : null,
+        choiceGroupKey: nextGroupKey,
       })
       setItemForm(initialItem)
+      setChoiceGroupMode('none')
+      setChoiceGroupPreset('')
+      setChoiceGroupCustom('')
       await loadItems(selectedServiceId)
     } finally {
       setBusy(false)
     }
   }
+
+  const groupLabel = (key) => {
+    const map = {
+      ceramic: 'Керамика',
+      paste: 'Паста и круги',
+      film: 'Плёнка',
+      zone: 'Зона нанесения',
+      materials: 'Материалы',
+      chem: 'Химия',
+    }
+    return map[key] || key
+  }
+
+  const existingGroupKeys = Array.from(new Set((items || []).map((x) => x.choiceGroupKey).filter(Boolean)))
+  const presets = [
+    { key: 'materials', label: 'Материалы' },
+    { key: 'paste', label: 'Паста и круги' },
+    { key: 'ceramic', label: 'Керамика' },
+    { key: 'film', label: 'Плёнка' },
+    { key: 'zone', label: 'Зона нанесения' },
+    { key: 'chem', label: 'Химия' },
+    ...existingGroupKeys
+      .filter((k) => !['materials', 'paste', 'ceramic', 'film', 'zone', 'chem'].includes(k))
+      .map((k) => ({ key: k, label: groupLabel(k) })),
+  ]
 
   const deleteItem = async (itemId) => {
     if (!selectedServiceId || busy) return
@@ -89,10 +130,18 @@ export default function AdminServicesPage() {
             <option value="">Выберите салон</option>
             {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
-          <input placeholder="Название услуги" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          <input type="number" placeholder="Длительность" value={form.durationMinutes} onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })} />
-          <input type="number" placeholder="Цена" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+          <Field label="Название услуги" value={form.name}>
+            <input placeholder="Название услуги" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          </Field>
+          <Field label="Описание" value={form.description}>
+            <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          </Field>
+          <Field label="Длительность" value={form.durationMinutes}>
+            <input type="number" placeholder="Длительность" value={form.durationMinutes} onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })} />
+          </Field>
+          <Field label="Цена" value={form.price}>
+            <input type="number" placeholder="Цена" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+          </Field>
           <button type="submit" disabled={busy}>{busy ? 'Сохранение…' : 'Добавить услугу'}</button>
         </form>
 
@@ -110,15 +159,48 @@ export default function AdminServicesPage() {
                 <option value="OPTIONAL">Опциональный</option>
                 <option value="CHOICE_OPTION">Вариант выбора</option>
               </select>
-              <input placeholder="Название пункта" value={itemForm.name} onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })} />
-              <input placeholder="Описание (опционально)" value={itemForm.description} onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })} />
-              <input type="number" placeholder="Цена" value={itemForm.price} onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })} />
-              <input placeholder="Ключ группы выбора (например ceramic)" value={itemForm.choiceGroupKey} onChange={(e) => setItemForm({ ...itemForm, choiceGroupKey: e.target.value })} />
+              <Field label="Название пункта" value={itemForm.name}>
+                <input placeholder="Название пункта" value={itemForm.name} onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })} />
+              </Field>
+              <Field label="Описание (опционально)" value={itemForm.description}>
+                <input placeholder="Описание (опционально)" value={itemForm.description} onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })} />
+              </Field>
+              <Field label="Цена" value={itemForm.price}>
+                <input type="number" placeholder="Цена" value={itemForm.price} onChange={(e) => setItemForm({ ...itemForm, price: e.target.value })} />
+              </Field>
+
+              {itemForm.kind === 'CHOICE_OPTION' ? (
+                <div className="stack">
+                  <div className="muted">Группа выбора</div>
+                  <div className="form-grid">
+                    <select value={choiceGroupMode} onChange={(e) => setChoiceGroupMode(e.target.value)}>
+                      <option value="none">Выберите…</option>
+                      <option value="preset">Из списка</option>
+                      <option value="custom">Новая группа</option>
+                    </select>
+                    {choiceGroupMode === 'preset' && (
+                      <select value={choiceGroupPreset} onChange={(e) => setChoiceGroupPreset(e.target.value)}>
+                        <option value="">Выберите группу</option>
+                        {presets.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
+                      </select>
+                    )}
+                    {choiceGroupMode === 'custom' && (
+                      <Field label="Ключ (латиница)" value={choiceGroupCustom}>
+                        <input placeholder="например: ceramic" value={choiceGroupCustom} onChange={(e) => setChoiceGroupCustom(e.target.value)} />
+                      </Field>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div className="muted">Группа выбора: —</div>
+              )}
               <label className="flex items-center gap-3">
                 <input type="checkbox" checked={!!itemForm.defaultSelected} onChange={(e) => setItemForm({ ...itemForm, defaultSelected: e.target.checked })} />
                 <span className="text-white/80">Выбрано по умолчанию</span>
               </label>
-              <input type="number" placeholder="Сортировка" value={itemForm.sortOrder} onChange={(e) => setItemForm({ ...itemForm, sortOrder: e.target.value })} />
+              <Field label="Сортировка" value={itemForm.sortOrder}>
+                <input type="number" placeholder="Сортировка" value={itemForm.sortOrder} onChange={(e) => setItemForm({ ...itemForm, sortOrder: e.target.value })} />
+              </Field>
               <button type="submit" disabled={busy || !itemForm.name}>{busy ? 'Добавление…' : 'Добавить пункт'}</button>
             </form>
 
@@ -129,7 +211,11 @@ export default function AdminServicesPage() {
                     <h4>{it.name}</h4>
                     <button type="button" className="danger" onClick={() => deleteItem(it.id)} disabled={busy}>Удалить</button>
                   </div>
-                  <p className="muted">{it.kind}{it.choiceGroupKey ? ` • группа: ${it.choiceGroupKey}` : ''}{it.defaultSelected ? ' • по умолчанию' : ''}</p>
+                  <p className="muted">
+                    {it.kind}
+                    {it.choiceGroupKey ? ` • группа: ${groupLabel(it.choiceGroupKey)}` : ''}
+                    {it.defaultSelected ? ' • по умолчанию' : ''}
+                  </p>
                   {it.description && <p className="muted">{it.description}</p>}
                   <p>{it.price} ₽</p>
                 </div>

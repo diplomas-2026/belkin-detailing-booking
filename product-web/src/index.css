@@ -149,8 +149,12 @@
     @apply grid gap-3 items-end;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
-  .form-grid input, .form-grid select, .form-grid textarea, .form-grid button { margin: 0; }
+  .form-grid input, .form-grid select, .form-grid textarea, .form-grid button,
+  .form-grid .field input, .form-grid .field select, .form-grid .field textarea { margin: 0; }
   .form-grid button { height: 46px; }
+
+  .field { @apply grid gap-1; }
+  .field-label { @apply text-white/55 text-xs font-semibold; }
 
   /* Auth */
   .auth-wrap { @apply min-h-screen grid place-items-center px-4 py-8; }

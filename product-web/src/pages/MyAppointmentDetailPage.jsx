@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import api from '../api'
+import Field from '../components/ui/Field'
 import { appointmentStatusLabel } from '../utils/appointmentStatus'
 
 export default function MyAppointmentDetailPage() {
@@ -178,10 +179,18 @@ export default function MyAppointmentDetailPage() {
                       <div className="card">
                         <h4>Данные карты (не сохраняем)</h4>
                         <div className="form-grid">
-                          <input placeholder="Номер карты" value={payForm.cardNumber} onChange={(e) => setPayForm({ ...payForm, cardNumber: e.target.value })} />
-                          <input placeholder="MM/YY" value={payForm.exp} onChange={(e) => setPayForm({ ...payForm, exp: e.target.value })} />
-                          <input placeholder="CVC" value={payForm.cvc} onChange={(e) => setPayForm({ ...payForm, cvc: e.target.value })} />
-                          <input placeholder="Держатель" value={payForm.holder} onChange={(e) => setPayForm({ ...payForm, holder: e.target.value })} />
+                          <Field label="Номер карты" value={payForm.cardNumber}>
+                            <input placeholder="Номер карты" value={payForm.cardNumber} onChange={(e) => setPayForm({ ...payForm, cardNumber: e.target.value })} />
+                          </Field>
+                          <Field label="Срок действия" value={payForm.exp}>
+                            <input placeholder="MM/YY" value={payForm.exp} onChange={(e) => setPayForm({ ...payForm, exp: e.target.value })} />
+                          </Field>
+                          <Field label="CVC" value={payForm.cvc}>
+                            <input placeholder="CVC" value={payForm.cvc} onChange={(e) => setPayForm({ ...payForm, cvc: e.target.value })} />
+                          </Field>
+                          <Field label="Держатель" value={payForm.holder}>
+                            <input placeholder="Держатель" value={payForm.holder} onChange={(e) => setPayForm({ ...payForm, holder: e.target.value })} />
+                          </Field>
                           <button type="button" onClick={payNow} disabled={paymentBusy || !payForm.cardNumber || !payForm.exp || !payForm.cvc || !payForm.holder}>
                             {paymentBusy ? 'Оплата…' : 'Подтвердить оплату'}
                           </button>
@@ -218,20 +227,22 @@ export default function MyAppointmentDetailPage() {
                   ) : (
                     <div className="stack">
                       <div className="form-grid">
-                        <input
-                          type="number"
-                          min="1"
-                          max="5"
-                          value={workshopForm.rating}
-                          onChange={(e) => setWorkshopForm({ ...workshopForm, rating: e.target.value })}
-                        />
-                        <textarea
-                          placeholder="Комментарий (необязательно)"
-                          value={workshopForm.comment}
-                          onChange={(e) => setWorkshopForm({ ...workshopForm, comment: e.target.value })}
-                        />
-                        <button type="button" onClick={submitWorkshop} disabled={submitting}>Отправить отзыв о салоне</button>
-                      </div>
+                          <input
+                            type="number"
+                            min="1"
+                            max="5"
+                            value={workshopForm.rating}
+                            onChange={(e) => setWorkshopForm({ ...workshopForm, rating: e.target.value })}
+                          />
+                          <Field label="Комментарий" value={workshopForm.comment}>
+                            <textarea
+                              placeholder="Комментарий (необязательно)"
+                              value={workshopForm.comment}
+                              onChange={(e) => setWorkshopForm({ ...workshopForm, comment: e.target.value })}
+                            />
+                          </Field>
+                          <button type="button" onClick={submitWorkshop} disabled={submitting}>Отправить отзыв о салоне</button>
+                        </div>
                     </div>
                   )}
                 </div>
@@ -263,11 +274,13 @@ export default function MyAppointmentDetailPage() {
                             value={masterForm.rating}
                             onChange={(e) => setMasterForm({ ...masterForm, rating: e.target.value })}
                           />
-                          <textarea
-                            placeholder="Комментарий (необязательно)"
-                            value={masterForm.comment}
-                            onChange={(e) => setMasterForm({ ...masterForm, comment: e.target.value })}
-                          />
+                          <Field label="Комментарий" value={masterForm.comment}>
+                            <textarea
+                              placeholder="Комментарий (необязательно)"
+                              value={masterForm.comment}
+                              onChange={(e) => setMasterForm({ ...masterForm, comment: e.target.value })}
+                            />
+                          </Field>
                           <button type="button" onClick={submitMaster} disabled={submitting}>Отправить отзыв о мастере</button>
                         </div>
                       </div>

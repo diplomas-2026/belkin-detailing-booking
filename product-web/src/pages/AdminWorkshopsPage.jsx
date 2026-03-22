@@ -3,6 +3,7 @@ import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 import api from '../api'
+import Field from '../components/ui/Field'
 
 const initial = { name: '', description: '', address: '', city: 'Самара', latitude: 53.2, longitude: 50.17, phone: '', workingHours: '', active: true }
 
@@ -154,12 +155,24 @@ export default function AdminWorkshopsPage() {
           )}
 
           <div className="form-grid">
-            <input placeholder="Название салона" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-            <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-            <input placeholder="Адрес" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
-            <input placeholder="Город" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
-            <input placeholder="Телефон" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-            <input placeholder="Часы работы" value={form.workingHours} onChange={(e) => setForm({ ...form, workingHours: e.target.value })} />
+            <Field label="Название салона" value={form.name}>
+              <input placeholder="Название салона" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </Field>
+            <Field label="Описание" value={form.description}>
+              <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            </Field>
+            <Field label="Адрес" value={form.address}>
+              <input placeholder="Адрес" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+            </Field>
+            <Field label="Город" value={form.city}>
+              <input placeholder="Город" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+            </Field>
+            <Field label="Телефон" value={form.phone}>
+              <input placeholder="Телефон" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            </Field>
+            <Field label="Часы работы" value={form.workingHours}>
+              <input placeholder="Часы работы" value={form.workingHours} onChange={(e) => setForm({ ...form, workingHours: e.target.value })} />
+            </Field>
             <label className="flex items-center gap-3">
               <input type="checkbox" checked={form.active} onChange={(e) => setForm({ ...form, active: e.target.checked })} />
               <span className="text-white/80">Салон открыт для клиентов</span>
@@ -170,8 +183,12 @@ export default function AdminWorkshopsPage() {
             <div className="card">
               <h3>Координаты</h3>
               <div className="form-grid">
-                <input type="number" step="0.000001" placeholder="Широта" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: Number(e.target.value) })} />
-                <input type="number" step="0.000001" placeholder="Долгота" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: Number(e.target.value) })} />
+                <Field label="Широта" value={form.latitude}>
+                  <input type="number" step="0.000001" placeholder="Широта" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: Number(e.target.value) })} />
+                </Field>
+                <Field label="Долгота" value={form.longitude}>
+                  <input type="number" step="0.000001" placeholder="Долгота" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: Number(e.target.value) })} />
+                </Field>
               </div>
               <p className="muted">Можно кликнуть по карте, чтобы выбрать точку.</p>
               <MapContainer
@@ -190,7 +207,9 @@ export default function AdminWorkshopsPage() {
               <div className="card">
                 <h3>Фото салона</h3>
                 <form className="form-grid" onSubmit={addPhoto}>
-                  <input placeholder="URL фото" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} />
+                  <Field label="URL фото" value={photoUrl}>
+                    <input placeholder="URL фото" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} />
+                  </Field>
                   <button type="submit" disabled={busy || !photoUrl}>{busy ? 'Добавление…' : 'Добавить фото'}</button>
                 </form>
                 <div className="photo-grid photo-grid-sm">
