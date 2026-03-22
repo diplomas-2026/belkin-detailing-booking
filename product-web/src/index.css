@@ -109,13 +109,14 @@
   button.danger, .btn.danger { background: rgba(244, 63, 94, 0.16); border: 1px solid rgba(244, 63, 94, 0.30); color: rgba(255, 255, 255, 0.92); }
   button.danger:hover, .btn.danger:hover { background: rgba(244, 63, 94, 0.22); }
 
-  /* Preserve "glossy" sidebar look (не меняем боковую панель) */
+  /* Sidebar accent (industrial amber, unified with content) */
   .sidebar button, .sidebar .btn,
   .public-sidebar button, .public-sidebar .btn {
     @apply rounded-2xl px-4 py-3 font-semibold text-white
-      bg-gradient-to-b from-violet-500 to-violet-600
-      shadow-[0_14px_30px_rgba(124,58,237,0.25)] border border-transparent
+      shadow-[0_14px_30px_rgba(245,158,11,0.22)] border border-transparent
       transition;
+    background: linear-gradient(180deg, var(--accent-strong) 0%, var(--accent) 100%);
+    color: #111827;
   }
   .sidebar button:hover, .sidebar .btn:hover,
   .public-sidebar button:hover, .public-sidebar .btn:hover { @apply -translate-y-0.5; }
@@ -172,7 +173,7 @@
   /* Badges */
   .badge { @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-bold border; }
   .badge-new { @apply bg-sky-500/10 border-sky-400/20 text-sky-200; }
-  .badge-confirmed { @apply bg-violet-500/10 border-violet-400/20 text-violet-200; }
+  .badge-confirmed { @apply bg-amber-500/10 border-amber-400/20 text-amber-200; }
   .badge-in_progress { @apply bg-amber-500/10 border-amber-400/20 text-amber-200; }
   .badge-completed { @apply bg-emerald-500/10 border-emerald-400/20 text-emerald-200; }
   .badge-cancelled { @apply bg-rose-500/10 border-rose-400/20 text-rose-200; }
