@@ -31,7 +31,7 @@ export default function MasterDetailPage() {
         <div>
           <div className="flex items-center gap-4">
             <img
-              className="avatar avatar-lg"
+              className="portrait portrait-lg"
               src={master.photoUrl || '/images/master-placeholder.jpeg'}
               alt={master.fullName}
               loading="lazy"

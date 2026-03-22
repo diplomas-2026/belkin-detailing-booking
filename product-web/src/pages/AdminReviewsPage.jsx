@@ -5,6 +5,7 @@ export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState([])
   const [budget, setBudget] = useState(null)
   const [lastRun, setLastRun] = useState(null)
+  const [loading, setLoading] = useState('')
 
   const load = () => {
     api.get('/admin/reviews').then((r) => {
@@ -19,10 +20,16 @@ export default function AdminReviewsPage() {
   useEffect(() => { load() }, [])
 
   const run = async (kind) => {
+    if (loading) return
+    setLoading(kind)
     const url = kind === 'all' ? '/admin/ai/run' : kind === 'feedback' ? '/admin/ai/feedback/run' : '/admin/ai/moderation/run'
-    const res = await api.post(url)
-    setLastRun(res.data)
-    load()
+    try {
+      const res = await api.post(url)
+      setLastRun(res.data)
+      load()
+    } finally {
+      setLoading('')
+    }
   }
 
   const statusLabel = (s) => {
@@ -37,21 +44,70 @@ export default function AdminReviewsPage() {
     return 'badge-pending'
   }
 
+  const normalizeRuns = (data) => {
+    if (!data) return []
+    return Array.isArray(data) ? data : [data]
+  }
+
+  const jobLabel = (job) => {
+    if (job === 'moderation') return 'Модерация'
+    if (job === 'feedback') return 'Фидбэк'
+    return job || '—'
+  }
+
+  const noteClass = (note = '') => {
+    const n = String(note).toLowerCase()
+    if (n.includes('лимит') || n.includes('пропущ')) return 'run-note warn'
+    if (n.includes('ошиб') || n.includes('не удалось')) return 'run-note bad'
+    return 'run-note ok'
+  }
+
   return (
     <div>
       <h1>AI‑модерация отзывов</h1>
       <div className="card">
         <div className="section-head">
           <h2>Управление</h2>
-          {budget && <span className="muted">Лимит на сегодня: {budget.used}/{budget.limit} токенов (осталось {budget.remaining})</span>}
+          {budget && (
+            <span className="muted">
+              Лимит на сегодня: <strong className="text-white">{budget.used}/{budget.limit}</strong> токенов (осталось <strong className="text-white">{budget.remaining}</strong>)
+            </span>
+          )}
         </div>
         <div className="flex gap-3 flex-wrap">
-          <button type="button" onClick={() => run('moderation')}>Запустить модерацию</button>
-          <button type="button" className="secondary" onClick={() => run('feedback')}>Обновить фидбэк</button>
-          <button type="button" className="secondary" onClick={() => run('all')}>Запустить всё</button>
+          <button type="button" onClick={() => run('moderation')} disabled={!!loading}>
+            {loading === 'moderation' ? 'Запуск…' : 'Запустить модерацию'}
+          </button>
+          <button type="button" className="secondary" onClick={() => run('feedback')} disabled={!!loading}>
+            {loading === 'feedback' ? 'Запуск…' : 'Обновить фидбэк'}
+          </button>
+          <button type="button" className="secondary" onClick={() => run('all')} disabled={!!loading}>
+            {loading === 'all' ? 'Запуск…' : 'Запустить всё'}
+          </button>
         </div>
         {lastRun && (
-          <p className="muted">Последний запуск: {JSON.stringify(lastRun)}</p>
+          <div className="run-box">
+            <h3 className="run-title">Результат последнего запуска</h3>
+            <div className="stack">
+              {normalizeRuns(lastRun).map((r, idx) => (
+                <div className="run-row" key={idx}>
+                  <div className="run-head">
+                    <strong className="text-white">{jobLabel(r.job)}</strong>
+                    {r.budget && (
+                      <span className="muted">
+                        Токены: <strong className="text-white">{r.budget.used}</strong>/<strong className="text-white">{r.budget.limit}</strong> (осталось <strong className="text-white">{r.budget.remaining}</strong>)
+                      </span>
+                    )}
+                  </div>
+                  <div className="run-metrics">
+                    <span className="badge badge-unknown">Обработано: {r.processedOrUpdated}</span>
+                    <span className="badge badge-unknown">LLM вызовов: {r.llmCalls}</span>
+                  </div>
+                  <div className={noteClass(r.note)}>{r.note}</div>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
       </div>
       <div className="grid">

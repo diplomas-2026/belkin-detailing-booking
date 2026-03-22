@@ -83,7 +83,7 @@ export default function WorkshopDetailPage() {
               >
                 <div className="flex items-center gap-3">
                   <img
-                    className="avatar"
+                    className="portrait"
                     src={m.photoUrl || '/images/master-placeholder.jpeg'}
                     alt={m.fullName}
                     loading="lazy"

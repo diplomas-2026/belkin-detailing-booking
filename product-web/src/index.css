@@ -214,12 +214,30 @@
   /* Map / photos */
   .map-layout { @apply grid gap-4 items-start; grid-template-columns: 2fr 1fr; }
   .map { @apply rounded-[18px] overflow-hidden border border-white/10 bg-white/5; height: 520px; }
+  .map-sm { height: 280px; }
   .list { @apply grid gap-4; }
   .photo-grid { @apply grid gap-3 mb-5; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
-  .photo-grid img { @apply w-full h-[130px] object-cover rounded-2xl border border-white/10; }
+  .photo-grid img { @apply w-full object-cover rounded-2xl border border-white/10; aspect-ratio: 4 / 3; }
+  .photo-grid-sm { margin-bottom: 0; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+  .thumb { display: grid; gap: 10px; }
 
-  .avatar { width: 44px; height: 44px; border-radius: 9999px; object-fit: cover; border: 1px solid var(--border); background: var(--surface); }
-  .avatar-lg { width: 72px; height: 72px; }
+  .portrait { width: 76px; height: 96px; border-radius: 14px; object-fit: cover; border: 1px solid var(--border); background: var(--surface); }
+  .portrait-lg { width: 140px; height: 180px; border-radius: 16px; }
+
+  .run-box { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
+  .run-title { margin: 0 0 10px; font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.92); }
+  .run-row { border: 1px solid var(--border); background: var(--surface); border-radius: 14px; padding: 14px; }
+  .run-head { display: grid; gap: 6px; grid-template-columns: 1fr; align-items: start; }
+  .run-metrics { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .run-note { margin-top: 10px; font-size: 14px; font-weight: 700; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--border); }
+  .run-note.ok { background: rgba(16, 185, 129, 0.10); border-color: rgba(16, 185, 129, 0.18); color: rgba(209, 250, 229, 0.92); }
+  .run-note.warn { background: rgba(245, 158, 11, 0.10); border-color: rgba(245, 158, 11, 0.18); color: rgba(254, 243, 199, 0.95); }
+  .run-note.bad { background: rgba(244, 63, 94, 0.10); border-color: rgba(244, 63, 94, 0.18); color: rgba(255, 228, 230, 0.95); }
+
+  .bar-row { display: grid; gap: 8px; }
+  .bar-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .bar-track { height: 10px; border-radius: 9999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); overflow: hidden; }
+  .bar-fill { height: 100%; background: linear-gradient(180deg, var(--accent-strong) 0%, var(--accent) 100%); }
 }
 
 @layer utilities {

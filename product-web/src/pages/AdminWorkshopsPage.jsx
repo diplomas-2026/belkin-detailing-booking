@@ -1,63 +1,215 @@
 import { useEffect, useState } from 'react'
+import { MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 import api from '../api'
 
 const initial = { name: '', description: '', address: '', city: 'Самара', latitude: 53.2, longitude: 50.17, phone: '', workingHours: '', active: true }
+
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+})
+
+function ClickMarker({ value, onChange }) {
+  useMapEvents({
+    click(e) {
+      onChange({ latitude: Number(e.latlng.lat.toFixed(6)), longitude: Number(e.latlng.lng.toFixed(6)) })
+    },
+  })
+  return <Marker position={[value.latitude, value.longitude]} />
+}
 
 export default function AdminWorkshopsPage() {
   const [items, setItems] = useState([])
   const [form, setForm] = useState(initial)
   const [photoUrl, setPhotoUrl] = useState('')
-  const [selectedWorkshop, setSelectedWorkshop] = useState('')
+  const [editingId, setEditingId] = useState(null)
+  const [busy, setBusy] = useState(false)
 
   const load = () => api.get('/admin/workshops').then((r) => setItems(r.data))
 
   useEffect(() => { load() }, [])
 
-  const create = async (e) => {
+  const save = async (e) => {
     e.preventDefault()
-    await api.post('/admin/workshops', form)
+    if (busy) return
+    setBusy(true)
+    try {
+      if (editingId) {
+        await api.put(`/admin/workshops/${editingId}`, form)
+      } else {
+        await api.post('/admin/workshops', form)
+      }
+      setForm(initial)
+      setEditingId(null)
+      load()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const startEdit = (w) => {
+    setEditingId(w.id)
+    setForm({
+      name: w.name || '',
+      description: w.description || '',
+      address: w.address || '',
+      city: w.city || 'Самара',
+      latitude: Number(w.latitude) || 53.2,
+      longitude: Number(w.longitude) || 50.17,
+      phone: w.phone || '',
+      workingHours: w.workingHours || '',
+      active: !!w.active,
+    })
+    setPhotoUrl('')
+  }
+
+  const cancelEdit = () => {
+    setEditingId(null)
     setForm(initial)
-    load()
+    setPhotoUrl('')
+  }
+
+  const toggleActive = async (w) => {
+    if (busy) return
+    setBusy(true)
+    try {
+      await api.put(`/admin/workshops/${w.id}`, {
+        name: w.name,
+        description: w.description,
+        address: w.address,
+        city: w.city,
+        latitude: w.latitude,
+        longitude: w.longitude,
+        phone: w.phone,
+        workingHours: w.workingHours,
+        active: !w.active,
+      })
+      load()
+    } finally {
+      setBusy(false)
+    }
   }
 
   const addPhoto = async (e) => {
     e.preventDefault()
-    await api.post(`/admin/workshops/${selectedWorkshop}/photos`, { photoUrl, sortOrder: 1, cover: false })
-    setPhotoUrl('')
-    load()
+    if (!editingId || !photoUrl) return
+    if (busy) return
+    setBusy(true)
+    try {
+      await api.post(`/admin/workshops/${editingId}/photos`, { photoUrl, sortOrder: 1, cover: false })
+      setPhotoUrl('')
+      load()
+    } finally {
+      setBusy(false)
+    }
   }
+
+  const deletePhoto = async (workshopId, photoId) => {
+    if (busy) return
+    setBusy(true)
+    try {
+      await api.delete(`/admin/workshops/${workshopId}/photos/${photoId}`)
+      load()
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  const selected = editingId ? items.find((x) => x.id === editingId) : null
 
   return (
     <div>
       <h1>Управление салонами</h1>
       <div className="stack">
-        <form className="card form-grid" onSubmit={create}>
-          <input placeholder="Название салона" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-          <input placeholder="Адрес" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
-          <input placeholder="Город" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
-          <input type="number" step="0.0001" placeholder="Широта" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: Number(e.target.value) })} />
-          <input type="number" step="0.0001" placeholder="Долгота" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: Number(e.target.value) })} />
-          <input placeholder="Телефон" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
-          <input placeholder="Часы работы" value={form.workingHours} onChange={(e) => setForm({ ...form, workingHours: e.target.value })} />
-          <button type="submit">Добавить салон</button>
-        </form>
+        <form className="card stack" onSubmit={save}>
+          <div className="section-head">
+            <h2>{editingId ? 'Редактирование салона' : 'Добавить салон'}</h2>
+            {editingId && (
+              <div className="flex gap-2 flex-wrap">
+                <button type="button" className="secondary" onClick={cancelEdit} disabled={busy}>Отмена</button>
+                <button type="submit" disabled={busy}>{busy ? 'Сохранение…' : 'Сохранить'}</button>
+              </div>
+            )}
+          </div>
 
-        <form className="card form-grid" onSubmit={addPhoto}>
-          <select value={selectedWorkshop} onChange={(e) => setSelectedWorkshop(e.target.value)}>
-            <option value="">Салон для фото</option>
-            {items.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
-          </select>
-          <input placeholder="URL фото" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} />
-          <button type="submit">Добавить фото</button>
+          {!editingId && (
+            <div className="flex gap-2 flex-wrap">
+              <button type="submit" disabled={busy}>{busy ? 'Добавление…' : 'Добавить салон'}</button>
+            </div>
+          )}
+
+          <div className="form-grid">
+            <input placeholder="Название салона" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+            <input placeholder="Адрес" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
+            <input placeholder="Город" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
+            <input placeholder="Телефон" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
+            <input placeholder="Часы работы" value={form.workingHours} onChange={(e) => setForm({ ...form, workingHours: e.target.value })} />
+            <label className="flex items-center gap-3">
+              <input type="checkbox" checked={form.active} onChange={(e) => setForm({ ...form, active: e.target.checked })} />
+              <span className="text-white/80">Салон открыт для клиентов</span>
+            </label>
+          </div>
+
+          <div className="grid">
+            <div className="card">
+              <h3>Координаты</h3>
+              <div className="form-grid">
+                <input type="number" step="0.000001" placeholder="Широта" value={form.latitude} onChange={(e) => setForm({ ...form, latitude: Number(e.target.value) })} />
+                <input type="number" step="0.000001" placeholder="Долгота" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: Number(e.target.value) })} />
+              </div>
+              <p className="muted">Можно кликнуть по карте, чтобы выбрать точку.</p>
+              <MapContainer
+                key={`${form.latitude}-${form.longitude}`}
+                center={[form.latitude, form.longitude]}
+                zoom={13}
+                scrollWheelZoom={false}
+                className="map map-sm"
+              >
+                <TileLayer attribution="&copy; OpenStreetMap contributors" url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <ClickMarker value={{ latitude: form.latitude, longitude: form.longitude }} onChange={(pos) => setForm({ ...form, ...pos })} />
+              </MapContainer>
+            </div>
+
+            {editingId && (
+              <div className="card">
+                <h3>Фото салона</h3>
+                <form className="form-grid" onSubmit={addPhoto}>
+                  <input placeholder="URL фото" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} />
+                  <button type="submit" disabled={busy || !photoUrl}>{busy ? 'Добавление…' : 'Добавить фото'}</button>
+                </form>
+                <div className="photo-grid photo-grid-sm">
+                  {(selected?.photos || []).map((p) => (
+                    <div key={p.id} className="thumb">
+                      <img src={p.photoUrl} alt="Фото салона" loading="lazy" />
+                      <button type="button" className="danger" onClick={() => deletePhoto(editingId, p.id)} disabled={busy}>Удалить</button>
+                    </div>
+                  ))}
+                  {!selected?.photos?.length && <p className="muted">Пока нет фото.</p>}
+                </div>
+              </div>
+            )}
+          </div>
         </form>
 
         <div className="grid">
           {items.map((w) => (
             <div key={w.id} className="card">
-              <h4>{w.name}</h4>
+              <div className="section-head">
+                <h4 className="text-white">{w.name}</h4>
+                <span className={`badge ${w.active ? 'badge-approved' : 'badge-rejected'}`}>{w.active ? 'Открыт' : 'Закрыт'}</span>
+              </div>
               <p>{w.address}</p>
-              <p>Фото: {w.photos.length}</p>
+              <p className="muted">Фото: {w.photos.length}</p>
+              <div className="flex gap-2 flex-wrap mt-2">
+                <button type="button" className="secondary" onClick={() => startEdit(w)} disabled={busy}>Редактировать</button>
+                <button type="button" className="danger" onClick={() => toggleActive(w)} disabled={busy}>
+                  {w.active ? 'Закрыть салон' : 'Открыть салон'}
+                </button>
+              </div>
             </div>
           ))}
         </div>
