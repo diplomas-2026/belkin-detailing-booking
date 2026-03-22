@@ -25,6 +25,10 @@ body { margin: 0; min-height: 100vh; background: transparent; }
 a { color: var(--blue); text-decoration: none; }
 a:hover { text-decoration: underline; }
 
+h1, h2, h3, h4 { margin: 0 0 10px; letter-spacing: -0.2px; }
+h1 { font-size: 30px; letter-spacing: -0.35px; margin-bottom: 16px; }
+p { margin: 0 0 10px; }
+
 .app-shell {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -71,6 +75,8 @@ a:hover { text-decoration: underline; }
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 14px;
 }
+
+.stack { display: grid; gap: 14px; }
 
 button {
   border: none;
@@ -175,14 +181,19 @@ label > input, label > select, label > textarea { font-weight: 500; }
 
 .form-grid {
   display: grid;
-  gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  align-items: end;
 }
+
+.form-grid input, .form-grid select, .form-grid textarea, .form-grid button { margin: 0; }
+.form-grid button { height: 42px; }
 
 .map-layout {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap: 12px;
+  gap: 16px;
+  align-items: start;
 }
 
 .map {
@@ -190,6 +201,13 @@ label > input, label > select, label > textarea { font-weight: 500; }
   border-radius: 16px;
   overflow: hidden;
 }
+
+.list {
+  display: grid;
+  gap: 14px;
+}
+
+.card > :last-child { margin-bottom: 0; }
 
 .photo-grid {
   display: grid;

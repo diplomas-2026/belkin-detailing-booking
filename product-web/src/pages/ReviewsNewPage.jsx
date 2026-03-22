@@ -34,20 +34,22 @@ export default function ReviewsNewPage() {
   return (
     <div>
       <h1>Оставить отзыв</h1>
-      <form className="card form-grid" onSubmit={submit}>
-        <select value={form.appointmentId} onChange={(e) => setForm({ ...form, appointmentId: e.target.value })}>
-          <option value="">Выберите завершенную запись</option>
-          {appointments.map((a) => <option key={a.id} value={a.id}>{a.workshopName} - {a.serviceName}</option>)}
-        </select>
-        <select value={form.targetType} onChange={(e) => setForm({ ...form, targetType: e.target.value })}>
-          <option value="WORKSHOP">О точке</option>
-          <option value="SERVICE">Об услуге</option>
-          <option value="MASTER">О мастере</option>
-        </select>
-        <input type="number" min="1" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
-        <textarea placeholder="Комментарий" value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} />
-        <button type="submit">Отправить отзыв</button>
-      </form>
+      <div className="stack">
+        <form className="card form-grid" onSubmit={submit}>
+          <select value={form.appointmentId} onChange={(e) => setForm({ ...form, appointmentId: e.target.value })}>
+            <option value="">Выберите завершенную запись</option>
+            {appointments.map((a) => <option key={a.id} value={a.id}>{a.workshopName} - {a.serviceName}</option>)}
+          </select>
+          <select value={form.targetType} onChange={(e) => setForm({ ...form, targetType: e.target.value })}>
+            <option value="WORKSHOP">О точке</option>
+            <option value="SERVICE">Об услуге</option>
+            <option value="MASTER">О мастере</option>
+          </select>
+          <input type="number" min="1" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
+          <textarea placeholder="Комментарий" value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} />
+          <button type="submit">Отправить отзыв</button>
+        </form>
+      </div>
     </div>
   )
 }

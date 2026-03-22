@@ -30,25 +30,27 @@ export default function AdminServicesPage() {
   return (
     <div>
       <h1>Управление услугами</h1>
-      <form className="card form-grid" onSubmit={create}>
-        <select value={form.workshopId} onChange={(e) => setForm({ ...form, workshopId: e.target.value })}>
-          <option value="">Выберите точку</option>
-          {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
-        </select>
-        <input placeholder="Название услуги" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-        <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-        <input type="number" placeholder="Длительность" value={form.durationMinutes} onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })} />
-        <input type="number" placeholder="Цена" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
-        <button type="submit">Добавить услугу</button>
-      </form>
-      <div className="grid">
-        {services.map((s) => (
-          <div className="card" key={s.id}>
-            <h4>{s.name}</h4>
-            <p>{s.workshopName}</p>
-            <p>{s.price} ₽</p>
-          </div>
-        ))}
+      <div className="stack">
+        <form className="card form-grid" onSubmit={create}>
+          <select value={form.workshopId} onChange={(e) => setForm({ ...form, workshopId: e.target.value })}>
+            <option value="">Выберите точку</option>
+            {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
+          </select>
+          <input placeholder="Название услуги" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+          <input type="number" placeholder="Длительность" value={form.durationMinutes} onChange={(e) => setForm({ ...form, durationMinutes: e.target.value })} />
+          <input type="number" placeholder="Цена" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
+          <button type="submit">Добавить услугу</button>
+        </form>
+        <div className="grid">
+          {services.map((s) => (
+            <div className="card" key={s.id}>
+              <h4>{s.name}</h4>
+              <p>{s.workshopName}</p>
+              <p>{s.price} ₽</p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   )
