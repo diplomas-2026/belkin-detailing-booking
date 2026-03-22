@@ -9,12 +9,22 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.beans.factory.annotation.Value;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
+    @Value("${app.debug.errors:false}")
+    private boolean debugErrors;
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Map<String, Object>> handleBusiness(BusinessException ex) {
@@ -41,7 +51,23 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleUnknown(Exception ex) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("message", "Внутренняя ошибка сервера"));
+    public ResponseEntity<Map<String, Object>> handleUnknown(Exception ex, HttpServletRequest request) {
+        String errorId = UUID.randomUUID().toString().substring(0, 8);
+        log.error("Unhandled exception errorId={} path={}", errorId, request == null ? "n/a" : request.getRequestURI(), ex);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("message", "Внутренняя ошибка сервера");
+        body.put("errorId", errorId);
+
+        String debugHeader = request == null ? null : request.getHeader("X-Debug");
+        boolean wantDebug = debugHeader != null && (debugHeader.equals("1") || debugHeader.equalsIgnoreCase("true"));
+        if (debugErrors && wantDebug) {
+            String msg = ex.getMessage() == null ? "" : ex.getMessage().replace("\n", " ").replace("\r", " ").trim();
+            if (msg.length() > 240) msg = msg.substring(0, 240);
+            body.put("exception", ex.getClass().getName());
+            body.put("detail", msg);
+        }
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
     }
 }
