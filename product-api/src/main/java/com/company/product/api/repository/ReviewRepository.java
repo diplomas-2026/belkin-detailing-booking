@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
-    List<ReviewEntity> findByServiceAndVisibleTrueOrderByCreatedAtDesc(ServiceEntity service);
+    List<ReviewEntity> findByServiceAndModerationStatusOrderByCreatedAtDesc(ServiceEntity service, ReviewModerationStatus status);
 
-    List<ReviewEntity> findByMasterAndVisibleTrueOrderByCreatedAtDesc(MasterEntity master);
+    List<ReviewEntity> findByMasterAndModerationStatusOrderByCreatedAtDesc(MasterEntity master, ReviewModerationStatus status);
 
-    List<ReviewEntity> findByWorkshopAndVisibleTrueOrderByCreatedAtDesc(WorkshopEntity workshop);
+    List<ReviewEntity> findByWorkshopAndModerationStatusOrderByCreatedAtDesc(WorkshopEntity workshop, ReviewModerationStatus status);
 
     List<ReviewEntity> findByMasterOrderByCreatedAtDesc(MasterEntity master);
 
@@ -21,7 +21,15 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
                                                                            MasterEntity master,
                                                                            WorkshopEntity workshop);
 
-    long countByVisibleTrue();
+    long countByModerationStatus(ReviewModerationStatus status);
 
-    List<ReviewEntity> findByVisibleTrueOrderByCreatedAtDesc(Pageable pageable);
+    List<ReviewEntity> findByModerationStatusOrderByCreatedAtDesc(ReviewModerationStatus status, Pageable pageable);
+
+    List<ReviewEntity> findByClientOrderByCreatedAtDesc(UserEntity client);
+
+    List<ReviewEntity> findByModerationStatus(ReviewModerationStatus status);
+
+    List<ReviewEntity> findByTargetTypeAndModerationStatusOrderByCreatedAtDesc(ReviewTargetType targetType, ReviewModerationStatus status, Pageable pageable);
+
+    ReviewEntity findTopByTargetTypeAndModerationStatusOrderByCreatedAtDesc(ReviewTargetType targetType, ReviewModerationStatus status);
 }

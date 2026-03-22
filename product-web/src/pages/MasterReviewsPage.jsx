@@ -15,8 +15,17 @@ export default function MasterReviewsPage() {
         {reviews.map((r) => (
           <div className="card" key={r.id}>
             <strong>{r.clientName}</strong>
+            <div className="flex items-center justify-between gap-3 mt-2">
+              <span className="muted">{r.targetType}</span>
+              <span className={`badge ${r.status === 'APPROVED' ? 'badge-approved' : r.status === 'REJECTED' ? 'badge-rejected' : 'badge-pending'}`}>
+                {r.status === 'APPROVED' ? 'Опубликован' : r.status === 'REJECTED' ? 'Отклонён' : 'На проверке'}
+              </span>
+            </div>
             <p>Оценка: {r.rating}/5</p>
-            <p>{r.comment}</p>
+            <p>{r.comment || 'Без комментария'}</p>
+            {r.status === 'REJECTED' && r.rejectionReason && (
+              <p className="error">Причина: {r.rejectionReason}</p>
+            )}
           </div>
         ))}
       </div>

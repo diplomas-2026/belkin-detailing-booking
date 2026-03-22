@@ -48,6 +48,16 @@ public class ReviewEntity {
     @Column(name = "is_visible", nullable = false)
     private boolean visible = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moderation_status", nullable = false, length = 20)
+    private ReviewModerationStatus moderationStatus = ReviewModerationStatus.PENDING;
+
+    @Column(name = "rejection_reason", length = 500)
+    private String rejectionReason;
+
+    @Column(name = "ai_moderated_at")
+    private LocalDateTime aiModeratedAt;
+
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 

@@ -231,8 +231,19 @@ public class ClientController {
         review.setWorkshop(workshop);
         review.setRating(request.rating());
         review.setComment(request.comment());
+        review.setModerationStatus(ReviewModerationStatus.PENDING);
+        review.setVisible(false);
+        review.setRejectionReason(null);
+        review.setAiModeratedAt(null);
 
         return mapper.toReviewView(reviewRepository.save(review));
+    }
+
+    @GetMapping("/reviews/my")
+    @PreAuthorize("hasRole('CLIENT')")
+    public List<ReviewDtos.ReviewView> myReviews() {
+        UserEntity user = currentUserService.requireUser();
+        return reviewRepository.findByClientOrderByCreatedAtDesc(user).stream().map(mapper::toReviewView).toList();
     }
 
     private void addStatusHistory(AppointmentEntity appointment,

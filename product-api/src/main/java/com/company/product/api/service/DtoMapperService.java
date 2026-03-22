@@ -73,10 +73,12 @@ public class DtoMapperService {
         return new ReviewDtos.ReviewView(
                 review.getId(),
                 review.getClient().getFullName(),
+                review.getTargetType(),
                 review.getRating(),
                 review.getComment(),
                 review.getCreatedAt(),
-                review.isVisible()
+                review.getModerationStatus(),
+                review.getRejectionReason()
         );
     }
 

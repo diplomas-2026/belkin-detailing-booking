@@ -281,7 +281,9 @@ public class SeedDataInitializer implements ApplicationRunner {
             review.setWorkshop(workshop);
             review.setRating(((Number) row.get("rating")).intValue());
             review.setComment((String) row.get("comment"));
-            review.setVisible(Boolean.TRUE.equals(row.get("visible")));
+            boolean visible = Boolean.TRUE.equals(row.get("visible"));
+            review.setVisible(visible);
+            review.setModerationStatus(visible ? ReviewModerationStatus.APPROVED : ReviewModerationStatus.REJECTED);
             reviewRepository.save(review);
         }
     }

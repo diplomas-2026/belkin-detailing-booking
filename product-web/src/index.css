@@ -178,6 +178,9 @@
   .badge-completed { @apply bg-emerald-500/10 border-emerald-400/20 text-emerald-200; }
   .badge-cancelled { @apply bg-rose-500/10 border-rose-400/20 text-rose-200; }
   .badge-unknown { @apply bg-white/5 border-white/10 text-white/80; }
+  .badge-pending { @apply bg-white/5 border-white/10 text-white/80; }
+  .badge-approved { @apply bg-emerald-500/10 border-emerald-400/20 text-emerald-200; }
+  .badge-rejected { @apply bg-rose-500/10 border-rose-400/20 text-rose-200; }
 
   /* Public pages */
   .page-head { @apply grid gap-3 items-end; grid-template-columns: 1fr auto; }

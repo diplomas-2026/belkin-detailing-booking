@@ -18,10 +18,12 @@ export default function PublicReviewsPage() {
   const [services, setServices] = useState([])
   const [selectedId, setSelectedId] = useState('')
   const [reviews, setReviews] = useState([])
+  const [feedback, setFeedback] = useState([])
 
   useEffect(() => {
     api.get('/workshops').then((r) => setWorkshops(r.data)).catch(() => {})
     api.get('/services').then((r) => setServices(r.data)).catch(() => {})
+    api.get('/public/feedback').then((r) => setFeedback(r.data)).catch(() => setFeedback([]))
   }, [])
 
   const options = useMemo(() => {
@@ -42,6 +44,7 @@ export default function PublicReviewsPage() {
   }, [mode, selectedId])
 
   const title = mode === 'SERVICE' ? 'Отзывы об услугах' : 'Отзывы о салонах'
+  const aiSummary = feedback.find((f) => f.targetType === mode)?.summary
 
   return (
     <div className="stack">
@@ -63,6 +66,7 @@ export default function PublicReviewsPage() {
 
       <section className="card">
         <h2>{title}</h2>
+        {aiSummary && <p className="muted">AI‑резюме: {aiSummary}</p>}
         {!options.length ? (
           <p className="muted">Загрузка…</p>
         ) : !reviews.length ? (

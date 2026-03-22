@@ -3,6 +3,9 @@ package com.company.product.api.controller;
 import com.company.product.api.dto.*;
 import com.company.product.api.entity.*;
 import com.company.product.api.repository.*;
+import com.company.product.api.ai.FeedbackSummaryService;
+import com.company.product.api.ai.ReviewAiModerationService;
+import com.company.product.api.ai.TokenBudgetService;
 import com.company.product.api.service.*;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Sort;
@@ -30,6 +33,9 @@ public class AdminController {
     private final ReviewRepository reviewRepository;
     private final DtoMapperService mapper;
     private final AppointmentWorkflowService workflowService;
+    private final ReviewAiModerationService moderationService;
+    private final FeedbackSummaryService feedbackSummaryService;
+    private final TokenBudgetService tokenBudgetService;
 
     public AdminController(CurrentUserService currentUserService,
                            WorkshopRepository workshopRepository,
@@ -42,7 +48,10 @@ public class AdminController {
                            AppointmentStatusHistoryRepository appointmentStatusHistoryRepository,
                            ReviewRepository reviewRepository,
                            DtoMapperService mapper,
-                           AppointmentWorkflowService workflowService) {
+                           AppointmentWorkflowService workflowService,
+                           ReviewAiModerationService moderationService,
+                           FeedbackSummaryService feedbackSummaryService,
+                           TokenBudgetService tokenBudgetService) {
         this.currentUserService = currentUserService;
         this.workshopRepository = workshopRepository;
         this.workshopPhotoRepository = workshopPhotoRepository;
@@ -55,6 +64,9 @@ public class AdminController {
         this.reviewRepository = reviewRepository;
         this.mapper = mapper;
         this.workflowService = workflowService;
+        this.moderationService = moderationService;
+        this.feedbackSummaryService = feedbackSummaryService;
+        this.tokenBudgetService = tokenBudgetService;
     }
 
     @GetMapping("/workshops")
@@ -203,13 +215,31 @@ public class AdminController {
         return reviewRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt")).stream().map(mapper::toReviewView).toList();
     }
 
-    @PatchMapping("/reviews/{id}/visibility")
-    public ReviewDtos.ReviewView visibility(@PathVariable Long id,
-                                            @RequestBody ReviewDtos.ReviewVisibilityRequest request) {
-        ReviewEntity review = reviewRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Отзыв не найден"));
-        review.setVisible(request.visible());
-        return mapper.toReviewView(reviewRepository.save(review));
+    @GetMapping("/ai/budget")
+    public AiDtos.TokenBudgetView budget() {
+        TokenBudgetService.TokenBudgetView b = tokenBudgetService.getBudget();
+        return new AiDtos.TokenBudgetView(b.date(), b.limit(), b.used(), b.remaining());
+    }
+
+    @PostMapping("/ai/moderation/run")
+    public AiDtos.RunResult runModeration() {
+        ReviewAiModerationService.ModerationRunResult result = moderationService.runOnce();
+        TokenBudgetService.TokenBudgetView b = tokenBudgetService.getBudget();
+        return new AiDtos.RunResult("moderation", result.processed(), result.llmCalls(), result.note(),
+                new AiDtos.TokenBudgetView(b.date(), b.limit(), b.used(), b.remaining()));
+    }
+
+    @PostMapping("/ai/feedback/run")
+    public AiDtos.RunResult runFeedback() {
+        FeedbackSummaryService.FeedbackRunResult result = feedbackSummaryService.updateIfNeeded();
+        TokenBudgetService.TokenBudgetView b = tokenBudgetService.getBudget();
+        return new AiDtos.RunResult("feedback", result.updated(), result.llmCalls(), result.note(),
+                new AiDtos.TokenBudgetView(b.date(), b.limit(), b.used(), b.remaining()));
+    }
+
+    @PostMapping("/ai/run")
+    public List<AiDtos.RunResult> runAll() {
+        return List.of(runModeration(), runFeedback());
     }
 
     @GetMapping("/dashboard")

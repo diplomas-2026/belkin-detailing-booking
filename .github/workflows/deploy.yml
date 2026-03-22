@@ -36,12 +36,16 @@ jobs:
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_KEY: ${{ secrets.SSH_KEY }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
+          GIGACHAT_API_KEY: ${{ secrets.GIGACHAT_API_KEY }}
+          GIGACHAT_SCOPE: ${{ secrets.GIGACHAT_SCOPE }}
+          GIGACHAT_MODEL: ${{ secrets.GIGACHAT_MODEL }}
         run: |
           set -euo pipefail
 
           : "${SSH_HOST:?Missing secret SSH_HOST}"
           : "${SSH_USER:?Missing secret SSH_USER}"
           : "${SSH_KEY:?Missing secret SSH_KEY}"
+          : "${GIGACHAT_API_KEY:?Missing secret GIGACHAT_API_KEY}"
           SSH_PORT="${SSH_PORT:-22}"
 
           mkdir -p ~/.ssh
@@ -65,5 +69,12 @@ jobs:
             -e "ssh -p $SSH_PORT" \
             "$GITHUB_WORKSPACE/product-web/dist/" \
             "$SSH_USER@$SSH_HOST:/var/www/projects/belkin-detailing-booking.matstart.ru/"
+
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cd /opt/belkin-detailing-booking && printf '%s\n' \
+            \"GIGACHAT_API_KEY=$GIGACHAT_API_KEY\" \
+            \"GIGACHAT_SCOPE=${GIGACHAT_SCOPE:-GIGACHAT_API_PERS}\" \
+            \"GIGACHAT_MODEL=${GIGACHAT_MODEL:-GigaChat}\" \
+            \"APP_AI_ENABLED=true\" \
+            > .env"
 
           ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" 'cd /opt/belkin-detailing-booking && docker compose -p belkin-detailing-booking -f compose.vps.yml up -d --build'

@@ -1,11 +1,15 @@
 package com.company.product.api.controller;
 
+import com.company.product.api.ai.ReviewModerationRules;
+import com.company.product.api.dto.FeedbackDtos;
 import com.company.product.api.dto.PublicDtos;
 import com.company.product.api.dto.ReviewDtos;
 import com.company.product.api.dto.ServiceDtos;
 import com.company.product.api.dto.WorkshopDtos;
+import com.company.product.api.entity.AiFeedbackSummaryEntity;
 import com.company.product.api.entity.AppointmentStatus;
 import com.company.product.api.entity.MasterEntity;
+import com.company.product.api.entity.ReviewModerationStatus;
 import com.company.product.api.entity.ServiceEntity;
 import com.company.product.api.entity.WorkshopEntity;
 import com.company.product.api.repository.*;
@@ -26,6 +30,7 @@ public class PublicController {
     private final MasterRepository masterRepository;
     private final ReviewRepository reviewRepository;
     private final AppointmentRepository appointmentRepository;
+    private final AiFeedbackSummaryRepository aiFeedbackSummaryRepository;
     private final DtoMapperService mapper;
 
     public PublicController(WorkshopRepository workshopRepository,
@@ -33,12 +38,14 @@ public class PublicController {
                             MasterRepository masterRepository,
                             ReviewRepository reviewRepository,
                             AppointmentRepository appointmentRepository,
+                            AiFeedbackSummaryRepository aiFeedbackSummaryRepository,
                             DtoMapperService mapper) {
         this.workshopRepository = workshopRepository;
         this.serviceRepository = serviceRepository;
         this.masterRepository = masterRepository;
         this.reviewRepository = reviewRepository;
         this.appointmentRepository = appointmentRepository;
+        this.aiFeedbackSummaryRepository = aiFeedbackSummaryRepository;
         this.mapper = mapper;
     }
 
@@ -47,17 +54,38 @@ public class PublicController {
         long workshops = workshopRepository.countByActiveTrue();
         long services = serviceRepository.countByActiveTrue();
         long appointments = appointmentRepository.count();
-        long reviews = reviewRepository.countByVisibleTrue();
+        long reviews = reviewRepository.countByModerationStatus(ReviewModerationStatus.APPROVED);
         return new PublicDtos.PublicStatsView(workshops, services, appointments, reviews);
     }
 
     @GetMapping("/public/reviews/recent")
     public List<ReviewDtos.ReviewView> recentReviews(@RequestParam(defaultValue = "12") int limit) {
         int safeLimit = Math.max(1, Math.min(limit, 30));
-        return reviewRepository.findByVisibleTrueOrderByCreatedAtDesc(PageRequest.of(0, safeLimit))
+        return reviewRepository.findByModerationStatusOrderByCreatedAtDesc(ReviewModerationStatus.APPROVED, PageRequest.of(0, safeLimit))
                 .stream()
                 .map(mapper::toReviewView)
                 .toList();
+    }
+
+    @GetMapping("/public/feedback")
+    public List<FeedbackDtos.FeedbackSummaryView> feedback() {
+        return aiFeedbackSummaryRepository.findAll().stream()
+                .map(this::toView)
+                .toList();
+    }
+
+    @GetMapping("/public/reviews/moderation-rules")
+    public List<String> moderationRules() {
+        return ReviewModerationRules.USER_RULES;
+    }
+
+    private FeedbackDtos.FeedbackSummaryView toView(AiFeedbackSummaryEntity e) {
+        return new FeedbackDtos.FeedbackSummaryView(
+                e.getTargetType(),
+                e.getSummary(),
+                e.getUpdatedAt(),
+                e.getBasedOnReviewCreatedAt()
+        );
     }
 
     @GetMapping("/workshops")
@@ -99,20 +127,20 @@ public class PublicController {
     public List<ReviewDtos.ReviewView> serviceReviews(@PathVariable Long id) {
         ServiceEntity service = serviceRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
-        return reviewRepository.findByServiceAndVisibleTrueOrderByCreatedAtDesc(service).stream().map(mapper::toReviewView).toList();
+        return reviewRepository.findByServiceAndModerationStatusOrderByCreatedAtDesc(service, ReviewModerationStatus.APPROVED).stream().map(mapper::toReviewView).toList();
     }
 
     @GetMapping("/masters/{id}/reviews")
     public List<ReviewDtos.ReviewView> masterReviews(@PathVariable Long id) {
         MasterEntity master = masterRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Мастер не найден"));
-        return reviewRepository.findByMasterAndVisibleTrueOrderByCreatedAtDesc(master).stream().map(mapper::toReviewView).toList();
+        return reviewRepository.findByMasterAndModerationStatusOrderByCreatedAtDesc(master, ReviewModerationStatus.APPROVED).stream().map(mapper::toReviewView).toList();
     }
 
     @GetMapping("/workshops/{id}/reviews")
     public List<ReviewDtos.ReviewView> workshopReviews(@PathVariable Long id) {
         WorkshopEntity workshop = workshopRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
-        return reviewRepository.findByWorkshopAndVisibleTrueOrderByCreatedAtDesc(workshop).stream().map(mapper::toReviewView).toList();
+        return reviewRepository.findByWorkshopAndModerationStatusOrderByCreatedAtDesc(workshop, ReviewModerationStatus.APPROVED).stream().map(mapper::toReviewView).toList();
     }
 }
