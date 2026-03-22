@@ -69,6 +69,39 @@ input, select, textarea {
   margin-bottom: 8px;
 }
 
+.password-field {
+  position: relative;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+.password-field input {
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-right: 44px;
+}
+
+.password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: #475569;
+  display: grid;
+  place-items: center;
+}
+
+.password-toggle:hover { background: #f1f5f9; }
+.password-toggle:active { background: #e2e8f0; }
+.password-toggle:focus-visible { outline: 2px solid #93c5fd; outline-offset: 2px; }
+
+.password-toggle svg { width: 18px; height: 18px; }
+
 .auth-wrap {
   min-height: 100vh;
   display: grid;
