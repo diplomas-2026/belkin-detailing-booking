@@ -32,7 +32,7 @@ export default function MasterDetailPage() {
           <div className="flex items-center gap-4">
             <img
               className="avatar avatar-lg"
-              src={master.photoUrl || '/images/master-placeholder.svg'}
+              src={master.photoUrl || '/images/master-placeholder.jpeg'}
               alt={master.fullName}
               loading="lazy"
             />
