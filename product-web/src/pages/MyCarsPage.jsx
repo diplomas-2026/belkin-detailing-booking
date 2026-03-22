@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../api'
 
 const initial = { brand: '', model: '', year: 2022, plateNumber: '', color: '', notes: '' }
@@ -36,6 +37,7 @@ export default function MyCarsPage() {
               <h4>{car.brand} {car.model}</h4>
               <p>{car.year} • {car.plateNumber}</p>
               <p>{car.color}</p>
+              <Link className="btn secondary" to={`/my-cars/${car.id}`}>Открыть</Link>
             </div>
           ))}
         </div>

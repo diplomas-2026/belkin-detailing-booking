@@ -29,10 +29,10 @@ export default function AdminWorkshopsPage() {
 
   return (
     <div>
-      <h1>Управление точками</h1>
+      <h1>Управление салонами</h1>
       <div className="stack">
         <form className="card form-grid" onSubmit={create}>
-          <input placeholder="Название точки" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+          <input placeholder="Название салона" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
           <input placeholder="Описание" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
           <input placeholder="Адрес" value={form.address} onChange={(e) => setForm({ ...form, address: e.target.value })} />
           <input placeholder="Город" value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} />
@@ -40,12 +40,12 @@ export default function AdminWorkshopsPage() {
           <input type="number" step="0.0001" placeholder="Долгота" value={form.longitude} onChange={(e) => setForm({ ...form, longitude: Number(e.target.value) })} />
           <input placeholder="Телефон" value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} />
           <input placeholder="Часы работы" value={form.workingHours} onChange={(e) => setForm({ ...form, workingHours: e.target.value })} />
-          <button type="submit">Добавить точку</button>
+          <button type="submit">Добавить салон</button>
         </form>
 
         <form className="card form-grid" onSubmit={addPhoto}>
           <select value={selectedWorkshop} onChange={(e) => setSelectedWorkshop(e.target.value)}>
-            <option value="">Точка для фото</option>
+            <option value="">Салон для фото</option>
             {items.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
           <input placeholder="URL фото" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} />

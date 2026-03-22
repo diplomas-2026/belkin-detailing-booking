@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import api from '../api'
+import { appointmentStatusLabel } from '../utils/appointmentStatus'
 
 const initial = { workshopId: '', carId: '', serviceId: '', scheduledStart: '', clientComment: '' }
 
@@ -56,7 +58,7 @@ export default function MyAppointmentsPage() {
       <div className="stack">
         <form className="card form-grid" onSubmit={create}>
           <select value={form.workshopId} onChange={(e) => setForm({ ...form, workshopId: e.target.value, serviceId: '' })}>
-            <option value="">Выберите точку</option>
+            <option value="">Выберите салон</option>
             {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
           <select value={form.carId} onChange={(e) => setForm({ ...form, carId: e.target.value })}>
@@ -78,7 +80,13 @@ export default function MyAppointmentsPage() {
               <h4>{a.serviceName}</h4>
               <p>{a.workshopName}</p>
               <p>{new Date(a.scheduledStart).toLocaleString('ru-RU')}</p>
-              <p>Статус: {a.status}</p>
+              <p>
+                Статус:{' '}
+                <span className={`badge badge-${a.status?.toLowerCase?.() || 'unknown'}`}>
+                  {appointmentStatusLabel(a.status)}
+                </span>
+              </p>
+              <Link className="btn secondary" to={`/my-appointments/${a.id}`}>Открыть</Link>
               {(a.status === 'NEW' || a.status === 'CONFIRMED') && (
                 <button className="danger" onClick={() => cancel(a.id)}>Отменить</button>
               )}

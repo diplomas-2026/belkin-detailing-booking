@@ -6,5 +6,7 @@ public class PublicDtos {
                                   long appointments,
                                   long reviews) {
     }
-}
 
+    public record WorkshopStatsView(long completedAppointments) {
+    }
+}

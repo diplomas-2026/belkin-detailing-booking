@@ -4,6 +4,7 @@ import com.company.product.api.dto.PublicDtos;
 import com.company.product.api.dto.ReviewDtos;
 import com.company.product.api.dto.ServiceDtos;
 import com.company.product.api.dto.WorkshopDtos;
+import com.company.product.api.entity.AppointmentStatus;
 import com.company.product.api.entity.MasterEntity;
 import com.company.product.api.entity.ServiceEntity;
 import com.company.product.api.entity.WorkshopEntity;
@@ -59,6 +60,14 @@ public class PublicController {
         WorkshopEntity workshop = workshopRepository.findById(id)
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
         return mapper.toWorkshopView(workshop);
+    }
+
+    @GetMapping("/workshops/{id}/stats")
+    public PublicDtos.WorkshopStatsView workshopStats(@PathVariable Long id) {
+        WorkshopEntity workshop = workshopRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Точка не найдена"));
+        long completed = appointmentRepository.countByWorkshopAndStatus(workshop, AppointmentStatus.COMPLETED);
+        return new PublicDtos.WorkshopStatsView(completed);
     }
 
     @GetMapping("/workshops/{id}/services")

@@ -30,7 +30,7 @@ export default function WorkshopsPage() {
 
   return (
     <div>
-      <h1>Точки обслуживания</h1>
+      <h1>Салоны</h1>
       <div className="map-layout">
         <MapContainer center={[53.2, 50.17]} zoom={11} scrollWheelZoom={false} className="map">
           <TileLayer
@@ -49,12 +49,11 @@ export default function WorkshopsPage() {
         </MapContainer>
         <div className="list">
           {items.map((w) => (
-            <article key={w.id} className="card">
+            <Link key={w.id} to={`/workshops/${w.id}`} className="card card-link">
               <h3>{w.name}</h3>
               <p>{w.address}</p>
               <p>{w.workingHours}</p>
-              <Link to={`/workshops/${w.id}`}>Подробнее</Link>
-            </article>
+            </Link>
           ))}
         </div>
       </div>

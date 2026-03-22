@@ -41,7 +41,7 @@ export default function PublicReviewsPage() {
     api.get(url).then((r) => setReviews(r.data)).catch(() => setReviews([]))
   }, [mode, selectedId])
 
-  const title = mode === 'SERVICE' ? 'Отзывы об услугах' : 'Отзывы о точках'
+  const title = mode === 'SERVICE' ? 'Отзывы об услугах' : 'Отзывы о салонах'
 
   return (
     <div className="stack">
@@ -52,7 +52,7 @@ export default function PublicReviewsPage() {
         </div>
         <div className="page-controls">
           <select value={mode} onChange={(e) => { setMode(e.target.value); setSelectedId('') }}>
-            <option value="WORKSHOP">О точках</option>
+            <option value="WORKSHOP">О салонах</option>
             <option value="SERVICE">Об услугах</option>
           </select>
           <select value={selectedId} onChange={(e) => setSelectedId(e.target.value)} disabled={!options.length}>
@@ -85,4 +85,3 @@ export default function PublicReviewsPage() {
     </div>
   )
 }
-

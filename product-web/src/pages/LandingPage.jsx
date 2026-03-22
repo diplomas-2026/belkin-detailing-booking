@@ -45,7 +45,7 @@ export default function LandingPage() {
           <div className="hero-stats">
             <div className="stat">
               <div className="stat-value">{stats ? stats.workshops : '—'}</div>
-              <div className="stat-label">точек</div>
+              <div className="stat-label">салонов</div>
             </div>
             <div className="stat">
               <div className="stat-value">{stats ? stats.services : '—'}</div>
@@ -83,17 +83,16 @@ export default function LandingPage() {
 
       <section className="card">
         <div className="section-head">
-          <h2>Точки обслуживания</h2>
-          <Link className="btn secondary" to="/workshops">Все точки</Link>
+          <h2>Салоны</h2>
+          <Link className="btn secondary" to="/workshops">Все салоны</Link>
         </div>
         <div className="grid">
           {featuredWorkshops.map((w) => (
-            <article key={w.id} className="card">
+            <Link key={w.id} to={`/workshops/${w.id}`} className="card card-link">
               <h4>{w.name}</h4>
               <p>{w.address}</p>
               <p className="muted">{w.workingHours}</p>
-              <Link to={`/workshops/${w.id}`}>Подробнее</Link>
-            </article>
+            </Link>
           ))}
           {!featuredWorkshops.length && <p className="muted">Загрузка…</p>}
         </div>

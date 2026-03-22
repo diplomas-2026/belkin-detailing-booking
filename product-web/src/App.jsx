@@ -16,7 +16,9 @@ import ServicesPage from './pages/ServicesPage'
 import MasterReviewsPage from './pages/MasterReviewsPage'
 import MasterTasksPage from './pages/MasterTasksPage'
 import MyAppointmentsPage from './pages/MyAppointmentsPage'
+import MyAppointmentDetailPage from './pages/MyAppointmentDetailPage'
 import MyCarsPage from './pages/MyCarsPage'
+import MyCarDetailPage from './pages/MyCarDetailPage'
 import ReviewsNewPage from './pages/ReviewsNewPage'
 import WorkshopDetailPage from './pages/WorkshopDetailPage'
 import WorkshopsPage from './pages/WorkshopsPage'
@@ -55,7 +57,9 @@ export default function App() {
       />
 
       <Route path="/my-cars" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyCarsPage /></InLayout></ProtectedRoute>} />
+      <Route path="/my-cars/:id" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyCarDetailPage /></InLayout></ProtectedRoute>} />
       <Route path="/my-appointments" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyAppointmentsPage /></InLayout></ProtectedRoute>} />
+      <Route path="/my-appointments/:id" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyAppointmentDetailPage /></InLayout></ProtectedRoute>} />
       <Route path="/reviews/new" element={<ProtectedRoute roles={['CLIENT']}><InLayout><ReviewsNewPage /></InLayout></ProtectedRoute>} />
 
       <Route path="/master/tasks" element={<ProtectedRoute roles={['MASTER']}><InLayout><MasterTasksPage /></InLayout></ProtectedRoute>} />

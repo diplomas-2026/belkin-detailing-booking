@@ -40,11 +40,11 @@ export default function ReviewsNewPage() {
             <option value="">Выберите завершенную запись</option>
             {appointments.map((a) => <option key={a.id} value={a.id}>{a.workshopName} - {a.serviceName}</option>)}
           </select>
-          <select value={form.targetType} onChange={(e) => setForm({ ...form, targetType: e.target.value })}>
-            <option value="WORKSHOP">О точке</option>
-            <option value="SERVICE">Об услуге</option>
-            <option value="MASTER">О мастере</option>
-          </select>
+        <select value={form.targetType} onChange={(e) => setForm({ ...form, targetType: e.target.value })}>
+          <option value="WORKSHOP">О салоне</option>
+          <option value="SERVICE">Об услуге</option>
+          <option value="MASTER">О мастере</option>
+        </select>
           <input type="number" min="1" max="5" value={form.rating} onChange={(e) => setForm({ ...form, rating: e.target.value })} />
           <textarea placeholder="Комментарий" value={form.comment} onChange={(e) => setForm({ ...form, comment: e.target.value })} />
           <button type="submit">Отправить отзыв</button>

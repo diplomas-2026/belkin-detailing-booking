@@ -20,7 +20,7 @@ export default function PublicLayout({ children }) {
 
         <nav className="stack">
           <NavLink to="/" end className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Главная</NavLink>
-          <NavLink to="/workshops" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Точки</NavLink>
+          <NavLink to="/workshops" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Салоны</NavLink>
           <NavLink to="/services" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Услуги / прайс</NavLink>
           <NavLink to="/reviews" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Отзывы</NavLink>
         </nav>

@@ -33,7 +33,7 @@ export default function AdminServicesPage() {
       <div className="stack">
         <form className="card form-grid" onSubmit={create}>
           <select value={form.workshopId} onChange={(e) => setForm({ ...form, workshopId: e.target.value })}>
-            <option value="">Выберите точку</option>
+            <option value="">Выберите салон</option>
             {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
           </select>
           <input placeholder="Название услуги" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />

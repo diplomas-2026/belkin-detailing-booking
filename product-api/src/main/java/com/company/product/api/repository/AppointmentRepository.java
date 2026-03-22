@@ -16,4 +16,6 @@ public interface AppointmentRepository extends JpaRepository<AppointmentEntity, 
     List<AppointmentEntity> findByStatusInAndMasterAndScheduledEndAfter(List<AppointmentStatus> statuses, MasterEntity master, LocalDateTime start);
 
     boolean existsByClientAndScheduledStart(UserEntity client, LocalDateTime scheduledStart);
+
+    long countByWorkshopAndStatus(WorkshopEntity workshop, AppointmentStatus status);
 }

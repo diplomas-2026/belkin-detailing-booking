@@ -1,13 +1,6 @@
 import { useEffect, useState } from 'react'
 import api from '../api'
-
-const STATUS_LABELS = {
-  NEW: 'Новая',
-  CONFIRMED: 'Подтверждена',
-  IN_PROGRESS: 'В работе',
-  COMPLETED: 'Выполнена',
-  CANCELED: 'Отменена',
-}
+import { appointmentStatusLabel } from '../utils/appointmentStatus'
 
 export default function AdminAppointmentsPage() {
   const [appointments, setAppointments] = useState([])
@@ -42,7 +35,7 @@ export default function AdminAppointmentsPage() {
             <p>
               Статус:{' '}
               <span className={`badge badge-${a.status?.toLowerCase?.() || 'unknown'}`}>
-                {STATUS_LABELS[a.status] || a.status}
+                {appointmentStatusLabel(a.status)}
               </span>
             </p>
             {a.masterId ? <p>Мастер: {a.masterName}</p> : <p>Мастер не назначен</p>}

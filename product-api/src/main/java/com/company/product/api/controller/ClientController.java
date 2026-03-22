@@ -73,6 +73,17 @@ public class ClientController {
         return mapper.toCarView(carRepository.save(car));
     }
 
+    @GetMapping("/cars/{id}")
+    @PreAuthorize("hasRole('CLIENT')")
+    public CarDtos.CarView car(@PathVariable Long id) {
+        UserEntity user = currentUserService.requireUser();
+        CarEntity car = carRepository.findById(id).orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Автомобиль не найден"));
+        if (!car.getClient().getId().equals(user.getId())) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "Нет доступа к автомобилю");
+        }
+        return mapper.toCarView(car);
+    }
+
     @PutMapping("/cars/{id}")
     @PreAuthorize("hasRole('CLIENT')")
     public CarDtos.CarView updateCar(@PathVariable Long id, @Valid @RequestBody CarDtos.CarCreateRequest request) {
@@ -106,6 +117,18 @@ public class ClientController {
     public List<AppointmentDtos.AppointmentView> myAppointments() {
         UserEntity user = currentUserService.requireUser();
         return appointmentRepository.findByClientOrderByScheduledStartDesc(user).stream().map(mapper::toAppointmentView).toList();
+    }
+
+    @GetMapping("/appointments/{id}")
+    @PreAuthorize("hasRole('CLIENT')")
+    public AppointmentDtos.AppointmentView appointment(@PathVariable Long id) {
+        UserEntity user = currentUserService.requireUser();
+        AppointmentEntity appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Запись не найдена"));
+        if (!appointment.getClient().getId().equals(user.getId())) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "Нет доступа к записи");
+        }
+        return mapper.toAppointmentView(appointment);
     }
 
     @PostMapping("/appointments")

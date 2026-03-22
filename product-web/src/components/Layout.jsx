@@ -4,7 +4,7 @@ import { getStoredUser, logout } from '../utils/auth'
 const navByRole = {
   CLIENT: [
     { to: '/dashboard', label: 'Главная' },
-    { to: '/workshops', label: 'Точки' },
+    { to: '/workshops', label: 'Салоны' },
     { to: '/my-cars', label: 'Мои автомобили' },
     { to: '/my-appointments', label: 'Мои записи' },
     { to: '/reviews/new', label: 'Оставить отзыв' },
@@ -13,12 +13,12 @@ const navByRole = {
     { to: '/dashboard', label: 'Главная' },
     { to: '/master/tasks', label: 'Мои задачи' },
     { to: '/master/reviews', label: 'Отзывы' },
-    { to: '/workshops', label: 'Точки' },
+    { to: '/workshops', label: 'Салоны' },
   ],
   ADMIN: [
     { to: '/dashboard', label: 'Главная' },
-    { to: '/workshops', label: 'Точки' },
-    { to: '/admin/workshops', label: 'Управление точками' },
+    { to: '/workshops', label: 'Салоны' },
+    { to: '/admin/workshops', label: 'Управление салонами' },
     { to: '/admin/appointments', label: 'Записи' },
     { to: '/admin/services', label: 'Услуги' },
     { to: '/admin/reviews', label: 'Отзывы' },
