@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import api from '../api'
 import { isLoggedIn } from '../utils/auth'
+import ShinyButton from '../components/ui/ShinyButton'
 
 export default function LandingPage() {
   const [stats, setStats] = useState(null)
@@ -31,10 +32,10 @@ export default function LandingPage() {
             </p>
             <div className="hero-actions">
               {loggedIn ? (
-                <Link className="btn" to="/dashboard">Перейти в кабинет</Link>
+                <ShinyButton as={Link} to="/dashboard">Перейти в кабинет</ShinyButton>
               ) : (
                 <>
-                  <Link className="btn" to="/register">Записаться</Link>
+                  <ShinyButton as={Link} to="/register">Записаться</ShinyButton>
                   <Link className="btn secondary" to="/services">Посмотреть прайс</Link>
                 </>
               )}
@@ -121,11 +122,10 @@ export default function LandingPage() {
           <p className="muted">Создайте аккаунт и записывайтесь онлайн в пару кликов.</p>
         </div>
         <div className="cta-actions">
-          <Link className="btn" to="/register">Регистрация</Link>
+          <ShinyButton as={Link} to="/register">Регистрация</ShinyButton>
           <Link className="btn secondary" to="/login">Вход</Link>
         </div>
       </section>
     </div>
   )
 }
-

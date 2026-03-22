@@ -8,45 +8,48 @@ export default function PublicLayout({ children }) {
 
   return (
     <div className="public-shell">
-      <header className="topbar">
-        <div className="topbar-inner">
-          <Link to="/" className="topbar-brand">MikhaDetail</Link>
+      <aside className="public-sidebar">
+        <Link to="/" className="brand">MikhaDetail</Link>
 
-          <nav className="topbar-nav">
-            <NavLink to="/" end className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>Главная</NavLink>
-            <NavLink to="/workshops" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>Точки</NavLink>
-            <NavLink to="/services" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>Услуги</NavLink>
-            <NavLink to="/reviews" className={({ isActive }) => `topbar-link${isActive ? ' active' : ''}`}>Отзывы</NavLink>
-          </nav>
-
-          <div className="topbar-actions">
-            {loggedIn ? (
-              <>
-                <span className="topbar-user">{user?.fullName}</span>
-                <Link to="/dashboard" className="btn">Кабинет</Link>
-                <button
-                  type="button"
-                  className="btn secondary"
-                  onClick={() => {
-                    logout()
-                    navigate('/login')
-                  }}
-                >
-                  Выйти
-                </button>
-              </>
-            ) : (
-              <>
-                <Link to="/login" className="btn secondary">Войти</Link>
-                <Link to="/register" className="btn">Регистрация</Link>
-              </>
-            )}
+        {loggedIn && (
+          <div className="user-box">
+            <p>{user?.fullName}</p>
+            <span>Клиентский кабинет</span>
           </div>
+        )}
+
+        <nav className="stack">
+          <NavLink to="/" end className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Главная</NavLink>
+          <NavLink to="/workshops" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Точки</NavLink>
+          <NavLink to="/services" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Услуги / прайс</NavLink>
+          <NavLink to="/reviews" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>Отзывы</NavLink>
+        </nav>
+
+        <div className="public-actions">
+          {loggedIn ? (
+            <>
+              <Link to="/dashboard" className="btn secondary">Перейти в кабинет</Link>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => {
+                  logout()
+                  navigate('/login')
+                }}
+              >
+                Выйти
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="btn secondary">Войти</Link>
+              <Link to="/register" className="btn">Регистрация</Link>
+            </>
+          )}
         </div>
-      </header>
+      </aside>
 
       <main className="content">{children}</main>
     </div>
   )
 }
-
