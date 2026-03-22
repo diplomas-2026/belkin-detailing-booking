@@ -1,0 +1,66 @@
+name: deploy
+
+on:
+  push:
+    branches: ["main"]
+
+concurrency:
+  group: deploy-main
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build web
+        working-directory: product-web
+        env:
+          VITE_API_URL: /api/v1
+        run: |
+          set -e
+          npm ci
+          npm run build
+
+      - name: Install rsync
+        run: sudo apt-get update && sudo apt-get install -y rsync
+
+      - name: Deploy via SSH
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_KEY: ${{ secrets.SSH_KEY }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          set -euo pipefail
+
+          : "${SSH_HOST:?Missing secret SSH_HOST}"
+          : "${SSH_USER:?Missing secret SSH_USER}"
+          : "${SSH_KEY:?Missing secret SSH_KEY}"
+          SSH_PORT="${SSH_PORT:-22}"
+
+          mkdir -p ~/.ssh
+          echo "$SSH_KEY" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -p "$SSH_PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts
+
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" 'mkdir -p /opt/belkin-detailing-booking /var/www/projects/belkin-detailing-booking.matstart.ru'
+
+          rsync -az --delete \
+            --exclude '.git/' \
+            "$GITHUB_WORKSPACE/" \
+            -e "ssh -p $SSH_PORT" \
+            "$SSH_USER@$SSH_HOST:/opt/belkin-detailing-booking/"
+
+          rsync -az --delete \
+            -e "ssh -p $SSH_PORT" \
+            "$GITHUB_WORKSPACE/product-web/dist/" \
+            "$SSH_USER@$SSH_HOST:/var/www/projects/belkin-detailing-booking.matstart.ru/"
+
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" 'cd /opt/belkin-detailing-booking && docker compose -p belkin-detailing-booking -f compose.vps.yml up -d --build'
+

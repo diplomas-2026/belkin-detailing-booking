@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: belkin-detailing-booking-postgres
+    environment:
+      POSTGRES_DB: detaling
+      POSTGRES_USER: detaling
+      POSTGRES_PASSWORD: detaling
+    ports:
+      - "127.0.0.1:15434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U detaling -d detaling"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - belkin_detailing_booking_pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: product-api/Dockerfile
+    container_name: belkin-detailing-booking-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/detaling
+      SPRING_DATASOURCE_USERNAME: detaling
+      SPRING_DATASOURCE_PASSWORD: detaling
+      SPRING_PROFILES_ACTIVE: dev
+    ports:
+      - "127.0.0.1:18028:8080"
+    volumes:
+      - ./product-api/users.txt:/app/users.txt
+    restart: unless-stopped
+
+volumes:
+  belkin_detailing_booking_pgdata:
