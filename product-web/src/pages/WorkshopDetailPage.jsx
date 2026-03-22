@@ -81,8 +81,18 @@ export default function WorkshopDetailPage() {
                 to={`/workshops/${workshop.id}/masters/${m.id}`}
                 className="card card-link"
               >
-                <h4 className="text-white">{m.fullName}</h4>
-                <p className="muted">{m.specialization} • {m.experienceYears} лет опыта</p>
+                <div className="flex items-center gap-3">
+                  <img
+                    className="avatar"
+                    src={m.photoUrl || '/images/master-placeholder.svg'}
+                    alt={m.fullName}
+                    loading="lazy"
+                  />
+                  <div>
+                    <h4 className="text-white">{m.fullName}</h4>
+                    <p className="muted">{m.specialization} • {m.experienceYears} лет опыта</p>
+                  </div>
+                </div>
               </Link>
             ))}
           </div>

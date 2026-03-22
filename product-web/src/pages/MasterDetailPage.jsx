@@ -29,8 +29,18 @@ export default function MasterDetailPage() {
     <div className="stack">
       <div className="page-head">
         <div>
-          <h1>{master.fullName}</h1>
-          <p className="muted">{master.specialization} • {master.experienceYears} лет опыта</p>
+          <div className="flex items-center gap-4">
+            <img
+              className="avatar avatar-lg"
+              src={master.photoUrl || '/images/master-placeholder.svg'}
+              alt={master.fullName}
+              loading="lazy"
+            />
+            <div>
+              <h1>{master.fullName}</h1>
+              <p className="muted">{master.specialization} • {master.experienceYears} лет опыта</p>
+            </div>
+          </div>
         </div>
         <div className="page-controls">
           <Link className="btn secondary" to={`/workshops/${id}`}>Назад к салону</Link>
@@ -73,4 +83,3 @@ export default function MasterDetailPage() {
     </div>
   )
 }
-

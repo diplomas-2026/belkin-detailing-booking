@@ -292,6 +292,7 @@ public class AdminController {
         master.setUser(user);
         master.setWorkshop(workshop);
         master.setSpecialization(request.specialization());
+        master.setPhotoUrl(request.photoUrl());
         master.setExperienceYears(request.experienceYears());
         master.setActive(request.active());
     }

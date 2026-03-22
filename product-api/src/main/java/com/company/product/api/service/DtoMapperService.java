@@ -90,6 +90,7 @@ public class DtoMapperService {
                 master.getWorkshop().getId(),
                 master.getWorkshop().getName(),
                 master.getSpecialization(),
+                master.getPhotoUrl(),
                 master.getExperienceYears(),
                 master.isActive()
         );

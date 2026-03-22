@@ -23,6 +23,9 @@ public class MasterEntity {
 
     private String specialization;
 
+    @Column(name = "photo_url", length = 500)
+    private String photoUrl;
+
     @Column(name = "experience_years", nullable = false)
     private Integer experienceYears;
 

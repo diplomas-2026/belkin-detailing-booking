@@ -158,6 +158,7 @@ public class SeedDataInitializer implements ApplicationRunner {
             master.setUser(user);
             master.setWorkshop(workshop);
             master.setSpecialization((String) row.get("specialization"));
+            master.setPhotoUrl((String) row.get("photoUrl"));
             master.setExperienceYears(((Number) row.get("experienceYears")).intValue());
             master.setActive(Boolean.TRUE.equals(row.get("active")));
             masterRepository.save(master);
