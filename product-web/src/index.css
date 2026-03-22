@@ -20,9 +20,9 @@
   a { @apply text-sky-300 hover:text-sky-200; text-decoration: none; }
 
   h1, h2, h3, h4 { @apply tracking-tight; }
-  h1 { @apply text-3xl font-extrabold mb-4; }
-  h2 { @apply text-xl font-bold mb-3; }
-  h3 { @apply text-lg font-bold mb-2; }
+  h1 { @apply text-2xl font-semibold mb-4; }
+  h2 { @apply text-lg font-semibold mb-3; }
+  h3 { @apply text-base font-semibold mb-2; }
   h4 { @apply text-base font-bold mb-2; }
   p { @apply text-white/80; margin: 0 0 10px; }
 }
@@ -30,7 +30,13 @@
 @layer components {
   /* Layouts */
   .app-shell { @apply grid min-h-screen; grid-template-columns: 280px 1fr; }
-  .content { @apply w-full max-w-[1160px] mx-auto px-4 py-6; }
+  .content {
+    @apply w-full max-w-[1160px] mx-auto px-5 py-7;
+    background: rgba(6, 8, 14, 0.68);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 22px;
+    margin: 18px auto;
+  }
 
   .sidebar {
     @apply bg-white/5 backdrop-blur-xl border-r border-white/10
@@ -56,10 +62,10 @@
 
   /* Surfaces */
   .card {
-    @apply rounded-[18px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-soft;
-    padding: 18px;
+    @apply rounded-2xl border border-white/10 bg-white/[0.035];
+    padding: 16px;
   }
-  .card-link { @apply cursor-pointer transition hover:bg-white/10 hover:border-white/20; }
+  .card-link { @apply cursor-pointer transition hover:bg-white/[0.06] hover:border-white/20; }
   .grid {
     display: grid;
     gap: 16px;
@@ -72,27 +78,49 @@
 
   /* Buttons / inputs */
   button, .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-3
-      font-semibold text-white bg-gradient-to-b from-violet-500 to-violet-600
-      shadow-[0_14px_30px_rgba(124,58,237,0.25)] transition;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5
+      font-semibold text-white bg-white/10 border border-white/10 shadow-none
+      transition;
   }
-  button:hover, .btn:hover { @apply -translate-y-0.5; }
-  button:active, .btn:active { @apply translate-y-0; }
-  button:disabled { @apply opacity-60 cursor-not-allowed translate-y-0 shadow-none; }
+  button:hover, .btn:hover { @apply bg-white/15; }
+  button:active, .btn:active { @apply bg-white/20; }
+  button:disabled { @apply opacity-60 cursor-not-allowed; }
 
-  button.secondary, .btn.secondary {
+  button.secondary, .btn.secondary { @apply bg-transparent; }
+  button.secondary:hover, .btn.secondary:hover { @apply bg-white/10; }
+  button.danger, .btn.danger { @apply bg-rose-500/15 border-rose-400/25 text-rose-100; }
+  button.danger:hover, .btn.danger:hover { @apply bg-rose-500/25; }
+
+  /* Preserve "glossy" sidebar look (не меняем боковую панель) */
+  .sidebar button, .sidebar .btn,
+  .public-sidebar button, .public-sidebar .btn {
+    @apply rounded-2xl px-4 py-3 font-semibold text-white
+      bg-gradient-to-b from-violet-500 to-violet-600
+      shadow-[0_14px_30px_rgba(124,58,237,0.25)] border border-transparent
+      transition;
+  }
+  .sidebar button:hover, .sidebar .btn:hover,
+  .public-sidebar button:hover, .public-sidebar .btn:hover { @apply -translate-y-0.5; }
+  .sidebar button:active, .sidebar .btn:active,
+  .public-sidebar button:active, .public-sidebar .btn:active { @apply translate-y-0; }
+  .sidebar button:disabled, .public-sidebar button:disabled { @apply opacity-60 cursor-not-allowed translate-y-0 shadow-none; }
+
+  .sidebar button.secondary, .sidebar .btn.secondary,
+  .public-sidebar button.secondary, .public-sidebar .btn.secondary {
     @apply bg-white/10 text-white shadow-none border border-white/10;
   }
-  button.secondary:hover, .btn.secondary:hover { @apply bg-white/15; }
-  button.danger, .btn.danger { @apply bg-gradient-to-b from-rose-500 to-rose-600; }
+  .sidebar button.secondary:hover, .sidebar .btn.secondary:hover,
+  .public-sidebar button.secondary:hover, .public-sidebar .btn.secondary:hover { @apply bg-white/15; }
+  .sidebar button.danger, .sidebar .btn.danger,
+  .public-sidebar button.danger, .public-sidebar .btn.danger { @apply bg-gradient-to-b from-rose-500 to-rose-600; }
 
   input, select, textarea {
-    @apply w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-white
-      placeholder:text-white/40 outline-none transition;
+    @apply w-full rounded-xl border border-white/10 bg-white/[0.04] px-4 py-2.5 text-white
+      placeholder:text-white/35 outline-none transition;
     margin-top: 4px;
     margin-bottom: 8px;
   }
-  input:focus, select:focus, textarea:focus { @apply border-white/20 ring-4 ring-violet-500/20; }
+  input:focus, select:focus, textarea:focus { @apply border-white/20 ring-4 ring-sky-500/15; }
   label { @apply block font-semibold text-white/90; }
 
   .muted { @apply text-white/55 text-xs; margin: 10px 0 0; }
@@ -170,7 +198,7 @@
 }
 
 @layer utilities {
-  .shadow-soft { box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 18px 50px rgba(0,0,0,0.50); }
+  .shadow-soft { box-shadow: 0 0 0 1px rgba(255,255,255,0.06), 0 10px 28px rgba(0,0,0,0.40); }
   .shadow-glow { box-shadow: 0 0 0 1px rgba(255,255,255,0.08), 0 30px 80px rgba(0,0,0,0.60); }
 
   @keyframes shimmer {
