@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import api from '../api'
 import { appointmentStatusLabel } from '../utils/appointmentStatus'
 
 const initial = { workshopId: '', carId: '', serviceId: '', scheduledStart: '', clientComment: '' }
 
 export default function MyAppointmentsPage() {
+  const [searchParams] = useSearchParams()
   const [appointments, setAppointments] = useState([])
   const [workshops, setWorkshops] = useState([])
   const [cars, setCars] = useState([])
@@ -34,6 +35,19 @@ export default function MyAppointmentsPage() {
     load()
     return () => { active = false }
   }, [])
+
+  useEffect(() => {
+    const wid = searchParams.get('workshopId')
+    const sid = searchParams.get('serviceId')
+    const cid = searchParams.get('carId')
+    if (!wid && !sid && !cid) return
+    setForm((prev) => ({
+      ...prev,
+      workshopId: wid ? String(wid) : prev.workshopId,
+      serviceId: sid ? String(sid) : prev.serviceId,
+      carId: cid ? String(cid) : prev.carId,
+    }))
+  }, [searchParams])
 
   useEffect(() => {
     if (!form.workshopId) return

@@ -13,6 +13,7 @@ import com.company.product.api.service.BusinessException;
 import com.company.product.api.service.DtoMapperService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
 
@@ -48,6 +49,15 @@ public class PublicController {
         long appointments = appointmentRepository.count();
         long reviews = reviewRepository.countByVisibleTrue();
         return new PublicDtos.PublicStatsView(workshops, services, appointments, reviews);
+    }
+
+    @GetMapping("/public/reviews/recent")
+    public List<ReviewDtos.ReviewView> recentReviews(@RequestParam(defaultValue = "12") int limit) {
+        int safeLimit = Math.max(1, Math.min(limit, 30));
+        return reviewRepository.findByVisibleTrueOrderByCreatedAtDesc(PageRequest.of(0, safeLimit))
+                .stream()
+                .map(mapper::toReviewView)
+                .toList();
     }
 
     @GetMapping("/workshops")

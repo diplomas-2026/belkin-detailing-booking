@@ -2,6 +2,7 @@ package com.company.product.api.repository;
 
 import com.company.product.api.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
@@ -21,4 +22,6 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
                                                                            WorkshopEntity workshop);
 
     long countByVisibleTrue();
+
+    List<ReviewEntity> findByVisibleTrueOrderByCreatedAtDesc(Pageable pageable);
 }

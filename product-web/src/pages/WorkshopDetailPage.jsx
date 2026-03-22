@@ -58,7 +58,7 @@ export default function WorkshopDetailPage() {
               <p>{service.durationMinutes} мин • {service.price} ₽</p>
               <Link
                 className="btn secondary"
-                to={`/services?workshopId=${workshop.id}&serviceId=${service.id}`}
+                to={`/my-appointments?workshopId=${workshop.id}&serviceId=${service.id}`}
               >
                 Записаться
               </Link>
