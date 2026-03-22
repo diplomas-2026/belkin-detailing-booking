@@ -153,6 +153,7 @@ public class TargetFeedbackService {
                 Отзывы:
                 %s
                 """.formatted(targetType, targetName, body);
+        int promptTokens = AiTokenEstimator.estimateTokens(system, user);
 
         Duration timeout = properties.llmTimeout() == null ? Duration.ofSeconds(25) : properties.llmTimeout();
         try {
@@ -165,9 +166,11 @@ public class TargetFeedbackService {
             int used = Math.max(80, AiTokenEstimator.estimateTokens(system, user, trimmed));
             return new SummaryResult(trimmed, used);
         } catch (java.util.concurrent.TimeoutException te) {
-            return new SummaryResult("Не удалось обновить резюме автоматически (таймаут).", 0);
+            return new SummaryResult("Таймаут LLM (" + timeout + "). promptTokens≈" + promptTokens + ". Проверь GIGACHAT_API_KEY/доступность GigaChat.", 0);
         } catch (Exception e) {
-            return new SummaryResult("Не удалось обновить резюме автоматически.", 0);
+            String msg = e.getMessage() == null ? "" : e.getMessage().replace("\n", " ").replace("\r", " ").trim();
+            if (msg.length() > 180) msg = msg.substring(0, 180);
+            return new SummaryResult("Ошибка LLM: " + e.getClass().getSimpleName() + (msg.isBlank() ? "" : (": " + msg)), 0);
         }
     }
 

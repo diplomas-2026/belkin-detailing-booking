@@ -130,6 +130,7 @@ public class FeedbackSummaryService {
                 Отзывы:
                 %s
                 """.formatted(type, body);
+        int promptTokens = AiTokenEstimator.estimateTokens(system, user);
 
         Duration timeout = properties.llmTimeout() == null ? Duration.ofSeconds(25) : properties.llmTimeout();
         try {
@@ -144,9 +145,11 @@ public class FeedbackSummaryService {
             int usedTokens = AiTokenEstimator.estimateTokens(system, user, trimmed);
             return new SummaryResult(trimmed, Math.max(50, usedTokens));
         } catch (java.util.concurrent.TimeoutException te) {
-            return new SummaryResult("Не удалось обновить резюме автоматически (таймаут).", 0);
+            return new SummaryResult("Таймаут LLM (" + timeout + "). promptTokens≈" + promptTokens + ".", 0);
         } catch (Exception e) {
-            return new SummaryResult("Не удалось обновить резюме автоматически.", 0);
+            String msg = e.getMessage() == null ? "" : e.getMessage().replace("\n", " ").replace("\r", " ").trim();
+            if (msg.length() > 180) msg = msg.substring(0, 180);
+            return new SummaryResult("Ошибка LLM: " + e.getClass().getSimpleName() + (msg.isBlank() ? "" : (": " + msg)), 0);
         }
     }
 
