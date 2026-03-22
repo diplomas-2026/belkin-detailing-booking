@@ -2,7 +2,9 @@ package com.company.product.api.service;
 
 import com.company.product.api.dto.*;
 import com.company.product.api.entity.*;
+import com.company.product.api.repository.AppointmentServiceItemRepository;
 import com.company.product.api.repository.WorkshopPhotoRepository;
+import com.company.product.api.repository.ServiceItemRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,9 +13,15 @@ import java.util.List;
 public class DtoMapperService {
 
     private final WorkshopPhotoRepository workshopPhotoRepository;
+    private final ServiceItemRepository serviceItemRepository;
+    private final AppointmentServiceItemRepository appointmentServiceItemRepository;
 
-    public DtoMapperService(WorkshopPhotoRepository workshopPhotoRepository) {
+    public DtoMapperService(WorkshopPhotoRepository workshopPhotoRepository,
+                            ServiceItemRepository serviceItemRepository,
+                            AppointmentServiceItemRepository appointmentServiceItemRepository) {
         this.workshopPhotoRepository = workshopPhotoRepository;
+        this.serviceItemRepository = serviceItemRepository;
+        this.appointmentServiceItemRepository = appointmentServiceItemRepository;
     }
 
     public WorkshopDtos.WorkshopView toWorkshopView(WorkshopEntity workshop) {
@@ -41,6 +49,26 @@ public class DtoMapperService {
         );
     }
 
+    public ServiceDtos.ServiceItemView toServiceItemView(ServiceItemEntity item) {
+        return new ServiceDtos.ServiceItemView(
+                item.getId(),
+                item.getKind().name(),
+                item.getName(),
+                item.getDescription(),
+                item.getPrice(),
+                item.getChoiceGroupKey(),
+                item.isDefaultSelected(),
+                item.getSortOrder()
+        );
+    }
+
+    public ServiceDtos.ServiceDetailView toServiceDetailView(ServiceEntity service) {
+        List<ServiceDtos.ServiceItemView> items = serviceItemRepository.findByServiceOrderBySortOrderAscIdAsc(service).stream()
+                .map(this::toServiceItemView)
+                .toList();
+        return new ServiceDtos.ServiceDetailView(toServiceView(service), items);
+    }
+
     public CarDtos.CarView toCarView(CarEntity car) {
         return new CarDtos.CarView(car.getId(), car.getBrand(), car.getModel(), car.getYear(), car.getPlateNumber(), car.getColor(), car.getNotes());
     }
@@ -53,6 +81,22 @@ public class DtoMapperService {
                 .map(s -> new AppointmentDtos.AppointmentServiceView(s.getId(), s.getName(), s.getDurationMinutes(), s.getPrice()))
                 .toList();
 
+        var selectedItems = appointmentServiceItemRepository.findByAppointment(appointment).stream()
+                .map(x -> {
+                    ServiceItemEntity i = x.getServiceItem();
+                    ServiceEntity s = i.getService();
+                    return new AppointmentDtos.AppointmentSelectedItemView(
+                            i.getId(),
+                            s.getId(),
+                            s.getName(),
+                            i.getKind().name(),
+                            i.getName(),
+                            i.getPrice(),
+                            i.getChoiceGroupKey()
+                    );
+                })
+                .toList();
+
         return new AppointmentDtos.AppointmentView(
                 appointment.getId(),
                 appointment.getWorkshop().getId(),
@@ -62,6 +106,7 @@ public class DtoMapperService {
                 appointment.getService().getId(),
                 appointment.getService().getName(),
                 services,
+                selectedItems,
                 masterId,
                 masterName,
                 appointment.getScheduledStart(),

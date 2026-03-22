@@ -30,6 +30,7 @@ public class SeedDataInitializer implements ApplicationRunner {
     private final WorkshopRepository workshopRepository;
     private final WorkshopPhotoRepository workshopPhotoRepository;
     private final ServiceRepository serviceRepository;
+    private final ServiceItemRepository serviceItemRepository;
     private final MasterRepository masterRepository;
     private final MasterShiftRepository masterShiftRepository;
     private final CarRepository carRepository;
@@ -42,6 +43,7 @@ public class SeedDataInitializer implements ApplicationRunner {
                                WorkshopRepository workshopRepository,
                                WorkshopPhotoRepository workshopPhotoRepository,
                                ServiceRepository serviceRepository,
+                               ServiceItemRepository serviceItemRepository,
                                MasterRepository masterRepository,
                                MasterShiftRepository masterShiftRepository,
                                CarRepository carRepository,
@@ -53,6 +55,7 @@ public class SeedDataInitializer implements ApplicationRunner {
         this.workshopRepository = workshopRepository;
         this.workshopPhotoRepository = workshopPhotoRepository;
         this.serviceRepository = serviceRepository;
+        this.serviceItemRepository = serviceItemRepository;
         this.masterRepository = masterRepository;
         this.masterShiftRepository = masterShiftRepository;
         this.carRepository = carRepository;
@@ -69,6 +72,7 @@ public class SeedDataInitializer implements ApplicationRunner {
         seedWorkshops();
         seedWorkshopPhotos();
         seedServices();
+        seedServiceItems();
         seedMasters();
         seedShifts();
         seedCars();
@@ -147,6 +151,32 @@ public class SeedDataInitializer implements ApplicationRunner {
             service.setPrice(BigDecimal.valueOf(((Number) row.get("price")).doubleValue()));
             service.setActive(Boolean.TRUE.equals(row.get("active")));
             serviceRepository.save(service);
+        }
+    }
+
+    private void seedServiceItems() throws IOException {
+        for (Map<String, Object> row : readJsonArray("seed-data/service_items.json")) {
+            WorkshopEntity workshop = workshopRepository.findByName((String) row.get("workshopName")).orElseThrow();
+            ServiceEntity service = serviceRepository.findByWorkshopAndName(workshop, (String) row.get("serviceName")).orElseThrow();
+
+            ServiceItemKind kind = ServiceItemKind.valueOf(((String) row.get("kind")).trim().toUpperCase());
+            String name = (String) row.get("name");
+            String choiceGroupKey = (String) row.get("choiceGroupKey");
+
+            ServiceItemEntity item = serviceItemRepository
+                    .findByServiceAndKindAndNameAndChoiceGroupKey(service, kind, name, choiceGroupKey)
+                    .orElseGet(ServiceItemEntity::new);
+
+            item.setService(service);
+            item.setKind(kind);
+            item.setName(name);
+            item.setDescription((String) row.get("description"));
+            item.setPrice(BigDecimal.valueOf(((Number) row.get("price")).doubleValue()));
+            item.setChoiceGroupKey(choiceGroupKey);
+            item.setDefaultSelected(Boolean.TRUE.equals(row.get("defaultSelected")));
+            item.setSortOrder(row.get("sortOrder") == null ? 0 : ((Number) row.get("sortOrder")).intValue());
+
+            serviceItemRepository.save(item);
         }
     }
 

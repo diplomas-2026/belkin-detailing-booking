@@ -13,6 +13,7 @@ import com.company.product.api.entity.AppointmentStatus;
 import com.company.product.api.entity.MasterEntity;
 import com.company.product.api.entity.ReviewModerationStatus;
 import com.company.product.api.entity.ServiceEntity;
+import com.company.product.api.entity.ServiceItemEntity;
 import com.company.product.api.entity.WorkshopEntity;
 import com.company.product.api.repository.*;
 import com.company.product.api.service.BusinessException;
@@ -29,6 +30,7 @@ public class PublicController {
 
     private final WorkshopRepository workshopRepository;
     private final ServiceRepository serviceRepository;
+    private final ServiceItemRepository serviceItemRepository;
     private final MasterRepository masterRepository;
     private final ReviewRepository reviewRepository;
     private final AppointmentRepository appointmentRepository;
@@ -38,6 +40,7 @@ public class PublicController {
 
     public PublicController(WorkshopRepository workshopRepository,
                             ServiceRepository serviceRepository,
+                            ServiceItemRepository serviceItemRepository,
                             MasterRepository masterRepository,
                             ReviewRepository reviewRepository,
                             AppointmentRepository appointmentRepository,
@@ -46,6 +49,7 @@ public class PublicController {
                             DtoMapperService mapper) {
         this.workshopRepository = workshopRepository;
         this.serviceRepository = serviceRepository;
+        this.serviceItemRepository = serviceItemRepository;
         this.masterRepository = masterRepository;
         this.reviewRepository = reviewRepository;
         this.appointmentRepository = appointmentRepository;
@@ -125,6 +129,28 @@ public class PublicController {
         return serviceRepository.findAll().stream()
                 .filter(ServiceEntity::isActive)
                 .map(mapper::toServiceView)
+                .toList();
+    }
+
+    @GetMapping("/services/{id}")
+    public ServiceDtos.ServiceDetailView service(@PathVariable Long id) {
+        ServiceEntity service = serviceRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
+        if (!service.isActive()) {
+            throw new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена");
+        }
+        return mapper.toServiceDetailView(service);
+    }
+
+    @GetMapping("/services/{id}/items")
+    public List<ServiceDtos.ServiceItemView> serviceItems(@PathVariable Long id) {
+        ServiceEntity service = serviceRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
+        if (!service.isActive()) {
+            throw new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена");
+        }
+        return serviceItemRepository.findByServiceOrderBySortOrderAscIdAsc(service).stream()
+                .map(mapper::toServiceItemView)
                 .toList();
     }
 

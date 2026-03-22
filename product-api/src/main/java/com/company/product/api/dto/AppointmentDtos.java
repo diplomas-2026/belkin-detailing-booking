@@ -13,6 +13,14 @@ import java.util.List;
 public class AppointmentDtos {
     public record AppointmentServiceView(Long id, String name, Integer durationMinutes, BigDecimal price) {}
 
+    public record AppointmentSelectedItemView(Long id,
+                                              Long serviceId,
+                                              String serviceName,
+                                              String kind,
+                                              String name,
+                                              BigDecimal price,
+                                              String choiceGroupKey) {}
+
     public record AppointmentView(Long id,
                                   Long workshopId,
                                   String workshopName,
@@ -21,6 +29,7 @@ public class AppointmentDtos {
                                   Long serviceId,
                                   String serviceName,
                                   List<AppointmentServiceView> services,
+                                  List<AppointmentSelectedItemView> selectedItems,
                                   Long masterId,
                                   String masterName,
                                   LocalDateTime scheduledStart,
@@ -32,10 +41,13 @@ public class AppointmentDtos {
                                   String clientComment,
                                   String resultComment) {}
 
+    public record ServiceSelectionRequest(@NotNull Long serviceId, List<Long> selectedItemIds) {}
+
     public record AppointmentCreateRequest(@NotNull Long workshopId,
                                            @NotNull Long carId,
                                            Long serviceId,
                                            List<Long> serviceIds,
+                                           List<ServiceSelectionRequest> selections,
                                            @NotNull LocalDateTime scheduledStart,
                                            String clientComment) {}
 

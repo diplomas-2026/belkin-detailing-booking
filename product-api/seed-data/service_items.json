@@ -1,0 +1,248 @@
+[
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Экспресс мойка (внешняя)","kind":"MANDATORY","name":"Работа мастера","description":"Мойка кузова без салона.","price":1400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Ручная мойка (двухфазная)","kind":"MANDATORY","name":"Работа мастера","description":"Ручная мойка кузова по технологии 2 фазы.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Ручная мойка (двухфазная)","kind":"MANDATORY","name":"Расходники и химия","description":"Шампунь, микрофибры, составы для безопасной мойки.","price":600,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Чернение резины","description":"Уход за боковинами шин.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Быстрая сушка","description":"Сушка + продувка щелей.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Пластик экстерьера","description":"Уход за внешним пластиком.","price":400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Комплексная мойка (кузов + салон)","kind":"MANDATORY","name":"Работа мастера","description":"Кузов + пылесос салона + коврики.","price":2000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Комплексная мойка (кузов + салон)","kind":"MANDATORY","name":"Расходники и химия","description":"Шампунь, микрофибры, составы.","price":800,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Комплексная мойка (кузов + салон)","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка салона составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Комплексная мойка (кузов + салон)","kind":"OPTIONAL","name":"Чернение резины","description":"Уход за боковинами шин.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антибактериальная обработка салона","kind":"MANDATORY","name":"Работа мастера","description":"Подготовка и нанесение состава.","price":400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антибактериальная обработка салона","kind":"CHOICE_OPTION","name":"Наш состав","description":"Состав студии (включено).","price":800,"choiceGroupKey":"materials","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антибактериальная обработка салона","kind":"CHOICE_OPTION","name":"Состав клиента","description":"Клиент привозит свой состав.","price":0,"choiceGroupKey":"materials","defaultSelected":false,"sortOrder":30},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Озонация салона","kind":"MANDATORY","name":"Работа + оборудование","description":"Озонация салона.","price":1900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Удаление битума и смолы","kind":"MANDATORY","name":"Работа мастера","description":"Деликатная очистка ЛКП.","price":1800,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Удаление битума и смолы","kind":"CHOICE_OPTION","name":"Наша химия","description":"Используем химию студии.","price":700,"choiceGroupKey":"chem","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Удаление битума и смолы","kind":"CHOICE_OPTION","name":"Химия клиента","description":"Клиент привозит свою химию.","price":0,"choiceGroupKey":"chem","defaultSelected":false,"sortOrder":30},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка фар","kind":"MANDATORY","name":"Работа мастера","description":"Полировка фар.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка фар","kind":"MANDATORY","name":"Расходники","description":"Паста/круги/обезжиривание.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка фар","kind":"OPTIONAL","name":"Защитный лак","description":"Финишная защита лаком.","price":900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка фар","kind":"OPTIONAL","name":"PPF пленка на фары","description":"Оклейка фар пленкой для защиты.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (1 шаг)","kind":"MANDATORY","name":"Работа мастера","description":"Одношаговая полировка.","price":8500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (1 шаг)","kind":"CHOICE_OPTION","name":"Паста и круги (студии)","description":"Материалы студии.","price":4000,"choiceGroupKey":"paste","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (1 шаг)","kind":"CHOICE_OPTION","name":"Паста клиента","description":"Клиент привозит пасту/круги.","price":0,"choiceGroupKey":"paste","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (1 шаг)","kind":"OPTIONAL","name":"Антиголограммный финиш","description":"Финишная паста для идеального блеска.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (1 шаг)","kind":"OPTIONAL","name":"Защитный воск","description":"Быстрая защита после полировки.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (2-3 шага)","kind":"MANDATORY","name":"Работа мастера","description":"Полировка 2-3 шага.","price":12000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (2-3 шага)","kind":"CHOICE_OPTION","name":"Паста и круги (студии)","description":"Материалы студии.","price":7000,"choiceGroupKey":"paste","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (2-3 шага)","kind":"CHOICE_OPTION","name":"Паста клиента","description":"Клиент привозит пасту/круги.","price":0,"choiceGroupKey":"paste","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (2-3 шага)","kind":"OPTIONAL","name":"Защита силант","description":"Долговременная защита ЛКП.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Полировка кузова (2-3 шага)","kind":"OPTIONAL","name":"Антидождь на лобовое","description":"Антидождь на лобовое стекло.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Керамическое покрытие","kind":"MANDATORY","name":"Подготовка ЛКП","description":"Мойка/обезжиривание/подготовка поверхности.","price":6000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Керамическое покрытие","kind":"MANDATORY","name":"Работа мастера","description":"Нанесение состава.","price":10000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Керамика стандарт (1 слой)","description":"Стандартный состав.","price":6000,"choiceGroupKey":"ceramic","defaultSelected":true,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Керамика премиум (2 слоя)","description":"Премиальный состав/2 слоя.","price":11000,"choiceGroupKey":"ceramic","defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Состав клиента","description":"Клиент привозит свой состав.","price":0,"choiceGroupKey":"ceramic","defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Керамическое покрытие","kind":"OPTIONAL","name":"Антидождь (все стекла)","description":"Антидождь на все стекла.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Керамическое покрытие","kind":"OPTIONAL","name":"Пластик экстерьера (защита)","description":"Защита внешнего пластика.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":70},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антидождь (стекла)","kind":"MANDATORY","name":"Подготовка стекла","description":"Очистка и подготовка стекла.","price":500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Лобовое","description":"Нанесение на лобовое стекло.","price":1700,"choiceGroupKey":"zone","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Все стекла","description":"Нанесение на все стекла.","price":3000,"choiceGroupKey":"zone","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Зеркала","description":"Нанесение на зеркала.","price":700,"choiceGroupKey":"zone","defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"MANDATORY","name":"Работа мастера","description":"Очистка дисков.","price":3000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"MANDATORY","name":"Химия и консервация","description":"Химия и составы для консервации.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"OPTIONAL","name":"Керамика на диски","description":"Керамическая защита дисков.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Мойка двигателя (бережно)","kind":"MANDATORY","name":"Работа мастера","description":"Аккуратная мойка подкапотки.","price":3200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Мойка двигателя (бережно)","kind":"MANDATORY","name":"Химия и расходники","description":"Составы и расходники.","price":1300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Мойка двигателя (бережно)","kind":"OPTIONAL","name":"Консервация пластика","description":"Консервация пластиковых элементов.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Химчистка салона (комплекс)","kind":"MANDATORY","name":"Работа мастера","description":"Комплексная химчистка салона.","price":11000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Химчистка салона (комплекс)","kind":"MANDATORY","name":"Химия и расходники","description":"Химия и расходные материалы.","price":4000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Озонация","description":"Озонация после химчистки.","price":900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Защита кожи","description":"Защитная пропитка кожи.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Химчистка потолка","kind":"MANDATORY","name":"Работа мастера","description":"Чистка потолка.","price":4500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Химчистка потолка","kind":"MANDATORY","name":"Химия и расходники","description":"Химия и расходные материалы.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Химчистка потолка","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антигравийная пленка (PPF) — зона","kind":"MANDATORY","name":"Работа мастера","description":"Оклейка выбранной зоны.","price":8000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"PPF стандарт","description":"Пленка студии (стандарт).","price":10000,"choiceGroupKey":"film","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"PPF премиум","description":"Пленка студии (премиум).","price":15000,"choiceGroupKey":"film","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"Материал клиента","description":"Клиент привозит свою пленку.","price":0,"choiceGroupKey":"film","defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Антигравийная пленка (PPF) — зона","kind":"OPTIONAL","name":"Полировка зоны","description":"Подготовка зоны перед оклейкой.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Предпродажная подготовка","kind":"MANDATORY","name":"Работа мастера","description":"Комплекс работ для подготовки к продаже.","price":6500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Предпродажная подготовка","kind":"MANDATORY","name":"Комплексная мойка","description":"Мойка и базовая уборка салона.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Предпродажная подготовка","kind":"OPTIONAL","name":"Легкая полировка","description":"Освежить внешний вид ЛКП.","price":3500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Центр","serviceName":"Предпродажная подготовка","kind":"OPTIONAL","name":"Фотосессия авто","description":"Фото для объявлений.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Экспресс мойка (внешняя)","kind":"MANDATORY","name":"Работа мастера","description":"Мойка кузова без салона.","price":1400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Ручная мойка (двухфазная)","kind":"MANDATORY","name":"Работа мастера","description":"Ручная мойка кузова по технологии 2 фазы.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Ручная мойка (двухфазная)","kind":"MANDATORY","name":"Расходники и химия","description":"Шампунь, микрофибры, составы для безопасной мойки.","price":600,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Чернение резины","description":"Уход за боковинами шин.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Быстрая сушка","description":"Сушка + продувка щелей.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Пластик экстерьера","description":"Уход за внешним пластиком.","price":400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Комплексная мойка (кузов + салон)","kind":"MANDATORY","name":"Работа мастера","description":"Кузов + пылесос салона + коврики.","price":2000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Комплексная мойка (кузов + салон)","kind":"MANDATORY","name":"Расходники и химия","description":"Шампунь, микрофибры, составы.","price":800,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Комплексная мойка (кузов + салон)","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка салона составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Комплексная мойка (кузов + салон)","kind":"OPTIONAL","name":"Чернение резины","description":"Уход за боковинами шин.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антибактериальная обработка салона","kind":"MANDATORY","name":"Работа мастера","description":"Подготовка и нанесение состава.","price":400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антибактериальная обработка салона","kind":"CHOICE_OPTION","name":"Наш состав","description":"Состав студии (включено).","price":800,"choiceGroupKey":"materials","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антибактериальная обработка салона","kind":"CHOICE_OPTION","name":"Состав клиента","description":"Клиент привозит свой состав.","price":0,"choiceGroupKey":"materials","defaultSelected":false,"sortOrder":30},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Озонация салона","kind":"MANDATORY","name":"Работа + оборудование","description":"Озонация салона.","price":1900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Удаление битума и смолы","kind":"MANDATORY","name":"Работа мастера","description":"Деликатная очистка ЛКП.","price":1800,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Удаление битума и смолы","kind":"CHOICE_OPTION","name":"Наша химия","description":"Используем химию студии.","price":700,"choiceGroupKey":"chem","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Удаление битума и смолы","kind":"CHOICE_OPTION","name":"Химия клиента","description":"Клиент привозит свою химию.","price":0,"choiceGroupKey":"chem","defaultSelected":false,"sortOrder":30},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка фар","kind":"MANDATORY","name":"Работа мастера","description":"Полировка фар.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка фар","kind":"MANDATORY","name":"Расходники","description":"Паста/круги/обезжиривание.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка фар","kind":"OPTIONAL","name":"Защитный лак","description":"Финишная защита лаком.","price":900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка фар","kind":"OPTIONAL","name":"PPF пленка на фары","description":"Оклейка фар пленкой для защиты.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (1 шаг)","kind":"MANDATORY","name":"Работа мастера","description":"Одношаговая полировка.","price":8500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (1 шаг)","kind":"CHOICE_OPTION","name":"Паста и круги (студии)","description":"Материалы студии.","price":4000,"choiceGroupKey":"paste","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (1 шаг)","kind":"CHOICE_OPTION","name":"Паста клиента","description":"Клиент привозит пасту/круги.","price":0,"choiceGroupKey":"paste","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (1 шаг)","kind":"OPTIONAL","name":"Антиголограммный финиш","description":"Финишная паста для идеального блеска.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (1 шаг)","kind":"OPTIONAL","name":"Защитный воск","description":"Быстрая защита после полировки.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (2-3 шага)","kind":"MANDATORY","name":"Работа мастера","description":"Полировка 2-3 шага.","price":12000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (2-3 шага)","kind":"CHOICE_OPTION","name":"Паста и круги (студии)","description":"Материалы студии.","price":7000,"choiceGroupKey":"paste","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (2-3 шага)","kind":"CHOICE_OPTION","name":"Паста клиента","description":"Клиент привозит пасту/круги.","price":0,"choiceGroupKey":"paste","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (2-3 шага)","kind":"OPTIONAL","name":"Защита силант","description":"Долговременная защита ЛКП.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Полировка кузова (2-3 шага)","kind":"OPTIONAL","name":"Антидождь на лобовое","description":"Антидождь на лобовое стекло.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Керамическое покрытие","kind":"MANDATORY","name":"Подготовка ЛКП","description":"Мойка/обезжиривание/подготовка поверхности.","price":6000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Керамическое покрытие","kind":"MANDATORY","name":"Работа мастера","description":"Нанесение состава.","price":10000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Керамика стандарт (1 слой)","description":"Стандартный состав.","price":6000,"choiceGroupKey":"ceramic","defaultSelected":true,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Керамика премиум (2 слоя)","description":"Премиальный состав/2 слоя.","price":11000,"choiceGroupKey":"ceramic","defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Состав клиента","description":"Клиент привозит свой состав.","price":0,"choiceGroupKey":"ceramic","defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Керамическое покрытие","kind":"OPTIONAL","name":"Антидождь (все стекла)","description":"Антидождь на все стекла.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Керамическое покрытие","kind":"OPTIONAL","name":"Пластик экстерьера (защита)","description":"Защита внешнего пластика.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":70},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антидождь (стекла)","kind":"MANDATORY","name":"Подготовка стекла","description":"Очистка и подготовка стекла.","price":500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Лобовое","description":"Нанесение на лобовое стекло.","price":1700,"choiceGroupKey":"zone","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Все стекла","description":"Нанесение на все стекла.","price":3000,"choiceGroupKey":"zone","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Зеркала","description":"Нанесение на зеркала.","price":700,"choiceGroupKey":"zone","defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"MANDATORY","name":"Работа мастера","description":"Очистка дисков.","price":3000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"MANDATORY","name":"Химия и консервация","description":"Химия и составы для консервации.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"OPTIONAL","name":"Керамика на диски","description":"Керамическая защита дисков.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Мойка двигателя (бережно)","kind":"MANDATORY","name":"Работа мастера","description":"Аккуратная мойка подкапотки.","price":3200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Мойка двигателя (бережно)","kind":"MANDATORY","name":"Химия и расходники","description":"Составы и расходники.","price":1300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Мойка двигателя (бережно)","kind":"OPTIONAL","name":"Консервация пластика","description":"Консервация пластиковых элементов.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Химчистка салона (комплекс)","kind":"MANDATORY","name":"Работа мастера","description":"Комплексная химчистка салона.","price":11000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Химчистка салона (комплекс)","kind":"MANDATORY","name":"Химия и расходники","description":"Химия и расходные материалы.","price":4000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Озонация","description":"Озонация после химчистки.","price":900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Защита кожи","description":"Защитная пропитка кожи.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Химчистка потолка","kind":"MANDATORY","name":"Работа мастера","description":"Чистка потолка.","price":4500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Химчистка потолка","kind":"MANDATORY","name":"Химия и расходники","description":"Химия и расходные материалы.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Химчистка потолка","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антигравийная пленка (PPF) — зона","kind":"MANDATORY","name":"Работа мастера","description":"Оклейка выбранной зоны.","price":8000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"PPF стандарт","description":"Пленка студии (стандарт).","price":10000,"choiceGroupKey":"film","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"PPF премиум","description":"Пленка студии (премиум).","price":15000,"choiceGroupKey":"film","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"Материал клиента","description":"Клиент привозит свою пленку.","price":0,"choiceGroupKey":"film","defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Антигравийная пленка (PPF) — зона","kind":"OPTIONAL","name":"Полировка зоны","description":"Подготовка зоны перед оклейкой.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Предпродажная подготовка","kind":"MANDATORY","name":"Работа мастера","description":"Комплекс работ для подготовки к продаже.","price":6500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Предпродажная подготовка","kind":"MANDATORY","name":"Комплексная мойка","description":"Мойка и базовая уборка салона.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Предпродажная подготовка","kind":"OPTIONAL","name":"Легкая полировка","description":"Освежить внешний вид ЛКП.","price":3500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Юг","serviceName":"Предпродажная подготовка","kind":"OPTIONAL","name":"Фотосессия авто","description":"Фото для объявлений.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Экспресс мойка (внешняя)","kind":"MANDATORY","name":"Работа мастера","description":"Мойка кузова без салона.","price":1400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Ручная мойка (двухфазная)","kind":"MANDATORY","name":"Работа мастера","description":"Ручная мойка кузова по технологии 2 фазы.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Ручная мойка (двухфазная)","kind":"MANDATORY","name":"Расходники и химия","description":"Шампунь, микрофибры, составы для безопасной мойки.","price":600,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Чернение резины","description":"Уход за боковинами шин.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Быстрая сушка","description":"Сушка + продувка щелей.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Ручная мойка (двухфазная)","kind":"OPTIONAL","name":"Пластик экстерьера","description":"Уход за внешним пластиком.","price":400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Комплексная мойка (кузов + салон)","kind":"MANDATORY","name":"Работа мастера","description":"Кузов + пылесос салона + коврики.","price":2000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Комплексная мойка (кузов + салон)","kind":"MANDATORY","name":"Расходники и химия","description":"Шампунь, микрофибры, составы.","price":800,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Комплексная мойка (кузов + салон)","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка салона составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Комплексная мойка (кузов + салон)","kind":"OPTIONAL","name":"Чернение резины","description":"Уход за боковинами шин.","price":300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антибактериальная обработка салона","kind":"MANDATORY","name":"Работа мастера","description":"Подготовка и нанесение состава.","price":400,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антибактериальная обработка салона","kind":"CHOICE_OPTION","name":"Наш состав","description":"Состав студии (включено).","price":800,"choiceGroupKey":"materials","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антибактериальная обработка салона","kind":"CHOICE_OPTION","name":"Состав клиента","description":"Клиент привозит свой состав.","price":0,"choiceGroupKey":"materials","defaultSelected":false,"sortOrder":30},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Озонация салона","kind":"MANDATORY","name":"Работа + оборудование","description":"Озонация салона.","price":1900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Удаление битума и смолы","kind":"MANDATORY","name":"Работа мастера","description":"Деликатная очистка ЛКП.","price":1800,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Удаление битума и смолы","kind":"CHOICE_OPTION","name":"Наша химия","description":"Используем химию студии.","price":700,"choiceGroupKey":"chem","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Удаление битума и смолы","kind":"CHOICE_OPTION","name":"Химия клиента","description":"Клиент привозит свою химию.","price":0,"choiceGroupKey":"chem","defaultSelected":false,"sortOrder":30},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка фар","kind":"MANDATORY","name":"Работа мастера","description":"Полировка фар.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка фар","kind":"MANDATORY","name":"Расходники","description":"Паста/круги/обезжиривание.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка фар","kind":"OPTIONAL","name":"Защитный лак","description":"Финишная защита лаком.","price":900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка фар","kind":"OPTIONAL","name":"PPF пленка на фары","description":"Оклейка фар пленкой для защиты.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (1 шаг)","kind":"MANDATORY","name":"Работа мастера","description":"Одношаговая полировка.","price":8500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (1 шаг)","kind":"CHOICE_OPTION","name":"Паста и круги (студии)","description":"Материалы студии.","price":4000,"choiceGroupKey":"paste","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (1 шаг)","kind":"CHOICE_OPTION","name":"Паста клиента","description":"Клиент привозит пасту/круги.","price":0,"choiceGroupKey":"paste","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (1 шаг)","kind":"OPTIONAL","name":"Антиголограммный финиш","description":"Финишная паста для идеального блеска.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (1 шаг)","kind":"OPTIONAL","name":"Защитный воск","description":"Быстрая защита после полировки.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (2-3 шага)","kind":"MANDATORY","name":"Работа мастера","description":"Полировка 2-3 шага.","price":12000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (2-3 шага)","kind":"CHOICE_OPTION","name":"Паста и круги (студии)","description":"Материалы студии.","price":7000,"choiceGroupKey":"paste","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (2-3 шага)","kind":"CHOICE_OPTION","name":"Паста клиента","description":"Клиент привозит пасту/круги.","price":0,"choiceGroupKey":"paste","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (2-3 шага)","kind":"OPTIONAL","name":"Защита силант","description":"Долговременная защита ЛКП.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Полировка кузова (2-3 шага)","kind":"OPTIONAL","name":"Антидождь на лобовое","description":"Антидождь на лобовое стекло.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Керамическое покрытие","kind":"MANDATORY","name":"Подготовка ЛКП","description":"Мойка/обезжиривание/подготовка поверхности.","price":6000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Керамическое покрытие","kind":"MANDATORY","name":"Работа мастера","description":"Нанесение состава.","price":10000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Керамика стандарт (1 слой)","description":"Стандартный состав.","price":6000,"choiceGroupKey":"ceramic","defaultSelected":true,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Керамика премиум (2 слоя)","description":"Премиальный состав/2 слоя.","price":11000,"choiceGroupKey":"ceramic","defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Керамическое покрытие","kind":"CHOICE_OPTION","name":"Состав клиента","description":"Клиент привозит свой состав.","price":0,"choiceGroupKey":"ceramic","defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Керамическое покрытие","kind":"OPTIONAL","name":"Антидождь (все стекла)","description":"Антидождь на все стекла.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Керамическое покрытие","kind":"OPTIONAL","name":"Пластик экстерьера (защита)","description":"Защита внешнего пластика.","price":1200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":70},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антидождь (стекла)","kind":"MANDATORY","name":"Подготовка стекла","description":"Очистка и подготовка стекла.","price":500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Лобовое","description":"Нанесение на лобовое стекло.","price":1700,"choiceGroupKey":"zone","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Все стекла","description":"Нанесение на все стекла.","price":3000,"choiceGroupKey":"zone","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антидождь (стекла)","kind":"CHOICE_OPTION","name":"Зеркала","description":"Нанесение на зеркала.","price":700,"choiceGroupKey":"zone","defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"MANDATORY","name":"Работа мастера","description":"Очистка дисков.","price":3000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"MANDATORY","name":"Химия и консервация","description":"Химия и составы для консервации.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Детейлинг дисков (очистка + консервация)","kind":"OPTIONAL","name":"Керамика на диски","description":"Керамическая защита дисков.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Мойка двигателя (бережно)","kind":"MANDATORY","name":"Работа мастера","description":"Аккуратная мойка подкапотки.","price":3200,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Мойка двигателя (бережно)","kind":"MANDATORY","name":"Химия и расходники","description":"Составы и расходники.","price":1300,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Мойка двигателя (бережно)","kind":"OPTIONAL","name":"Консервация пластика","description":"Консервация пластиковых элементов.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Химчистка салона (комплекс)","kind":"MANDATORY","name":"Работа мастера","description":"Комплексная химчистка салона.","price":11000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Химчистка салона (комплекс)","kind":"MANDATORY","name":"Химия и расходники","description":"Химия и расходные материалы.","price":4000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Озонация","description":"Озонация после химчистки.","price":900,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Защита кожи","description":"Защитная пропитка кожи.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Химчистка салона (комплекс)","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":60},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Химчистка потолка","kind":"MANDATORY","name":"Работа мастера","description":"Чистка потолка.","price":4500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Химчистка потолка","kind":"MANDATORY","name":"Химия и расходники","description":"Химия и расходные материалы.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Химчистка потолка","kind":"OPTIONAL","name":"Антибактериальная обработка","description":"Легкая обработка составом.","price":700,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антигравийная пленка (PPF) — зона","kind":"MANDATORY","name":"Работа мастера","description":"Оклейка выбранной зоны.","price":8000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"PPF стандарт","description":"Пленка студии (стандарт).","price":10000,"choiceGroupKey":"film","defaultSelected":true,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"PPF премиум","description":"Пленка студии (премиум).","price":15000,"choiceGroupKey":"film","defaultSelected":false,"sortOrder":30},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антигравийная пленка (PPF) — зона","kind":"CHOICE_OPTION","name":"Материал клиента","description":"Клиент привозит свою пленку.","price":0,"choiceGroupKey":"film","defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Антигравийная пленка (PPF) — зона","kind":"OPTIONAL","name":"Полировка зоны","description":"Подготовка зоны перед оклейкой.","price":1500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50},
+
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Предпродажная подготовка","kind":"MANDATORY","name":"Работа мастера","description":"Комплекс работ для подготовки к продаже.","price":6500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":10},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Предпродажная подготовка","kind":"MANDATORY","name":"Комплексная мойка","description":"Мойка и базовая уборка салона.","price":2500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":20},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Предпродажная подготовка","kind":"OPTIONAL","name":"Легкая полировка","description":"Освежить внешний вид ЛКП.","price":3500,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":40},
+  {"workshopName":"Михайлов Detailing Север","serviceName":"Предпродажная подготовка","kind":"OPTIONAL","name":"Фотосессия авто","description":"Фото для объявлений.","price":1000,"choiceGroupKey":null,"defaultSelected":false,"sortOrder":50}
+]
+

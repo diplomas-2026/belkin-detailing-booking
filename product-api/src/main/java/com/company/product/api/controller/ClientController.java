@@ -11,8 +11,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -22,6 +28,8 @@ public class ClientController {
     private final CarRepository carRepository;
     private final WorkshopRepository workshopRepository;
     private final ServiceRepository serviceRepository;
+    private final ServiceItemRepository serviceItemRepository;
+    private final AppointmentServiceItemRepository appointmentServiceItemRepository;
     private final MasterRepository masterRepository;
     private final AppointmentRepository appointmentRepository;
     private final AppointmentStatusHistoryRepository appointmentStatusHistoryRepository;
@@ -33,6 +41,8 @@ public class ClientController {
                             CarRepository carRepository,
                             WorkshopRepository workshopRepository,
                             ServiceRepository serviceRepository,
+                            ServiceItemRepository serviceItemRepository,
+                            AppointmentServiceItemRepository appointmentServiceItemRepository,
                             MasterRepository masterRepository,
                             AppointmentRepository appointmentRepository,
                             AppointmentStatusHistoryRepository appointmentStatusHistoryRepository,
@@ -43,6 +53,8 @@ public class ClientController {
         this.carRepository = carRepository;
         this.workshopRepository = workshopRepository;
         this.serviceRepository = serviceRepository;
+        this.serviceItemRepository = serviceItemRepository;
+        this.appointmentServiceItemRepository = appointmentServiceItemRepository;
         this.masterRepository = masterRepository;
         this.appointmentRepository = appointmentRepository;
         this.appointmentStatusHistoryRepository = appointmentStatusHistoryRepository;
@@ -174,7 +186,74 @@ public class ClientController {
 
         ServiceEntity primaryService = services.getFirst();
         int totalMinutes = services.stream().mapToInt(ServiceEntity::getDurationMinutes).sum();
-        BigDecimal totalPrice = services.stream().map(ServiceEntity::getPrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        Map<Long, Set<Long>> requestedSelectedItemIds = new HashMap<>();
+        if (request.selections() != null) {
+            for (AppointmentDtos.ServiceSelectionRequest s : request.selections()) {
+                if (s == null || s.serviceId() == null) continue;
+                Set<Long> ids = new HashSet<>();
+                if (s.selectedItemIds() != null) {
+                    for (Long x : s.selectedItemIds()) {
+                        if (x != null && x > 0) ids.add(x);
+                    }
+                }
+                requestedSelectedItemIds.put(s.serviceId(), ids);
+            }
+        }
+
+        List<ServiceItemEntity> chosenItems = new ArrayList<>();
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for (ServiceEntity service : services) {
+            List<ServiceItemEntity> catalogItems = serviceItemRepository.findByServiceOrderBySortOrderAscIdAsc(service);
+            if (catalogItems.isEmpty()) {
+                totalPrice = totalPrice.add(service.getPrice());
+                continue;
+            }
+
+            Set<Long> requested = requestedSelectedItemIds.getOrDefault(service.getId(), Set.of());
+            Map<String, List<ServiceItemEntity>> choiceGroups = new HashMap<>();
+
+            for (ServiceItemEntity item : catalogItems) {
+                if (item.getKind() == ServiceItemKind.MANDATORY) {
+                    chosenItems.add(item);
+                } else if (item.getKind() == ServiceItemKind.OPTIONAL) {
+                    if (item.isDefaultSelected() || requested.contains(item.getId())) {
+                        chosenItems.add(item);
+                    }
+                } else if (item.getKind() == ServiceItemKind.CHOICE_OPTION) {
+                    String key = item.getChoiceGroupKey();
+                    if (key == null || key.isBlank()) continue;
+                    choiceGroups.computeIfAbsent(key, k -> new ArrayList<>()).add(item);
+                }
+            }
+
+            // validate requested ids belong to service
+            for (Long id : requested) {
+                boolean ok = catalogItems.stream().anyMatch(i -> i.getId().equals(id));
+                if (!ok) {
+                    throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Выбран некорректный пункт услуги");
+                }
+            }
+
+            // resolve choice groups: exactly 1 option per group (use requested if provided, else default)
+            for (Map.Entry<String, List<ServiceItemEntity>> e : choiceGroups.entrySet()) {
+                List<ServiceItemEntity> options = e.getValue();
+                List<ServiceItemEntity> requestedOptions = options.stream().filter(o -> requested.contains(o.getId())).toList();
+                if (requestedOptions.size() > 1) {
+                    throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "В группе выбора можно указать только один вариант");
+                }
+                ServiceItemEntity selected = requestedOptions.isEmpty()
+                        ? options.stream().filter(ServiceItemEntity::isDefaultSelected).findFirst().orElse(options.getFirst())
+                        : requestedOptions.getFirst();
+                chosenItems.add(selected);
+            }
+
+            for (ServiceItemEntity x : chosenItems) {
+                if (x.getService().getId().equals(service.getId())) {
+                    totalPrice = totalPrice.add(x.getPrice());
+                }
+            }
+        }
 
         AppointmentEntity appointment = new AppointmentEntity();
         appointment.setClient(user);
@@ -189,6 +268,19 @@ public class ClientController {
         appointment.setClientComment(request.clientComment());
 
         AppointmentEntity saved = appointmentRepository.save(appointment);
+        // Persist selected items (if any)
+        if (!chosenItems.isEmpty()) {
+            for (ServiceItemEntity item : chosenItems) {
+                AppointmentServiceItemEntity link = new AppointmentServiceItemEntity();
+                link.setAppointment(saved);
+                link.setServiceItem(item);
+                AppointmentServiceItemEntity.Pk pk = new AppointmentServiceItemEntity.Pk();
+                pk.setAppointmentId(saved.getId());
+                pk.setServiceItemId(item.getId());
+                link.setId(pk);
+                appointmentServiceItemRepository.save(link);
+            }
+        }
         addStatusHistory(saved, null, AppointmentStatus.NEW, user, "Создана клиентом");
         return mapper.toAppointmentView(saved);
     }

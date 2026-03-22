@@ -32,6 +32,7 @@ public class AdminController {
     private final WorkshopRepository workshopRepository;
     private final WorkshopPhotoRepository workshopPhotoRepository;
     private final ServiceRepository serviceRepository;
+    private final ServiceItemRepository serviceItemRepository;
     private final MasterRepository masterRepository;
     private final UserRepository userRepository;
     private final MasterShiftRepository masterShiftRepository;
@@ -49,6 +50,7 @@ public class AdminController {
                            WorkshopRepository workshopRepository,
                            WorkshopPhotoRepository workshopPhotoRepository,
                            ServiceRepository serviceRepository,
+                           ServiceItemRepository serviceItemRepository,
                            MasterRepository masterRepository,
                            UserRepository userRepository,
                            MasterShiftRepository masterShiftRepository,
@@ -65,6 +67,7 @@ public class AdminController {
         this.workshopRepository = workshopRepository;
         this.workshopPhotoRepository = workshopPhotoRepository;
         this.serviceRepository = serviceRepository;
+        this.serviceItemRepository = serviceItemRepository;
         this.masterRepository = masterRepository;
         this.userRepository = userRepository;
         this.masterShiftRepository = masterShiftRepository;
@@ -136,6 +139,54 @@ public class AdminController {
                 .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
         applyService(service, request);
         return mapper.toServiceView(serviceRepository.save(service));
+    }
+
+    @GetMapping("/services")
+    public List<ServiceDtos.ServiceView> services() {
+        return serviceRepository.findAll(Sort.by(Sort.Direction.ASC, "name")).stream().map(mapper::toServiceView).toList();
+    }
+
+    @GetMapping("/services/{id}/items")
+    public List<ServiceDtos.ServiceItemView> serviceItems(@PathVariable Long id) {
+        ServiceEntity service = serviceRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
+        return serviceItemRepository.findByServiceOrderBySortOrderAscIdAsc(service).stream().map(mapper::toServiceItemView).toList();
+    }
+
+    @PostMapping("/services/{id}/items")
+    public ServiceDtos.ServiceItemView createItem(@PathVariable Long id, @Valid @RequestBody ServiceDtos.ServiceItemCreateRequest request) {
+        ServiceEntity service = serviceRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Услуга не найдена"));
+
+        ServiceItemKind kind;
+        try {
+            kind = ServiceItemKind.valueOf(request.kind().trim().toUpperCase(java.util.Locale.ROOT));
+        } catch (Exception e) {
+            throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Некорректный тип пункта услуги");
+        }
+
+        ServiceItemEntity item = new ServiceItemEntity();
+        item.setService(service);
+        item.setKind(kind);
+        item.setName(request.name());
+        item.setDescription(request.description());
+        item.setPrice(request.price());
+        item.setChoiceGroupKey(request.choiceGroupKey());
+        item.setDefaultSelected(request.defaultSelected());
+        item.setSortOrder(request.sortOrder() == null ? 0 : request.sortOrder());
+
+        ServiceItemEntity saved = serviceItemRepository.save(item);
+        return mapper.toServiceItemView(saved);
+    }
+
+    @DeleteMapping("/services/{serviceId}/items/{itemId}")
+    public void deleteItem(@PathVariable Long serviceId, @PathVariable Long itemId) {
+        ServiceItemEntity item = serviceItemRepository.findById(itemId)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Пункт услуги не найден"));
+        if (!item.getService().getId().equals(serviceId)) {
+            throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Пункт не принадлежит услуге");
+        }
+        serviceItemRepository.delete(item);
     }
 
     @PatchMapping("/services/{id}/active")
