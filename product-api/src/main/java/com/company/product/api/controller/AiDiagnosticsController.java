@@ -28,4 +28,9 @@ public class AiDiagnosticsController {
     public AiDiagnosticsDtos.PingResultView ping() {
         return diagnosticsService.ping();
     }
+
+    @GetMapping("/connectivity")
+    public AiDiagnosticsDtos.ConnectivityView connectivity() {
+        return diagnosticsService.connectivity();
+    }
 }
