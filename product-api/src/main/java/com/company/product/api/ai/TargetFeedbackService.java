@@ -8,9 +8,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class TargetFeedbackService {
@@ -22,6 +26,7 @@ public class TargetFeedbackService {
     private final AiWorkshopFeedbackRepository workshopFeedbackRepository;
     private final AiMasterFeedbackRepository masterFeedbackRepository;
     private final ChatClient chatClient;
+    private final ExecutorService aiExecutor;
 
     public TargetFeedbackService(AiProperties properties,
                                  TokenBudgetService tokenBudgetService,
@@ -30,6 +35,7 @@ public class TargetFeedbackService {
                                  MasterRepository masterRepository,
                                  AiWorkshopFeedbackRepository workshopFeedbackRepository,
                                  AiMasterFeedbackRepository masterFeedbackRepository,
+                                 ExecutorService aiExecutor,
                                  ObjectProvider<ChatClient.Builder> chatClientBuilderProvider) {
         this.properties = properties;
         this.tokenBudgetService = tokenBudgetService;
@@ -38,6 +44,7 @@ public class TargetFeedbackService {
         this.masterRepository = masterRepository;
         this.workshopFeedbackRepository = workshopFeedbackRepository;
         this.masterFeedbackRepository = masterFeedbackRepository;
+        this.aiExecutor = aiExecutor;
         ChatClient.Builder builder = chatClientBuilderProvider.getIfAvailable();
         this.chatClient = builder == null ? null : builder.build();
     }
@@ -141,13 +148,18 @@ public class TargetFeedbackService {
                 %s
                 """.formatted(targetType, targetName, body);
 
+        Duration timeout = properties.llmTimeout() == null ? Duration.ofSeconds(25) : properties.llmTimeout();
         try {
-            String content = chatClient.prompt().system(system).user(user).call().content();
+            CompletableFuture<String> fut = CompletableFuture.supplyAsync(() ->
+                    chatClient.prompt().system(system).user(user).call().content(), aiExecutor);
+            String content = fut.get(Math.max(1, timeout.toSeconds()), TimeUnit.SECONDS);
             String trimmed = content == null ? "" : content.trim();
             if (trimmed.isBlank()) trimmed = "Нет данных.";
             if (trimmed.length() > 1200) trimmed = trimmed.substring(0, 1200);
             int used = Math.max(80, AiTokenEstimator.estimateTokens(system, user, trimmed));
             return new SummaryResult(trimmed, used);
+        } catch (java.util.concurrent.TimeoutException te) {
+            return new SummaryResult("Не удалось обновить резюме автоматически (таймаут).", 0);
         } catch (Exception e) {
             return new SummaryResult("Не удалось обновить резюме автоматически.", 0);
         }
@@ -157,4 +169,3 @@ public class TargetFeedbackService {
 
     private record SummaryResult(String summary, int usedTokens) {}
 }
-

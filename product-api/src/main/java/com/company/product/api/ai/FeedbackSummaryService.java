@@ -13,10 +13,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class FeedbackSummaryService {
@@ -25,16 +29,19 @@ public class FeedbackSummaryService {
     private final ReviewRepository reviewRepository;
     private final AiFeedbackSummaryRepository feedbackSummaryRepository;
     private final ChatClient chatClient;
+    private final ExecutorService aiExecutor;
 
     public FeedbackSummaryService(AiProperties properties,
                                   TokenBudgetService tokenBudgetService,
                                   ReviewRepository reviewRepository,
                                   AiFeedbackSummaryRepository feedbackSummaryRepository,
+                                  ExecutorService aiExecutor,
                                   ObjectProvider<ChatClient.Builder> chatClientBuilderProvider) {
         this.properties = properties;
         this.tokenBudgetService = tokenBudgetService;
         this.reviewRepository = reviewRepository;
         this.feedbackSummaryRepository = feedbackSummaryRepository;
+        this.aiExecutor = aiExecutor;
         ChatClient.Builder builder = chatClientBuilderProvider.getIfAvailable();
         this.chatClient = builder == null ? null : builder.build();
     }
@@ -120,12 +127,11 @@ public class FeedbackSummaryService {
                 %s
                 """.formatted(type, body);
 
+        Duration timeout = properties.llmTimeout() == null ? Duration.ofSeconds(25) : properties.llmTimeout();
         try {
-            String content = chatClient.prompt()
-                    .system(system)
-                    .user(user)
-                    .call()
-                    .content();
+            CompletableFuture<String> fut = CompletableFuture.supplyAsync(() ->
+                    chatClient.prompt().system(system).user(user).call().content(), aiExecutor);
+            String content = fut.get(Math.max(1, timeout.toSeconds()), TimeUnit.SECONDS);
             if (content == null) return new SummaryResult("Нет данных.", 50);
             String trimmed = content.trim();
             if (trimmed.length() > 1200) {
@@ -133,6 +139,8 @@ public class FeedbackSummaryService {
             }
             int usedTokens = AiTokenEstimator.estimateTokens(system, user, trimmed);
             return new SummaryResult(trimmed, Math.max(50, usedTokens));
+        } catch (java.util.concurrent.TimeoutException te) {
+            return new SummaryResult("Не удалось обновить резюме автоматически (таймаут).", 0);
         } catch (Exception e) {
             return new SummaryResult("Не удалось обновить резюме автоматически.", 0);
         }
