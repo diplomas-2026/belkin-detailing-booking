@@ -1,17 +1,16 @@
 package com.company.product.api.dto;
 
-import java.time.Duration;
 import java.util.Map;
 
 public class AiDiagnosticsDtos {
 
     public record AiConfigView(
             boolean aiEnabled,
-            Duration llmTimeout,
+            String llmTimeout,
             String gigachatModel,
             String gigachatScope,
-            Duration gigachatConnectTimeout,
-            Duration gigachatReadTimeout,
+            String gigachatConnectTimeout,
+            String gigachatReadTimeout,
             boolean apiKeyPresent,
             Integer apiKeyLength,
             String apiKeyFingerprint
@@ -29,4 +28,3 @@ public class AiDiagnosticsDtos {
             Map<String, PingResultView> checks
     ) {}
 }
-

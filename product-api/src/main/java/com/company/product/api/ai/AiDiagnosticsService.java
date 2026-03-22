@@ -37,8 +37,11 @@ public class AiDiagnosticsService {
     public AiDiagnosticsDtos.DiagnosticsView diagnostics() {
         AiDiagnosticsDtos.AiConfigView config = buildConfig();
         Map<String, AiDiagnosticsDtos.PingResultView> checks = new LinkedHashMap<>();
-        checks.put("chat_ping", pingChat());
         return new AiDiagnosticsDtos.DiagnosticsView(config, checks);
+    }
+
+    public AiDiagnosticsDtos.PingResultView ping() {
+        return pingChat();
     }
 
     private AiDiagnosticsDtos.AiConfigView buildConfig() {
@@ -55,11 +58,11 @@ public class AiDiagnosticsService {
 
         return new AiDiagnosticsDtos.AiConfigView(
                 properties.enabled(),
-                llmTimeout,
+                llmTimeout == null ? null : llmTimeout.toString(),
                 model,
                 scope,
-                ct,
-                rt,
+                ct == null ? null : ct.toString(),
+                rt == null ? null : rt.toString(),
                 present,
                 len,
                 fp
@@ -128,4 +131,3 @@ public class AiDiagnosticsService {
         }
     }
 }
-
