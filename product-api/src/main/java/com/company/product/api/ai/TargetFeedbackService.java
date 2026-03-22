@@ -70,6 +70,9 @@ public class TargetFeedbackService {
 
         List<ReviewEntity> reviews = reviewRepository.findByWorkshopAndModerationStatusOrderByCreatedAtDesc(workshop, ReviewModerationStatus.APPROVED, PageRequest.of(0, 60));
         SummaryResult sr = generate("WORKSHOP", workshop.getName(), reviews);
+        if (sr.usedTokens() <= 0) {
+            return new RunResult(0, 0, sr.summary());
+        }
         tokenBudgetService.consume(sr.usedTokens());
 
         AiWorkshopFeedbackEntity e = existing == null ? new AiWorkshopFeedbackEntity() : existing;
@@ -103,6 +106,9 @@ public class TargetFeedbackService {
 
         List<ReviewEntity> reviews = reviewRepository.findByMasterAndModerationStatusOrderByCreatedAtDesc(master, ReviewModerationStatus.APPROVED, PageRequest.of(0, 60));
         SummaryResult sr = generate("MASTER", master.getUser().getFullName(), reviews);
+        if (sr.usedTokens() <= 0) {
+            return new RunResult(0, 0, sr.summary());
+        }
         tokenBudgetService.consume(sr.usedTokens());
 
         AiMasterFeedbackEntity e = existing == null ? new AiMasterFeedbackEntity() : existing;

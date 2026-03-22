@@ -86,6 +86,10 @@ public class FeedbackSummaryService {
             );
 
             SummaryResult summaryResult = generateSummary(type, reviews);
+            if (summaryResult.usedTokens() <= 0) {
+                notes.put(type, summaryResult.summary());
+                continue;
+            }
             tokenBudgetService.consume(summaryResult.usedTokens());
 
             AiFeedbackSummaryEntity entity = existing == null ? new AiFeedbackSummaryEntity() : existing;
