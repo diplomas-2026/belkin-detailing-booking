@@ -45,7 +45,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
                         .requestMatchers("/api/v1/auth/login", "/api/v1/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/workshops/**", "/api/v1/services/**", "/api/v1/masters/*/reviews", "/api/v1/workshops/*/reviews").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/workshops/**", "/api/v1/services/**", "/api/v1/masters/*/reviews", "/api/v1/workshops/*/reviews", "/api/v1/public/**").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/v1/master/**").hasRole("MASTER")
                         .requestMatchers("/api/v1/cars/**", "/api/v1/appointments/**", "/api/v1/reviews/**").authenticated()

@@ -11,4 +11,6 @@ public interface ServiceRepository extends JpaRepository<ServiceEntity, Long> {
     List<ServiceEntity> findByWorkshopAndActiveTrueOrderByNameAsc(WorkshopEntity workshop);
 
     Optional<ServiceEntity> findByWorkshopAndName(WorkshopEntity workshop, String name);
+
+    long countByActiveTrue();
 }

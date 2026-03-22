@@ -1,13 +1,18 @@
 import { Navigate, Route, Routes } from 'react-router-dom'
 import Layout from './components/Layout'
+import PublicLayout from './components/PublicLayout'
+import SmartLayout from './components/SmartLayout'
 import ProtectedRoute from './components/ProtectedRoute'
 import AdminAppointmentsPage from './pages/AdminAppointmentsPage'
 import AdminReviewsPage from './pages/AdminReviewsPage'
 import AdminServicesPage from './pages/AdminServicesPage'
 import AdminWorkshopsPage from './pages/AdminWorkshopsPage'
 import DashboardPage from './pages/DashboardPage'
+import LandingPage from './pages/LandingPage'
 import LoginPage from './pages/LoginPage'
+import PublicReviewsPage from './pages/PublicReviewsPage'
 import RegisterPage from './pages/RegisterPage'
+import ServicesPage from './pages/ServicesPage'
 import MasterReviewsPage from './pages/MasterReviewsPage'
 import MasterTasksPage from './pages/MasterTasksPage'
 import MyAppointmentsPage from './pages/MyAppointmentsPage'
@@ -20,9 +25,23 @@ function InLayout({ children }) {
   return <Layout>{children}</Layout>
 }
 
+function InPublicLayout({ children }) {
+  return <PublicLayout>{children}</PublicLayout>
+}
+
+function InSmartLayout({ children }) {
+  return <SmartLayout>{children}</SmartLayout>
+}
+
 export default function App() {
   return (
     <Routes>
+      <Route path="/" element={<InPublicLayout><LandingPage /></InPublicLayout>} />
+      <Route path="/workshops" element={<InSmartLayout><WorkshopsPage /></InSmartLayout>} />
+      <Route path="/workshops/:id" element={<InSmartLayout><WorkshopDetailPage /></InSmartLayout>} />
+      <Route path="/services" element={<InSmartLayout><ServicesPage /></InSmartLayout>} />
+      <Route path="/reviews" element={<InSmartLayout><PublicReviewsPage /></InSmartLayout>} />
+
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
 
@@ -31,22 +50,6 @@ export default function App() {
         element={
           <ProtectedRoute>
             <InLayout><DashboardPage /></InLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/workshops"
-        element={
-          <ProtectedRoute>
-            <InLayout><WorkshopsPage /></InLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/workshops/:id"
-        element={
-          <ProtectedRoute>
-            <InLayout><WorkshopDetailPage /></InLayout>
           </ProtectedRoute>
         }
       />
@@ -63,7 +66,7 @@ export default function App() {
       <Route path="/admin/services" element={<ProtectedRoute roles={['ADMIN']}><InLayout><AdminServicesPage /></InLayout></ProtectedRoute>} />
       <Route path="/admin/reviews" element={<ProtectedRoute roles={['ADMIN']}><InLayout><AdminReviewsPage /></InLayout></ProtectedRoute>} />
 
-      <Route path="*" element={<Navigate to="/dashboard" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

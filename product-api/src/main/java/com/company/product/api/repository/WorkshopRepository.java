@@ -10,4 +10,6 @@ public interface WorkshopRepository extends JpaRepository<WorkshopEntity, Long> 
     List<WorkshopEntity> findByActiveTrueOrderByNameAsc();
 
     Optional<WorkshopEntity> findByName(String name);
+
+    long countByActiveTrue();
 }

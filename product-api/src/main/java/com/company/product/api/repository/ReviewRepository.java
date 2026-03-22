@@ -19,4 +19,6 @@ public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
                                                                            ServiceEntity service,
                                                                            MasterEntity master,
                                                                            WorkshopEntity workshop);
+
+    long countByVisibleTrue();
 }

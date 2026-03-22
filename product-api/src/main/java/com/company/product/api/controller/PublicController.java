@@ -1,5 +1,6 @@
 package com.company.product.api.controller;
 
+import com.company.product.api.dto.PublicDtos;
 import com.company.product.api.dto.ReviewDtos;
 import com.company.product.api.dto.ServiceDtos;
 import com.company.product.api.dto.WorkshopDtos;
@@ -22,18 +23,30 @@ public class PublicController {
     private final ServiceRepository serviceRepository;
     private final MasterRepository masterRepository;
     private final ReviewRepository reviewRepository;
+    private final AppointmentRepository appointmentRepository;
     private final DtoMapperService mapper;
 
     public PublicController(WorkshopRepository workshopRepository,
                             ServiceRepository serviceRepository,
                             MasterRepository masterRepository,
                             ReviewRepository reviewRepository,
+                            AppointmentRepository appointmentRepository,
                             DtoMapperService mapper) {
         this.workshopRepository = workshopRepository;
         this.serviceRepository = serviceRepository;
         this.masterRepository = masterRepository;
         this.reviewRepository = reviewRepository;
+        this.appointmentRepository = appointmentRepository;
         this.mapper = mapper;
+    }
+
+    @GetMapping("/public/stats")
+    public PublicDtos.PublicStatsView stats() {
+        long workshops = workshopRepository.countByActiveTrue();
+        long services = serviceRepository.countByActiveTrue();
+        long appointments = appointmentRepository.count();
+        long reviews = reviewRepository.countByVisibleTrue();
+        return new PublicDtos.PublicStatsView(workshops, services, appointments, reviews);
     }
 
     @GetMapping("/workshops")
