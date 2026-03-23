@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import api from '../api'
+import { appointmentStatusLabel } from '../utils/appointmentStatus'
 
 export default function MyCarDetailPage() {
   const { id } = useParams()
@@ -116,6 +117,12 @@ export default function MyCarDetailPage() {
                     {a.services?.length > 1 && <p className="muted">+ ещё {a.services.length - 1} услуг</p>}
                     <p>{a.workshopName}</p>
                     <p>{new Date(a.scheduledStart).toLocaleString('ru-RU')}</p>
+                    <p>
+                      Статус:{' '}
+                      <span className={`badge badge-${a.status?.toLowerCase?.() || 'unknown'}`}>
+                        {appointmentStatusLabel(a.status)}
+                      </span>
+                    </p>
                   </Link>
                 ))}
             </div>
