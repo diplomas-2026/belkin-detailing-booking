@@ -78,6 +78,7 @@ export default function MyCarsPage() {
         <div className="grid">
           {cars.map((car) => (
             <div key={car.id} className="card">
+              <img className="car-thumb" src="/images/car-placeholder.png" alt="Автомобиль" loading="lazy" />
               <h4>{car.brand} {car.model}</h4>
               <p>{car.year} • {car.plateNumber}</p>
               <p>{car.color}</p>

@@ -49,11 +49,16 @@ export default function MyCarDetailPage() {
 
       {car && (
         <div className="card">
-          <h2>{car.brand} {car.model}</h2>
+          <div className="car-hero">
+            <img className="car-hero-img" src="/images/car-placeholder.png" alt="Автомобиль" loading="lazy" />
+            <div>
+              <h2>{car.brand} {car.model}</h2>
+              <p className="muted">{car.year} • {car.plateNumber}</p>
+            </div>
+          </div>
           <div className="grid">
             <div className="card">
               <h4>Основное</h4>
-              <p>{car.year} • {car.plateNumber}</p>
               <p>{car.color}</p>
             </div>
             <div className="card">

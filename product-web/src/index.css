@@ -326,6 +326,34 @@
   .portrait { width: 76px; height: 96px; border-radius: 14px; object-fit: cover; border: 1px solid var(--border); background: var(--surface); }
   .portrait-lg { width: 140px; height: 180px; border-radius: 16px; }
 
+  .car-thumb {
+    width: 100%;
+    max-width: 260px;
+    height: auto;
+    display: block;
+    margin-bottom: 10px;
+    border-radius: 14px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .car-hero {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .car-hero-img {
+    width: 180px;
+    height: auto;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  @media (max-width: 640px) {
+    .car-hero { flex-direction: column; align-items: flex-start; }
+    .car-hero-img { width: 100%; max-width: 320px; }
+  }
+
   .run-box { margin-top: 14px; border-top: 1px solid var(--border); padding-top: 14px; }
   .run-title { margin: 0 0 10px; font-size: 16px; font-weight: 700; color: rgba(255,255,255,0.92); }
   .run-row { border: 1px solid var(--border); background: var(--surface); border-radius: 14px; padding: 14px; }
