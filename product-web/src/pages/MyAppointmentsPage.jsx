@@ -70,6 +70,16 @@ export default function MyAppointmentsPage() {
     api.get(`/workshops/${form.workshopId}/services`).then((r) => setServices(r.data))
   }, [form.workshopId])
 
+  const toggleService = (serviceId) => {
+    setForm((prev) => {
+      const current = new Set(prev.serviceIds || [])
+      const idStr = String(serviceId)
+      if (current.has(idStr)) current.delete(idStr)
+      else current.add(idStr)
+      return { ...prev, serviceIds: Array.from(current) }
+    })
+  }
+
   const buildDefaultSelection = (items = []) => {
     const selected = new Set()
     const choiceGroups = {}
@@ -192,113 +202,151 @@ export default function MyAppointmentsPage() {
     <div>
       <h1>Мои записи</h1>
       <div className="stack">
-        <form className="card form-grid" onSubmit={create}>
-          <select value={form.workshopId} onChange={(e) => setForm({ ...form, workshopId: e.target.value, serviceIds: [] })}>
-            <option value="">Выберите салон</option>
-            {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
-          </select>
-          <select value={form.carId} onChange={(e) => setForm({ ...form, carId: e.target.value })}>
-            <option value="">Выберите авто</option>
-            {cars.map((c) => <option key={c.id} value={c.id}>{c.brand} {c.model} ({c.plateNumber})</option>)}
-          </select>
-          <select
-            multiple
-            value={form.serviceIds}
-            onChange={(e) => setForm({ ...form, serviceIds: Array.from(e.target.selectedOptions).map((o) => o.value) })}
-          >
-            {services.map((s) => <option key={s.id} value={s.id}>{s.name}</option>)}
-          </select>
-          {(form.serviceIds || []).length > 0 && (
-            <div className="card">
-              <h4>Состав выбранных услуг</h4>
-              <p className="muted">Можно отказаться от материалов студии и выбрать опции (если доступны).</p>
-              <div className="stack">
-                {(form.serviceIds || []).map((sidRaw) => {
-                  const serviceId = Number(sidRaw)
-                  const service = services.find((x) => x.id === serviceId)
-                  const items = serviceItemsById[serviceId] || []
-                  const hasItems = items.length > 0
+        <form className="card booking-form" onSubmit={create}>
+          <div className="booking-grid">
+            <div className="stack">
+              <Field label="Салон" value={form.workshopId}>
+                <select value={form.workshopId} onChange={(e) => setForm({ ...form, workshopId: e.target.value, serviceIds: [] })}>
+                  <option value="">Выберите салон</option>
+                  {workshops.map((w) => <option key={w.id} value={w.id}>{w.name}</option>)}
+                </select>
+              </Field>
+              <Field label="Автомобиль" value={form.carId}>
+                <select value={form.carId} onChange={(e) => setForm({ ...form, carId: e.target.value })}>
+                  <option value="">Выберите авто</option>
+                  {cars.map((c) => <option key={c.id} value={c.id}>{c.brand} {c.model} ({c.plateNumber})</option>)}
+                </select>
+              </Field>
+              <Field label="Дата и время" value={form.scheduledStart}>
+                <input type="datetime-local" value={form.scheduledStart} onChange={(e) => setForm({ ...form, scheduledStart: e.target.value })} />
+              </Field>
+              <Field label="Комментарий" value={form.clientComment}>
+                <input placeholder="Комментарий" value={form.clientComment} onChange={(e) => setForm({ ...form, clientComment: e.target.value })} />
+              </Field>
+            </div>
 
-                  const groups = {}
-                  for (const it of items) {
-                    if (it.kind === 'CHOICE_OPTION' && it.choiceGroupKey) {
-                      groups[it.choiceGroupKey] = groups[it.choiceGroupKey] || []
-                      groups[it.choiceGroupKey].push(it)
-                    }
-                  }
-
-                  const optionals = items.filter((x) => x.kind === 'OPTIONAL')
+            <div className="stack">
+              <div className="section-head">
+                <h3>Выберите услуги</h3>
+                <span className="muted">{services.length ? `${services.length} доступно` : 'Сначала выберите салон'}</span>
+              </div>
+              <div className="service-list">
+                {services.map((s) => {
+                  const checked = (form.serviceIds || []).includes(String(s.id))
                   return (
-                    <div className="card" key={serviceId}>
-                      <div className="section-head">
-                        <h4 className="text-white">{service?.name || `Услуга #${serviceId}`}</h4>
-                        <span className="muted">{hasItems ? 'Настраиваемая' : 'Без доп. пунктов'}</span>
+                    <label key={s.id} className={`service-item ${checked ? 'selected' : ''}`}>
+                      <input type="checkbox" checked={checked} onChange={() => toggleService(s.id)} />
+                      <div className="service-info">
+                        <strong className="text-white">{s.name}</strong>
+                        {s.description && <span className="muted">{s.description}</span>}
                       </div>
-
-                      {hasItems && (
-                        <div className="stack">
-                          {Object.entries(groups).map(([gk, opts]) => (
-                            <div key={gk} className="card">
-                              <p className="muted">Выбор: <strong className="text-white">{groupLabel(gk)}</strong></p>
-                              <div className="stack">
-                                {opts.map((it) => (
-                                  <label key={it.id} className="flex items-center justify-between gap-3">
-                                    <span className="flex items-center gap-2">
-                                      <input
-                                        type="radio"
-                                        name={`group-${serviceId}-${gk}`}
-                                        checked={isSelected(serviceId, it.id)}
-                                        onChange={() => chooseInGroup(serviceId, gk, it.id)}
-                                      />
-                                      <span className="text-white/90">{it.name}</span>
-                                    </span>
-                                    <span className="muted">{it.price} ₽</span>
-                                  </label>
-                                ))}
-                              </div>
-                            </div>
-                          ))}
-
-                          {optionals.length > 0 && (
-                            <div className="card">
-                              <p className="muted">Опции</p>
-                              <div className="stack">
-                                {optionals.map((it) => (
-                                  <label key={it.id} className="flex items-center justify-between gap-3">
-                                    <span className="flex items-center gap-2">
-                                      <input
-                                        type="checkbox"
-                                        checked={isSelected(serviceId, it.id)}
-                                        onChange={() => toggleOptional(serviceId, it.id)}
-                                      />
-                                      <span className="text-white/90">{it.name}</span>
-                                    </span>
-                                    <span className="muted">{it.price} ₽</span>
-                                  </label>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      {!hasItems && (
-                        <p className="muted">Стоимость: {service?.price} ₽</p>
-                      )}
-                    </div>
+                      <div className="service-meta">
+                        <span className="text-white">{s.price} ₽</span>
+                        <span className="muted">{s.durationMinutes} мин</span>
+                      </div>
+                    </label>
                   )
                 })}
-              </div>
-              <div className="section-head" style={{ marginTop: 12 }}>
-                <strong className="text-white">Итого: {calcTotal()} ₽</strong>
+                {!services.length && <p className="muted">Выберите салон, чтобы увидеть список услуг.</p>}
               </div>
             </div>
-          )}
-          <input type="datetime-local" value={form.scheduledStart} onChange={(e) => setForm({ ...form, scheduledStart: e.target.value })} />
-          <Field label="Комментарий" value={form.clientComment}>
-            <input placeholder="Комментарий" value={form.clientComment} onChange={(e) => setForm({ ...form, clientComment: e.target.value })} />
-          </Field>
-          <button type="submit">Записаться</button>
+          </div>
+
+          <div className="booking-footer">
+            <div className="booking-total">
+              <div className="muted">Итого</div>
+              <div className="text-white"><strong>{calcTotal()} ₽</strong></div>
+            </div>
+            <button type="submit" disabled={!form.workshopId || !form.carId || !form.scheduledStart || !(form.serviceIds || []).length}>
+              Записаться
+            </button>
+          </div>
         </form>
+
+        {(form.serviceIds || []).length > 0 && (
+          <div className="card booking-composition">
+            <div className="section-head">
+              <h2>Состав выбранных услуг</h2>
+              <span className="muted">Можно отказаться от материалов студии и выбрать опции</span>
+            </div>
+            <div className="stack">
+              {(form.serviceIds || []).map((sidRaw) => {
+                const serviceId = Number(sidRaw)
+                const service = services.find((x) => x.id === serviceId)
+                const items = serviceItemsById[serviceId] || []
+                const hasItems = items.length > 0
+
+                const groups = {}
+                for (const it of items) {
+                  if (it.kind === 'CHOICE_OPTION' && it.choiceGroupKey) {
+                    groups[it.choiceGroupKey] = groups[it.choiceGroupKey] || []
+                    groups[it.choiceGroupKey].push(it)
+                  }
+                }
+
+                const optionals = items.filter((x) => x.kind === 'OPTIONAL')
+                return (
+                  <div className="card" key={serviceId}>
+                    <div className="section-head">
+                      <h4 className="text-white">{service?.name || `Услуга #${serviceId}`}</h4>
+                      <span className="muted">{hasItems ? 'Настраиваемая' : 'Без доп. пунктов'}</span>
+                    </div>
+
+                    {hasItems && (
+                      <div className="stack">
+                        {Object.entries(groups).map(([gk, opts]) => (
+                          <div key={gk} className="card">
+                            <p className="muted">Выбор: <strong className="text-white">{groupLabel(gk)}</strong></p>
+                            <div className="stack">
+                              {opts.map((it) => (
+                                <label key={it.id} className="flex items-center justify-between gap-3">
+                                  <span className="flex items-center gap-2">
+                                    <input
+                                      type="radio"
+                                      name={`group-${serviceId}-${gk}`}
+                                      checked={isSelected(serviceId, it.id)}
+                                      onChange={() => chooseInGroup(serviceId, gk, it.id)}
+                                    />
+                                    <span className="text-white/90">{it.name}</span>
+                                  </span>
+                                  <span className="muted">{it.price} ₽</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+
+                        {optionals.length > 0 && (
+                          <div className="card">
+                            <p className="muted">Опции</p>
+                            <div className="stack">
+                              {optionals.map((it) => (
+                                <label key={it.id} className="flex items-center justify-between gap-3">
+                                  <span className="flex items-center gap-2">
+                                    <input
+                                      type="checkbox"
+                                      checked={isSelected(serviceId, it.id)}
+                                      onChange={() => toggleOptional(serviceId, it.id)}
+                                    />
+                                    <span className="text-white/90">{it.name}</span>
+                                  </span>
+                                  <span className="muted">{it.price} ₽</span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {!hasItems && (
+                      <p className="muted">Стоимость: {service?.price} ₽</p>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="grid">
           {appointments.map((a) => (
