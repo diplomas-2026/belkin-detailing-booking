@@ -420,7 +420,7 @@
   .option-list { display: grid; gap: 8px; }
   .option-row {
     display: grid;
-    grid-template-columns: 22px 1fr auto;
+    grid-template-columns: 1fr auto;
     gap: 10px;
     align-items: center;
     padding: 10px 12px;

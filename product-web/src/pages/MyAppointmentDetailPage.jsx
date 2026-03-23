@@ -176,7 +176,6 @@ export default function MyAppointmentDetailPage() {
                         <div className="stack">
                           {items.map((it) => (
                             <div key={it.id} className="option-row">
-                              <span className="muted">{it.kind === 'MANDATORY' ? 'Обязательно' : it.kind === 'OPTIONAL' ? 'Опция' : 'Выбор'}</span>
                               <span className="option-label text-white/90">{it.name}</span>
                               <span className="option-price muted">{it.price} ₽</span>
                             </div>

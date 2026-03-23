@@ -9,6 +9,7 @@ export default function MyCarDetailPage() {
   const [error, setError] = useState('')
   const [workshops, setWorkshops] = useState([])
   const [services, setServices] = useState([])
+  const [appointments, setAppointments] = useState([])
   const [workshopId, setWorkshopId] = useState('')
   const [serviceId, setServiceId] = useState('')
 
@@ -18,6 +19,12 @@ export default function MyCarDetailPage() {
       .then((r) => setCar(r.data))
       .catch(() => setError('Не удалось загрузить автомобиль'))
   }, [id])
+
+  useEffect(() => {
+    api.get('/appointments/my')
+      .then((r) => setAppointments(r.data || []))
+      .catch(() => setAppointments([]))
+  }, [])
 
   useEffect(() => {
     api.get('/workshops').then((r) => setWorkshops(r.data)).catch(() => {})
@@ -88,6 +95,31 @@ export default function MyCarDetailPage() {
             </div>
             <p className="muted">Салон и услуга будут подставлены в форме записи.</p>
           </div>
+        </div>
+      )}
+
+      {car && (
+        <div className="card">
+          <div className="section-head">
+            <h2>История записей</h2>
+            <span className="muted">Все записи по этому автомобилю</span>
+          </div>
+          {appointments.filter((a) => String(a.carId) === String(car.id)).length === 0 ? (
+            <p className="muted">Пока нет записей по этому автомобилю.</p>
+          ) : (
+            <div className="grid">
+              {appointments
+                .filter((a) => String(a.carId) === String(car.id))
+                .map((a) => (
+                  <Link key={a.id} className="card card-link" to={`/my-appointments/${a.id}`}>
+                    <h4>{a.serviceName}</h4>
+                    {a.services?.length > 1 && <p className="muted">+ ещё {a.services.length - 1} услуг</p>}
+                    <p>{a.workshopName}</p>
+                    <p>{new Date(a.scheduledStart).toLocaleString('ru-RU')}</p>
+                  </Link>
+                ))}
+            </div>
+          )}
         </div>
       )}
     </div>
