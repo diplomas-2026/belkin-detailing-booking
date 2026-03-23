@@ -14,6 +14,8 @@ export default function WorkshopDetailPage() {
   const [aiFeedback, setAiFeedback] = useState('')
   const [budget, setBudget] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [runResult, setRunResult] = useState(null)
+  const [flash, setFlash] = useState(false)
 
   useEffect(() => {
     api.get(`/workshops/${id}`).then((r) => setWorkshop(r.data))
@@ -27,19 +29,40 @@ export default function WorkshopDetailPage() {
     }
   }, [id])
 
+  useEffect(() => {
+    if (!aiFeedback) return
+    setFlash(true)
+    const t = setTimeout(() => setFlash(false), 900)
+    return () => clearTimeout(t)
+  }, [aiFeedback])
+
   if (!workshop) return <p>Загрузка...</p>
 
   const runFeedback = async () => {
     if (loading || user?.role !== 'ADMIN') return
     setLoading(true)
+    setRunResult(null)
     try {
-      await api.post(`/admin/ai/feedback/workshops/${id}/run`)
+      const res = await api.post(`/admin/ai/feedback/workshops/${id}/run`)
       const [fb, b] = await Promise.all([
         api.get(`/workshops/${id}/feedback`).catch(() => ({ data: { summary: '' } })),
         api.get('/admin/ai/budget').catch(() => ({ data: null })),
       ])
       setAiFeedback(fb.data?.summary || '')
       setBudget(b.data)
+      const note = res?.data?.note || 'Готово'
+      const updated = Number(res?.data?.processedOrUpdated || 0) > 0
+      setRunResult({
+        kind: updated ? 'success' : 'info',
+        title: updated ? 'AI‑фидбэк обновлён' : 'AI‑фидбэк не изменился',
+        message: note,
+      })
+    } catch (e) {
+      const msg =
+        e?.response?.data?.message ||
+        e?.message ||
+        'Не удалось запустить обновление AI‑фидбэка'
+      setRunResult({ kind: 'error', title: 'Ошибка', message: msg })
     } finally {
       setLoading(false)
     }
@@ -50,6 +73,51 @@ export default function WorkshopDetailPage() {
       <section className="card">
         <h1>{workshop.name}</h1>
         {workshop.description && <p>{workshop.description}</p>}
+
+        {(aiFeedback || user?.role === 'ADMIN') && (
+          <div className={`ai-feedback ${flash ? 'ai-feedback-flash' : ''}`}>
+            <div className="ai-feedback-main">
+              <div className="ai-feedback-title">
+                <span className="ai-chip">AI</span>
+                <h3 className="text-white">AI‑фидбэк салона</h3>
+              </div>
+              {aiFeedback ? (
+                <p className="ai-feedback-text">{aiFeedback}</p>
+              ) : (
+                <p className="muted">Пока нет AI‑фидбэка. Он появится после первых одобренных отзывов.</p>
+              )}
+              {runResult && (
+                <div className={`ai-feedback-result ${runResult.kind}`}>
+                  <div className="ai-feedback-result-title">{runResult.title}</div>
+                  <div className="ai-feedback-result-msg">{runResult.message}</div>
+                </div>
+              )}
+            </div>
+
+            {user?.role === 'ADMIN' && (
+              <div className="ai-feedback-actions">
+                {budget && (
+                  <div className="ai-budget">
+                    <div className="muted">Лимит на сегодня</div>
+                    <div className="text-white">
+                      <strong>{budget.used}</strong>/{budget.limit} (осталось <strong>{budget.remaining}</strong>)
+                    </div>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  className="ai-feedback-btn"
+                  onClick={runFeedback}
+                  disabled={loading}
+                  aria-busy={loading ? 'true' : 'false'}
+                >
+                  {loading ? 'Обновляем…' : 'Обновить AI‑фидбэк'}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         <div className="grid">
           <div className="card">
             <h4>Адрес</h4>
@@ -130,18 +198,6 @@ export default function WorkshopDetailPage() {
 
       <section className="card">
         <h2>Отзывы</h2>
-        {aiFeedback && <p className="muted">AI‑фидбэк: {aiFeedback}</p>}
-        {user?.role === 'ADMIN' && (
-          <div className="card">
-            <div className="section-head">
-              <h3>AI‑фидбэк салона</h3>
-              {budget && <span className="muted">Лимит на сегодня: <strong className="text-white">{budget.used}/{budget.limit}</strong> (осталось <strong className="text-white">{budget.remaining}</strong>)</span>}
-            </div>
-            <button type="button" onClick={runFeedback} disabled={loading}>
-              {loading ? 'Запуск…' : 'Обновить AI‑фидбэк салона'}
-            </button>
-          </div>
-        )}
         <div className="grid">
           {reviews.map((review) => (
             <div key={review.id} className="card">
