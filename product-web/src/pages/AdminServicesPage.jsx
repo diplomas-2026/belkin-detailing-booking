@@ -207,9 +207,7 @@ export default function AdminServicesPage() {
                     Пример: «Материалы» — варианты «своя химия» / «химия салона». Выбор будет виден клиенту при записи.
                   </div>
                 </div>
-              ) : (
-                <div className="muted text-xs">Группа выбора нужна только для пункта «Вариант выбора».</div>
-              )}
+              ) : null}
               <label className="flex items-center gap-3">
                 <input type="checkbox" checked={!!itemForm.defaultSelected} onChange={(e) => setItemForm({ ...itemForm, defaultSelected: e.target.checked })} />
                 <span className="text-white/80">Выбрано по умолчанию</span>
