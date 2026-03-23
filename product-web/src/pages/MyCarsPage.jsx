@@ -4,6 +4,16 @@ import api from '../api'
 import Field from '../components/ui/Field'
 
 const initial = { brand: '', model: '', year: 2022, plateNumber: '', color: '', notes: '' }
+const brandOptions = [
+  'BMW', 'Mercedes-Benz', 'Audi', 'Toyota', 'Lexus', 'Volkswagen', 'Skoda', 'Kia', 'Hyundai', 'Nissan',
+  'Renault', 'Mazda', 'Ford', 'Chevrolet', 'Volvo', 'Porsche', 'Land Rover', 'Geely', 'Chery', 'Haval',
+]
+const modelOptions = [
+  '3 Series', '5 Series', 'C-Class', 'E-Class', 'A4', 'A6', 'Camry', 'Corolla', 'RAV4', 'Land Cruiser',
+  'Octavia', 'Rapid', 'Kodiaq', 'Sportage', 'Sorento', 'Tucson', 'Santa Fe', 'Qashqai', 'X-Trail', 'CX-5',
+]
+const colorOptions = ['Чёрный', 'Белый', 'Серый', 'Серебристый', 'Синий', 'Красный', 'Зелёный', 'Бордовый', 'Коричневый', 'Бежевый']
+const yearOptions = Array.from({ length: 21 }, (_, i) => String(2026 - i))
 
 export default function MyCarsPage() {
   const [cars, setCars] = useState([])
@@ -25,24 +35,37 @@ export default function MyCarsPage() {
       <div className="stack">
         <form className="card form-grid" onSubmit={create}>
           <Field label="Марка" value={form.brand}>
-            <input placeholder="Марка" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
+            <input list="brand-options" placeholder="Марка" value={form.brand} onChange={(e) => setForm({ ...form, brand: e.target.value })} />
           </Field>
           <Field label="Модель" value={form.model}>
-            <input placeholder="Модель" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
+            <input list="model-options" placeholder="Модель" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
           </Field>
           <Field label="Год" value={form.year}>
-            <input placeholder="Год" type="number" value={form.year} onChange={(e) => setForm({ ...form, year: Number(e.target.value) })} />
+            <input list="year-options" placeholder="Год" type="number" value={form.year} onChange={(e) => setForm({ ...form, year: Number(e.target.value) })} />
           </Field>
           <Field label="Госномер" value={form.plateNumber}>
             <input placeholder="Госномер" value={form.plateNumber} onChange={(e) => setForm({ ...form, plateNumber: e.target.value })} />
           </Field>
           <Field label="Цвет" value={form.color}>
-            <input placeholder="Цвет" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} />
+            <input list="color-options" placeholder="Цвет" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} />
           </Field>
           <Field label="Примечание" value={form.notes}>
             <input placeholder="Примечание" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
           </Field>
           <button type="submit">Добавить авто</button>
+
+          <datalist id="brand-options">
+            {brandOptions.map((x) => <option key={x} value={x} />)}
+          </datalist>
+          <datalist id="model-options">
+            {modelOptions.map((x) => <option key={x} value={x} />)}
+          </datalist>
+          <datalist id="color-options">
+            {colorOptions.map((x) => <option key={x} value={x} />)}
+          </datalist>
+          <datalist id="year-options">
+            {yearOptions.map((x) => <option key={x} value={x} />)}
+          </datalist>
         </form>
         <div className="grid">
           {cars.map((car) => (
