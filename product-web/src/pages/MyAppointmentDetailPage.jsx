@@ -12,10 +12,6 @@ export default function MyAppointmentDetailPage() {
   const [submitting, setSubmitting] = useState(false)
   const [workshopForm, setWorkshopForm] = useState({ rating: 5, comment: '' })
   const [masterForm, setMasterForm] = useState({ rating: 5, comment: '' })
-  const [paymentOpen, setPaymentOpen] = useState(false)
-  const [paymentBusy, setPaymentBusy] = useState(false)
-  const [paymentError, setPaymentError] = useState('')
-  const [payForm, setPayForm] = useState({ cardNumber: '', exp: '', cvc: '', holder: '' })
 
   useEffect(() => {
     setError('')
@@ -23,8 +19,6 @@ export default function MyAppointmentDetailPage() {
       .then((r) => setAppointment(r.data))
       .catch(() => setError('Не удалось загрузить запись'))
   }, [id])
-
-  const reloadAppointment = () => api.get(`/appointments/${id}`).then((r) => setAppointment(r.data)).catch(() => {})
 
   const loadReviews = () => api.get(`/appointments/${id}/reviews`).then((r) => setReviews(r.data)).catch(() => setReviews([]))
 
@@ -74,37 +68,10 @@ export default function MyAppointmentDetailPage() {
     }
   }
 
-  const payNow = async () => {
-    if (paymentBusy || !appointment) return
-    setPaymentError('')
-    setPaymentBusy(true)
-    try {
-      await api.post(`/appointments/${appointment.id}/payment/pay-now`, payForm)
-      setPaymentOpen(false)
-      setPayForm({ cardNumber: '', exp: '', cvc: '', holder: '' })
-      reloadAppointment()
-      alert('Оплата принята. Статус обновлён на "Оплачено".')
-    } catch (e) {
-      setPaymentError('Не удалось выполнить оплату')
-    } finally {
-      setPaymentBusy(false)
-    }
-  }
-
-  const payInWorkshop = async () => {
-    if (paymentBusy || !appointment) return
-    setPaymentError('')
-    setPaymentBusy(true)
-    try {
-      await api.post(`/appointments/${appointment.id}/payment/in-workshop`)
-      reloadAppointment()
-      alert('Отметили способ оплаты: в салоне.')
-    } catch {
-      setPaymentError('Не удалось обновить способ оплаты')
-    } finally {
-      setPaymentBusy(false)
-    }
-  }
+  const paymentMethodLabel = (() => {
+    if (!appointment?.paymentMethod) return 'оплата в салоне (по умолчанию)'
+    return appointment.paymentMethod === 'NOW' ? 'оплата картой' : 'оплата в салоне'
+  })()
 
   return (
     <div className="stack">
@@ -159,44 +126,11 @@ export default function MyAppointmentDetailPage() {
                     {appointment.paymentStatus === 'PAID' ? 'Оплачено' : 'Не оплачено'}
                   </span>
                 </div>
-                {appointment.paymentMethod && (
-                  <p className="muted">
-                    Способ: {appointment.paymentMethod === 'NOW' ? 'оплатить сейчас' : 'оплатить в салоне'}
-                  </p>
-                )}
+                <p className="muted">Способ: {paymentMethodLabel}</p>
                 {appointment.paymentStatus !== 'PAID' && appointment.status !== 'CANCELLED' && (
                   <div className="stack">
-                    <div className="flex gap-2 flex-wrap">
-                      <button type="button" onClick={() => setPaymentOpen((v) => !v)} disabled={paymentBusy}>
-                        {paymentOpen ? 'Скрыть форму' : 'Оплатить сейчас'}
-                      </button>
-                      <button type="button" className="secondary" onClick={payInWorkshop} disabled={paymentBusy}>
-                        Оплатить в салоне
-                      </button>
-                    </div>
-                    {paymentError && <p className="error">{paymentError}</p>}
-                    {paymentOpen && (
-                      <div className="card">
-                        <h4>Данные карты (не сохраняем)</h4>
-                        <div className="form-grid">
-                          <Field label="Номер карты" value={payForm.cardNumber}>
-                            <input placeholder="Номер карты" value={payForm.cardNumber} onChange={(e) => setPayForm({ ...payForm, cardNumber: e.target.value })} />
-                          </Field>
-                          <Field label="Срок действия" value={payForm.exp}>
-                            <input placeholder="MM/YY" value={payForm.exp} onChange={(e) => setPayForm({ ...payForm, exp: e.target.value })} />
-                          </Field>
-                          <Field label="CVC" value={payForm.cvc}>
-                            <input placeholder="CVC" value={payForm.cvc} onChange={(e) => setPayForm({ ...payForm, cvc: e.target.value })} />
-                          </Field>
-                          <Field label="Держатель" value={payForm.holder}>
-                            <input placeholder="Держатель" value={payForm.holder} onChange={(e) => setPayForm({ ...payForm, holder: e.target.value })} />
-                          </Field>
-                          <button type="button" onClick={payNow} disabled={paymentBusy || !payForm.cardNumber || !payForm.exp || !payForm.cvc || !payForm.holder}>
-                            {paymentBusy ? 'Оплата…' : 'Подтвердить оплату'}
-                          </button>
-                        </div>
-                      </div>
-                    )}
+                    <p className="muted">Данные карты не сохраняются.</p>
+                    <Link className="btn" to={`/my-appointments/${appointment.id}/pay`}>Оплатить сейчас</Link>
                   </div>
                 )}
               </div>
