@@ -12,8 +12,7 @@ export default function AdminServicesPage() {
   const [selectedServiceId, setSelectedServiceId] = useState(null)
   const [items, setItems] = useState([])
   const [itemForm, setItemForm] = useState(initialItem)
-  const [choiceGroupMode, setChoiceGroupMode] = useState('none') // none | preset | custom
-  const [choiceGroupPreset, setChoiceGroupPreset] = useState('')
+  const [choiceGroupKey, setChoiceGroupKey] = useState('')
   const [choiceGroupCustom, setChoiceGroupCustom] = useState('')
   const [busy, setBusy] = useState(false)
 
@@ -51,11 +50,17 @@ export default function AdminServicesPage() {
   const selectService = async (serviceId) => {
     setSelectedServiceId(serviceId)
     setItemForm(initialItem)
-    setChoiceGroupMode('none')
-    setChoiceGroupPreset('')
+    setChoiceGroupKey('')
     setChoiceGroupCustom('')
     await loadItems(serviceId)
   }
+
+  useEffect(() => {
+    if (itemForm.kind !== 'CHOICE_OPTION') {
+      setChoiceGroupKey('')
+      setChoiceGroupCustom('')
+    }
+  }, [itemForm.kind])
 
   const addItem = async (e) => {
     e.preventDefault()
@@ -66,9 +71,9 @@ export default function AdminServicesPage() {
       const nextGroupKey =
         itemForm.kind !== 'CHOICE_OPTION'
           ? null
-          : choiceGroupMode === 'custom'
+          : choiceGroupKey === '__custom__'
             ? (choiceGroupCustom || '').trim() || null
-            : (choiceGroupPreset || '').trim() || null
+            : (choiceGroupKey || '').trim() || null
       await api.post(`/admin/services/${selectedServiceId}/items`, {
         ...itemForm,
         price: Number(itemForm.price),
@@ -76,8 +81,7 @@ export default function AdminServicesPage() {
         choiceGroupKey: nextGroupKey,
       })
       setItemForm(initialItem)
-      setChoiceGroupMode('none')
-      setChoiceGroupPreset('')
+      setChoiceGroupKey('')
       setChoiceGroupCustom('')
       await loadItems(selectedServiceId)
     } finally {
@@ -97,6 +101,15 @@ export default function AdminServicesPage() {
     return map[key] || key
   }
 
+  const kindLabel = (k) => {
+    const map = {
+      MANDATORY: 'Обязательный',
+      OPTIONAL: 'Опциональный',
+      CHOICE_OPTION: 'Вариант выбора',
+    }
+    return map[k] || k
+  }
+
   const existingGroupKeys = Array.from(new Set((items || []).map((x) => x.choiceGroupKey).filter(Boolean)))
   const presets = [
     { key: 'materials', label: 'Материалы' },
@@ -109,6 +122,14 @@ export default function AdminServicesPage() {
       .filter((k) => !['materials', 'paste', 'ceramic', 'film', 'zone', 'chem'].includes(k))
       .map((k) => ({ key: k, label: groupLabel(k) })),
   ]
+
+  const nextChoiceKey =
+    itemForm.kind !== 'CHOICE_OPTION'
+      ? null
+      : choiceGroupKey === '__custom__'
+        ? (choiceGroupCustom || '').trim()
+        : (choiceGroupKey || '').trim()
+  const canSubmitItem = !!itemForm.name && (itemForm.kind !== 'CHOICE_OPTION' || !!nextChoiceKey)
 
   const deleteItem = async (itemId) => {
     if (!selectedServiceId || busy) return
@@ -171,28 +192,23 @@ export default function AdminServicesPage() {
 
               {itemForm.kind === 'CHOICE_OPTION' ? (
                 <div className="stack">
-                  <div className="muted">Группа выбора</div>
-                  <div className="form-grid">
-                    <select value={choiceGroupMode} onChange={(e) => setChoiceGroupMode(e.target.value)}>
-                      <option value="none">Выберите…</option>
-                      <option value="preset">Из списка</option>
-                      <option value="custom">Новая группа</option>
-                    </select>
-                    {choiceGroupMode === 'preset' && (
-                      <select value={choiceGroupPreset} onChange={(e) => setChoiceGroupPreset(e.target.value)}>
-                        <option value="">Выберите группу</option>
-                        {presets.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
-                      </select>
-                    )}
-                    {choiceGroupMode === 'custom' && (
-                      <Field label="Ключ (латиница)" value={choiceGroupCustom}>
-                        <input placeholder="например: ceramic" value={choiceGroupCustom} onChange={(e) => setChoiceGroupCustom(e.target.value)} />
-                      </Field>
-                    )}
+                  <div className="muted">Группа выбора (объединяет варианты)</div>
+                  <select value={choiceGroupKey} onChange={(e) => setChoiceGroupKey(e.target.value)}>
+                    <option value="">Выберите группу</option>
+                    {presets.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
+                    <option value="__custom__">Новая группа…</option>
+                  </select>
+                  {choiceGroupKey === '__custom__' && (
+                    <Field label="Ключ группы (латиница)" value={choiceGroupCustom}>
+                      <input placeholder="например: ceramic" value={choiceGroupCustom} onChange={(e) => setChoiceGroupCustom(e.target.value)} />
+                    </Field>
+                  )}
+                  <div className="muted text-xs">
+                    Пример: «Материалы» — варианты «своя химия» / «химия салона». Выбор будет виден клиенту при записи.
                   </div>
                 </div>
               ) : (
-                <div className="muted">Группа выбора: —</div>
+                <div className="muted text-xs">Группа выбора нужна только для пункта «Вариант выбора».</div>
               )}
               <label className="flex items-center gap-3">
                 <input type="checkbox" checked={!!itemForm.defaultSelected} onChange={(e) => setItemForm({ ...itemForm, defaultSelected: e.target.checked })} />
@@ -201,7 +217,9 @@ export default function AdminServicesPage() {
               <Field label="Сортировка" value={itemForm.sortOrder}>
                 <input type="number" placeholder="Сортировка" value={itemForm.sortOrder} onChange={(e) => setItemForm({ ...itemForm, sortOrder: e.target.value })} />
               </Field>
-              <button type="submit" disabled={busy || !itemForm.name}>{busy ? 'Добавление…' : 'Добавить пункт'}</button>
+              <button type="submit" disabled={busy || !canSubmitItem}>
+                {busy ? 'Добавление…' : itemForm.kind === 'CHOICE_OPTION' && !nextChoiceKey ? 'Выберите группу' : 'Добавить пункт'}
+              </button>
             </form>
 
             <div className="stack">
@@ -212,7 +230,7 @@ export default function AdminServicesPage() {
                     <button type="button" className="danger" onClick={() => deleteItem(it.id)} disabled={busy}>Удалить</button>
                   </div>
                   <p className="muted">
-                    {it.kind}
+                    {kindLabel(it.kind)}
                     {it.choiceGroupKey ? ` • группа: ${groupLabel(it.choiceGroupKey)}` : ''}
                     {it.defaultSelected ? ' • по умолчанию' : ''}
                   </p>
