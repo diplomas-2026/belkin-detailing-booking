@@ -295,21 +295,22 @@ export default function MyAppointmentsPage() {
                     {hasItems && (
                       <div className="stack">
                         {Object.entries(groups).map(([gk, opts]) => (
-                          <div key={gk} className="card">
-                            <p className="muted">Выбор: <strong className="text-white">{groupLabel(gk)}</strong></p>
-                            <div className="stack">
+                          <div key={gk} className="option-group">
+                            <div className="option-group-head">
+                              <span className="muted">Выбор</span>
+                              <strong className="text-white">{groupLabel(gk)}</strong>
+                            </div>
+                            <div className="option-list">
                               {opts.map((it) => (
-                                <label key={it.id} className="flex items-center justify-between gap-3">
-                                  <span className="flex items-center gap-2">
-                                    <input
-                                      type="radio"
-                                      name={`group-${serviceId}-${gk}`}
-                                      checked={isSelected(serviceId, it.id)}
-                                      onChange={() => chooseInGroup(serviceId, gk, it.id)}
-                                    />
-                                    <span className="text-white/90">{it.name}</span>
-                                  </span>
-                                  <span className="muted">{it.price} ₽</span>
+                                <label key={it.id} className={`option-row ${isSelected(serviceId, it.id) ? 'selected' : ''}`}>
+                                  <input
+                                    type="radio"
+                                    name={`group-${serviceId}-${gk}`}
+                                    checked={isSelected(serviceId, it.id)}
+                                    onChange={() => chooseInGroup(serviceId, gk, it.id)}
+                                  />
+                                  <span className="option-label text-white/90">{it.name}</span>
+                                  <span className="option-price muted">{it.price} ₽</span>
                                 </label>
                               ))}
                             </div>
@@ -317,20 +318,20 @@ export default function MyAppointmentsPage() {
                         ))}
 
                         {optionals.length > 0 && (
-                          <div className="card">
-                            <p className="muted">Опции</p>
-                            <div className="stack">
+                          <div className="option-group">
+                            <div className="option-group-head">
+                              <span className="muted">Опции</span>
+                            </div>
+                            <div className="option-list">
                               {optionals.map((it) => (
-                                <label key={it.id} className="flex items-center justify-between gap-3">
-                                  <span className="flex items-center gap-2">
-                                    <input
-                                      type="checkbox"
-                                      checked={isSelected(serviceId, it.id)}
-                                      onChange={() => toggleOptional(serviceId, it.id)}
-                                    />
-                                    <span className="text-white/90">{it.name}</span>
-                                  </span>
-                                  <span className="muted">{it.price} ₽</span>
+                                <label key={it.id} className={`option-row ${isSelected(serviceId, it.id) ? 'selected' : ''}`}>
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected(serviceId, it.id)}
+                                    onChange={() => toggleOptional(serviceId, it.id)}
+                                  />
+                                  <span className="option-label text-white/90">{it.name}</span>
+                                  <span className="option-price muted">{it.price} ₽</span>
                                 </label>
                               ))}
                             </div>

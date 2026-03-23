@@ -404,6 +404,39 @@
   }
   .booking-total { display: grid; gap: 2px; }
   .booking-composition { padding: 18px; }
+  .option-group {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 12px;
+    background: var(--surface);
+  }
+  .option-group-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 13px;
+  }
+  .option-list { display: grid; gap: 8px; }
+  .option-row {
+    display: grid;
+    grid-template-columns: 22px 1fr auto;
+    gap: 10px;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    background: rgba(255,255,255,0.02);
+    cursor: pointer;
+    transition: background 120ms ease, border-color 120ms ease;
+  }
+  .option-row:hover { background: var(--surface-2); border-color: var(--border-strong); }
+  .option-row.selected {
+    border-color: rgba(245, 158, 11, 0.40);
+    box-shadow: 0 8px 18px rgba(0,0,0,0.20), 0 0 0 1px rgba(245, 158, 11, 0.10) inset;
+  }
+  .option-label { font-weight: 600; }
+  .option-price { text-align: right; }
   @media (max-width: 980px) {
     .booking-grid { grid-template-columns: 1fr; }
     .service-list { max-height: none; }
