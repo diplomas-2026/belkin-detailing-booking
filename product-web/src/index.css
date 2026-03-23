@@ -327,15 +327,20 @@
   .portrait-lg { width: 140px; height: 180px; border-radius: 16px; }
 
   .car-thumb {
-    width: 100%;
-    max-width: 260px;
+    width: 220px;
     height: auto;
     display: block;
-    margin-bottom: 10px;
     border-radius: 14px;
     border: 1px solid var(--border);
     background: var(--surface);
   }
+  .car-item {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+  .car-info { display: grid; gap: 6px; }
   .car-hero {
     display: flex;
     gap: 16px;
@@ -350,8 +355,10 @@
     background: var(--surface);
   }
   @media (max-width: 640px) {
+    .car-item { grid-template-columns: 1fr; }
     .car-hero { flex-direction: column; align-items: flex-start; }
     .car-hero-img { width: 100%; max-width: 320px; }
+    .car-thumb { width: 100%; max-width: 320px; }
   }
 
   .booking-form { padding: 18px; }

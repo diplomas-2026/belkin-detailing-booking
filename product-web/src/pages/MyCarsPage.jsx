@@ -78,11 +78,15 @@ export default function MyCarsPage() {
         <div className="grid">
           {cars.map((car) => (
             <div key={car.id} className="card">
-              <img className="car-thumb" src="/images/car-placeholder.png" alt="Автомобиль" loading="lazy" />
-              <h4>{car.brand} {car.model}</h4>
-              <p>{car.year} • {car.plateNumber}</p>
-              <p>{car.color}</p>
-              <Link className="btn secondary" to={`/my-cars/${car.id}`}>Открыть</Link>
+              <div className="car-item">
+                <img className="car-thumb" src="/images/car-placeholder.png" alt="Автомобиль" loading="lazy" />
+                <div className="car-info">
+                  <h4>{car.brand} {car.model}</h4>
+                  <p>{car.year} • {car.plateNumber}</p>
+                  <p>{car.color}</p>
+                  <Link className="btn secondary" to={`/my-cars/${car.id}`}>Открыть</Link>
+                </div>
+              </div>
             </div>
           ))}
         </div>
