@@ -61,7 +61,7 @@ export default function App() {
       <Route path="/my-cars" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyCarsPage /></InLayout></ProtectedRoute>} />
       <Route path="/my-cars/:id" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyCarDetailPage /></InLayout></ProtectedRoute>} />
       <Route path="/my-appointments" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyAppointmentsPage /></InLayout></ProtectedRoute>} />
-      <Route path="/my-appointments/:id" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyAppointmentDetailPage /></InLayout></ProtectedRoute>} />
+      <Route path="/my-appointments/:id" element={<ProtectedRoute roles={['CLIENT', 'MASTER', 'ADMIN']}><InLayout><MyAppointmentDetailPage /></InLayout></ProtectedRoute>} />
       <Route path="/my-appointments/:id/pay" element={<ProtectedRoute roles={['CLIENT']}><InLayout><MyAppointmentPayPage /></InLayout></ProtectedRoute>} />
 
       <Route path="/master/tasks" element={<ProtectedRoute roles={['MASTER']}><InLayout><MasterTasksPage /></InLayout></ProtectedRoute>} />

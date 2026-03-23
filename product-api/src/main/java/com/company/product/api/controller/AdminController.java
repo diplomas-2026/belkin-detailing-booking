@@ -202,6 +202,13 @@ public class AdminController {
         return appointmentRepository.findAll(Sort.by(Sort.Direction.DESC, "scheduledStart")).stream().map(mapper::toAppointmentView).toList();
     }
 
+    @GetMapping("/appointments/{id}")
+    public AppointmentDtos.AppointmentView appointment(@PathVariable Long id) {
+        AppointmentEntity appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Запись не найдена"));
+        return mapper.toAppointmentView(appointment);
+    }
+
     @PatchMapping("/appointments/{id}/assign-master")
     public AppointmentDtos.AppointmentView assignMaster(@PathVariable Long id,
                                                         @Valid @RequestBody AppointmentDtos.AssignMasterRequest request) {

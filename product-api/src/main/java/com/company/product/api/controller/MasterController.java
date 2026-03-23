@@ -50,6 +50,17 @@ public class MasterController {
         return appointmentRepository.findByMasterOrderByScheduledStartDesc(master).stream().map(mapper::toAppointmentView).toList();
     }
 
+    @GetMapping("/appointments/{id}")
+    public AppointmentDtos.AppointmentView appointment(@PathVariable Long id) {
+        MasterEntity master = findCurrentMaster();
+        AppointmentEntity appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(HttpStatus.NOT_FOUND, "Запись не найдена"));
+        if (appointment.getMaster() == null || !appointment.getMaster().getId().equals(master.getId())) {
+            throw new BusinessException(HttpStatus.FORBIDDEN, "Запись не назначена текущему мастеру");
+        }
+        return mapper.toAppointmentView(appointment);
+    }
+
     @PatchMapping("/appointments/{id}/status")
     public AppointmentDtos.AppointmentView changeStatus(@PathVariable Long id,
                                                         @Valid @RequestBody AppointmentDtos.StatusChangeRequest request) {

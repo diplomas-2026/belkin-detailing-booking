@@ -3,9 +3,11 @@ import { Link, useParams } from 'react-router-dom'
 import api from '../api'
 import Field from '../components/ui/Field'
 import { appointmentStatusLabel } from '../utils/appointmentStatus'
+import { getStoredUser } from '../utils/auth'
 
 export default function MyAppointmentDetailPage() {
   const { id } = useParams()
+  const user = getStoredUser()
   const [appointment, setAppointment] = useState(null)
   const [error, setError] = useState('')
   const [reviews, setReviews] = useState([])
@@ -15,16 +17,24 @@ export default function MyAppointmentDetailPage() {
 
   useEffect(() => {
     setError('')
-    api.get(`/appointments/${id}`)
+    const base =
+      user?.role === 'ADMIN' ? '/admin/appointments' :
+      user?.role === 'MASTER' ? '/master/appointments' :
+      '/appointments'
+    api.get(`${base}/${id}`)
       .then((r) => setAppointment(r.data))
       .catch(() => setError('Не удалось загрузить запись'))
-  }, [id])
+  }, [id, user?.role])
 
   const loadReviews = () => api.get(`/appointments/${id}/reviews`).then((r) => setReviews(r.data)).catch(() => setReviews([]))
 
   useEffect(() => {
-    loadReviews()
-  }, [id])
+    if (user?.role === 'CLIENT') {
+      loadReviews()
+    } else {
+      setReviews([])
+    }
+  }, [id, user?.role])
 
   const workshopReview = reviews.find((r) => r.targetType === 'WORKSHOP')
   const masterReview = reviews.find((r) => r.targetType === 'MASTER')
@@ -72,6 +82,14 @@ export default function MyAppointmentDetailPage() {
     if (!appointment?.paymentMethod) return 'оплата в салоне (по умолчанию)'
     return appointment.paymentMethod === 'NOW' ? 'оплата картой' : 'оплата в салоне'
   })()
+
+  const selectedItems = appointment?.selectedItems || []
+  const itemsByService = selectedItems.reduce((acc, it) => {
+    const sid = it.serviceId
+    acc[sid] = acc[sid] || { serviceName: it.serviceName, items: [] }
+    acc[sid].items.push(it)
+    return acc
+  }, {})
 
   return (
     <div className="stack">
@@ -127,7 +145,7 @@ export default function MyAppointmentDetailPage() {
                   </span>
                 </div>
                 <p className="muted">Способ: {paymentMethodLabel}</p>
-                {appointment.paymentStatus !== 'PAID' && appointment.status !== 'CANCELLED' && (
+                {user?.role === 'CLIENT' && appointment.paymentStatus !== 'PAID' && appointment.status !== 'CANCELLED' && (
                   <div className="stack">
                     <p className="muted">Данные карты не сохраняются.</p>
                     <Link className="btn" to={`/my-appointments/${appointment.id}/pay`}>Оплатить сейчас</Link>
@@ -138,8 +156,46 @@ export default function MyAppointmentDetailPage() {
           </div>
 
           <div className="card">
+            <div className="section-head">
+              <h2>Состав услуг</h2>
+              <span className="muted">Детализация выбранных пунктов</span>
+            </div>
+            {appointment.services?.length > 0 && (
+              <div className="stack">
+                {appointment.services.map((s) => {
+                  const group = itemsByService[s.id]
+                  const items = group?.items || []
+                  return (
+                    <div key={s.id} className="card">
+                      <div className="section-head">
+                        <h4>{s.name}</h4>
+                        <span className="muted">{s.durationMinutes} мин • {s.price} ₽</span>
+                      </div>
+                      {!items.length && <p className="muted">Без доп. пунктов</p>}
+                      {!!items.length && (
+                        <div className="stack">
+                          {items.map((it) => (
+                            <div key={it.id} className="option-row">
+                              <span className="muted">{it.kind === 'MANDATORY' ? 'Обязательно' : it.kind === 'OPTIONAL' ? 'Опция' : 'Выбор'}</span>
+                              <span className="option-label text-white/90">{it.name}</span>
+                              <span className="option-price muted">{it.price} ₽</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+            {!appointment.services?.length && <p className="muted">Нет выбранных услуг.</p>}
+          </div>
+
+          <div className="card">
             <h2>Отзывы по записи</h2>
-            {appointment.status !== 'COMPLETED' ? (
+            {user?.role !== 'CLIENT' ? (
+              <p className="muted">Отзывы доступны клиенту после выполнения услуги.</p>
+            ) : appointment.status !== 'COMPLETED' ? (
               <p className="muted">Оставить отзыв можно после выполнения услуги.</p>
             ) : (
               <div className="stack">
