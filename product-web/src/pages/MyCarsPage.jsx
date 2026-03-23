@@ -14,6 +14,8 @@ const modelOptions = [
 ]
 const colorOptions = ['Чёрный', 'Белый', 'Серый', 'Серебристый', 'Синий', 'Красный', 'Зелёный', 'Бордовый', 'Коричневый', 'Бежевый']
 const yearOptions = Array.from({ length: 21 }, (_, i) => String(2026 - i))
+const plateOptions = ['A000AA']
+const notesOptions = ['Требуется химчистка салона', 'Нужно убрать царапины на бампере', 'Своя химия', 'Просьба позвонить перед началом']
 
 export default function MyCarsPage() {
   const [cars, setCars] = useState([])
@@ -44,13 +46,13 @@ export default function MyCarsPage() {
             <input list="year-options" placeholder="Год" type="number" value={form.year} onChange={(e) => setForm({ ...form, year: Number(e.target.value) })} />
           </Field>
           <Field label="Госномер" value={form.plateNumber}>
-            <input placeholder="Госномер" value={form.plateNumber} onChange={(e) => setForm({ ...form, plateNumber: e.target.value })} />
+            <input list="plate-options" placeholder="Госномер" value={form.plateNumber} onChange={(e) => setForm({ ...form, plateNumber: e.target.value })} />
           </Field>
           <Field label="Цвет" value={form.color}>
             <input list="color-options" placeholder="Цвет" value={form.color} onChange={(e) => setForm({ ...form, color: e.target.value })} />
           </Field>
           <Field label="Примечание" value={form.notes}>
-            <input placeholder="Примечание" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+            <input list="notes-options" placeholder="Примечание" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
           </Field>
           <button type="submit">Добавить авто</button>
 
@@ -65,6 +67,12 @@ export default function MyCarsPage() {
           </datalist>
           <datalist id="year-options">
             {yearOptions.map((x) => <option key={x} value={x} />)}
+          </datalist>
+          <datalist id="plate-options">
+            {plateOptions.map((x) => <option key={x} value={x} />)}
+          </datalist>
+          <datalist id="notes-options">
+            {notesOptions.map((x) => <option key={x} value={x} />)}
           </datalist>
         </form>
         <div className="grid">
