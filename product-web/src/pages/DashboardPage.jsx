@@ -254,18 +254,29 @@ export default function DashboardPage() {
       )}
 
       {(aiWorkshop || aiMaster) && (
-        <div className="card">
-          <h2>AI‑фидбэк</h2>
+        <div className="stack">
           {aiWorkshop && (
-            <div className="card">
-              <h3>По салонам</h3>
-              <p className="muted">{aiWorkshop}</p>
+            <div className="ai-feedback">
+              <div className="ai-feedback-main">
+                <div className="ai-feedback-title">
+                  <span className="ai-chip">AI</span>
+                  <h3 className="text-white">AI‑фидбэк по салонам</h3>
+                </div>
+                <p className="muted text-xs">Сводка по всем одобренным отзывам о салонах.</p>
+                <p className="ai-feedback-text">{aiWorkshop}</p>
+              </div>
             </div>
           )}
           {aiMaster && (
-            <div className="card">
-              <h3>По мастерам</h3>
-              <p className="muted">{aiMaster}</p>
+            <div className="ai-feedback">
+              <div className="ai-feedback-main">
+                <div className="ai-feedback-title">
+                  <span className="ai-chip">AI</span>
+                  <h3 className="text-white">AI‑фидбэк по мастерам</h3>
+                </div>
+                <p className="muted text-xs">Сводка по всем одобренным отзывам о мастерах.</p>
+                <p className="ai-feedback-text">{aiMaster}</p>
+              </div>
             </div>
           )}
         </div>
