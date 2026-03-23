@@ -377,18 +377,6 @@ export default function MyAppointmentsPage() {
                   {a.paymentStatus === 'PAID' ? 'Оплачено' : 'Не оплачено'}
                 </span>
               </p>
-              {(a.status === 'NEW' || a.status === 'CONFIRMED') && (
-                <button
-                  className="danger"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    cancel(a.id)
-                  }}
-                >
-                  Отменить
-                </button>
-              )}
             </div>
           ))}
         </div>
