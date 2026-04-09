@@ -1,102 +1,161 @@
+import fs from 'fs'
+import path from 'path'
+import { fileURLToPath } from 'url'
 import { test, expect } from '@playwright/test'
 import { loadUsers, login } from './utils'
+import { createMockApi } from './mockApi'
 
 const users = loadUsers()
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
+const screenshotDir = path.resolve(__dirname, '../artifacts/screenshots')
 
-test('Логин и карта точек', async ({ page }) => {
+fs.mkdirSync(screenshotDir, { recursive: true })
+
+function shot(name) {
+  return path.join(screenshotDir, name)
+}
+
+async function capture(page, fileName) {
+  await page.screenshot({ path: shot(fileName), fullPage: true })
+}
+
+test.describe.configure({ mode: 'serial' })
+
+test('Публичные экраны и авторизация', async ({ page }) => {
+  const mock = createMockApi()
+  await mock.install(page)
+
+  await page.goto('/')
+  await expect(page.getByRole('heading', { name: 'Премиальный детейлинг в Самаре' })).toBeVisible()
+  await capture(page, '01-landing-page.png')
+
   await page.goto('/login')
   await expect(page.getByText('Онлайн-запись на детейлинг')).toBeVisible()
-  await page.screenshot({ path: 'artifacts/screenshots/login.png', fullPage: true })
+  await capture(page, '02-login-page.png')
 
-  await login(page, users.CLIENT[0])
+  await page.goto('/register')
+  await expect(page.getByRole('heading', { name: 'Регистрация' })).toBeVisible()
+  await capture(page, '03-register-page.png')
+
   await page.goto('/workshops')
-  await expect(page.getByText('Точки обслуживания')).toBeVisible()
-  await page.screenshot({ path: 'artifacts/screenshots/workshops-map.png', fullPage: true })
+  await expect(page.getByRole('heading', { name: 'Салоны' })).toBeVisible()
+  await capture(page, '04-workshops-page.png')
 
-  const workshops = await (await page.request.get('http://localhost:8080/api/v1/workshops')).json()
-  await page.goto(`/workshops/${workshops[0].id}`)
+  const workshop = mock.state.workshops[0]
+  await page.goto(`/workshops/${workshop.id}`)
   await expect(page.locator('h1')).toBeVisible()
-  await page.screenshot({ path: 'artifacts/screenshots/workshop-detail.png', fullPage: true })
-  await page.goto('/dashboard')
-  await page.screenshot({ path: 'artifacts/screenshots/dashboard-client.png', fullPage: true })
+  await capture(page, '05-workshop-detail-page.png')
+
+  const master = mock.state.masters.find((item) => item.workshopId === workshop.id)
+  await page.goto(`/workshops/${workshop.id}/masters/${master.id}`)
+  await expect(page.locator('h1')).toBeVisible()
+  await capture(page, '06-master-detail-page.png')
+
+  await page.goto('/services')
+  await expect(page.getByRole('heading', { name: 'Услуги и прайс' })).toBeVisible()
+  await capture(page, '07-services-page.png')
+
+  await page.goto('/reviews')
+  await expect(page.getByRole('heading', { name: 'Отзывы', exact: true })).toBeVisible()
+  await capture(page, '08-public-reviews-page.png')
 })
 
-test('Клиент создает авто и запись', async ({ page }) => {
+test('Клиентские экраны, детали записи и оплата', async ({ page }) => {
+  const mock = createMockApi()
+  await mock.install(page)
+
   await login(page, users.CLIENT[1])
 
+  await page.goto('/dashboard')
+  await expect(page.getByRole('heading', { name: 'Панель управления' })).toBeVisible()
+  await capture(page, '09-dashboard-client.png')
+
   await page.goto('/my-cars')
+  await expect(page.getByRole('heading', { name: 'Мои автомобили' })).toBeVisible()
+  await capture(page, '10-client-my-cars-page.png')
+
   const plate = `T${Date.now().toString().slice(-5)}TT163`
   await page.getByPlaceholder('Марка').fill('Skoda')
   await page.getByPlaceholder('Модель').fill('Octavia')
+  await page.getByPlaceholder('Год').fill('2024')
   await page.getByPlaceholder('Госномер').fill(plate)
+  await page.getByPlaceholder('Цвет').fill('Серый')
+  await page.getByPlaceholder('Примечание').fill('Тестовый автомобиль для скриншотов')
   await page.getByRole('button', { name: 'Добавить авто' }).click()
 
-  const token = await page.evaluate(() => localStorage.getItem('token'))
-  const workshops = await (await page.request.get('http://localhost:8080/api/v1/workshops', { headers: { Authorization: `Bearer ${token}` } })).json()
-  let workshopId = workshops[0].id
-  let serviceId = null
-  for (const workshop of workshops) {
-    const services = await (await page.request.get(`http://localhost:8080/api/v1/workshops/${workshop.id}/services`, { headers: { Authorization: `Bearer ${token}` } })).json()
-    if (services.length > 0) {
-      workshopId = workshop.id
-      serviceId = services[0].id
-      break
-    }
-  }
-  const cars = await (await page.request.get('http://localhost:8080/api/v1/cars/my', { headers: { Authorization: `Bearer ${token}` } })).json()
-  const carId = cars.find((c) => c.plateNumber === plate)?.id || cars[0].id
-  if (!serviceId) {
-    throw new Error('Не найдены услуги для записи')
-  }
+  const workshopId = mock.state.workshops[0].id
+  const serviceId = mock.state.services.find((item) => item.workshopId === workshopId).id
+  const carId = mock.state.cars.find((item) => item.plateNumber === plate)?.id
+
+  await page.goto(`/my-cars/${carId}`)
+  await expect(page.getByRole('heading', { name: 'Автомобиль' })).toBeVisible()
+  await capture(page, '11-client-car-detail-page.png')
+
   const future = new Date(Date.now() + 1000 * 60 * 60 * 48)
   const value = future.toISOString().slice(0, 16)
-  await page.request.post('http://localhost:8080/api/v1/appointments', {
-    headers: { Authorization: `Bearer ${token}` },
-    data: {
-      workshopId,
-      carId,
-      serviceId,
-      scheduledStart: `${value}:00`,
-      clientComment: 'Тестовая запись из E2E',
-    },
-  })
+  await page.goto(`/my-appointments?workshopId=${workshopId}&serviceId=${serviceId}&carId=${carId}`)
+  await page.locator('input[type="datetime-local"]').fill(value)
+  await page.getByPlaceholder('Комментарий').fill('Тестовая запись из E2E')
+  await page.getByRole('button', { name: 'Записаться' }).click()
+  const createdAppointment = mock.state.appointments.find((item) => item.clientEmail === users.CLIENT[1].email && item.clientComment === 'Тестовая запись из E2E')
 
   await page.goto('/my-appointments')
-  await expect(page.getByText('Статус: NEW').first()).toBeVisible()
-  await page.screenshot({ path: 'artifacts/screenshots/client-my-appointments.png', fullPage: true })
+  await expect(page.getByRole('heading', { name: 'Мои записи' })).toBeVisible()
+  await capture(page, '12-client-my-appointments-page.png')
+
+  await page.goto(`/my-appointments/${createdAppointment.id}`)
+  await expect(page.getByRole('heading', { name: 'Запись' })).toBeVisible()
+  await capture(page, '13-client-appointment-detail-page.png')
+
+  await page.goto(`/my-appointments/${createdAppointment.id}/pay`)
+  await expect(page.getByRole('heading', { name: 'Оплата' })).toBeVisible()
+  await capture(page, '14-client-payment-page.png')
 })
 
-test('Админ и мастер: управление и ограничения', async ({ browser }) => {
-  const admin = await browser.newPage()
-  await login(admin, users.ADMIN[0])
-  await admin.goto('/dashboard')
-  await admin.screenshot({ path: 'artifacts/screenshots/dashboard-admin.png', fullPage: true })
-
-  await admin.goto('/admin/workshops')
-  await admin.getByPlaceholder('Название точки').fill(`Новая точка ${Date.now().toString().slice(-4)}`)
-  await admin.getByPlaceholder('Адрес').fill('ул. Тестовая, 1')
-  await admin.getByRole('button', { name: 'Добавить точку' }).first().click()
-  await admin.screenshot({ path: 'artifacts/screenshots/admin-workshops.png', fullPage: true })
-
-  await admin.goto('/admin/services')
-  await admin.screenshot({ path: 'artifacts/screenshots/admin-services.png', fullPage: true })
-
-  await admin.goto('/admin/appointments')
-  await admin.screenshot({ path: 'artifacts/screenshots/admin-appointments.png', fullPage: true })
-
-  await admin.goto('/admin/reviews')
-  await admin.screenshot({ path: 'artifacts/screenshots/admin-reviews.png', fullPage: true })
+test('Мастер и администратор: кабинеты и ограничения доступа', async ({ browser }) => {
+  const mock = createMockApi()
 
   const master = await browser.newPage()
+  await mock.install(master)
   await login(master, users.MASTER[0])
   await master.goto('/dashboard')
-  await master.screenshot({ path: 'artifacts/screenshots/dashboard-master.png', fullPage: true })
+  await expect(master.getByRole('heading', { name: 'Панель управления' })).toBeVisible()
+  await capture(master, '15-dashboard-master.png')
 
   await master.goto('/master/tasks')
-  await master.screenshot({ path: 'artifacts/screenshots/master-tasks.png', fullPage: true })
+  await expect(master.getByRole('heading', { name: 'Мои задачи' })).toBeVisible()
+  await capture(master, '16-master-tasks-page.png')
+
+  await master.goto('/master/reviews')
+  await expect(master.getByRole('heading', { name: 'Отзывы о мастере' })).toBeVisible()
+  await capture(master, '17-master-reviews-page.png')
 
   await master.goto('/admin/workshops')
-  await expect(master).toHaveURL(/dashboard/)
+  await expect(master).toHaveURL(/\/dashboard$/)
+
+  const admin = await browser.newPage()
+  await mock.install(admin)
+  await login(admin, users.ADMIN[0])
+  await admin.goto('/dashboard')
+  await expect(admin.getByRole('heading', { name: 'Панель управления' })).toBeVisible()
+  await capture(admin, '18-dashboard-admin.png')
+
+  await admin.goto('/admin/workshops')
+  await expect(admin.getByRole('heading', { name: 'Управление салонами' })).toBeVisible()
+  await capture(admin, '19-admin-workshops-page.png')
+
+  await admin.goto('/admin/services')
+  await expect(admin.getByRole('heading', { name: 'Управление услугами' })).toBeVisible()
+  await capture(admin, '20-admin-services-page.png')
+
+  await admin.goto('/admin/appointments')
+  await expect(admin.getByRole('heading', { name: 'Записи клиентов' })).toBeVisible()
+  await capture(admin, '21-admin-appointments-page.png')
+
+  await admin.goto('/admin/reviews')
+  await expect(admin.getByRole('heading', { name: 'AI‑модерация отзывов' })).toBeVisible()
+  await capture(admin, '22-admin-reviews-page.png')
 
   await admin.close()
   await master.close()
