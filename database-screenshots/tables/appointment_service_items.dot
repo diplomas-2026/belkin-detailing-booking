@@ -1,0 +1,7 @@
+digraph single_table {
+  graph [rankdir=TB, fontsize=18];
+  node [shape=plain, fontname="Arial"];
+  label="belkin-detailing-booking — appointment_service_items";
+  labelloc=t;
+  "appointment_service_items" [label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6"><TR><TD BGCOLOR="#eeeeee" COLSPAN="3"><B>appointment_service_items</B></TD></TR><TR><TD><B>Поле</B></TD><TD><B>Тип</B></TD><TD><B>Модификаторы</B></TD></TR><TR><TD ALIGN="LEFT">appointment_id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">PK, NOT NULL, FK → appointments.id</TD></TR><TR><TD ALIGN="LEFT">service_item_id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">PK, NOT NULL, FK → service_items.id</TD></TR></TABLE>>];
+}

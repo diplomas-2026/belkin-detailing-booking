@@ -1,0 +1,7 @@
+digraph single_table {
+  graph [rankdir=TB, fontsize=18];
+  node [shape=plain, fontname="Arial"];
+  label="belkin-detailing-booking — cars";
+  labelloc=t;
+  "cars" [label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6"><TR><TD BGCOLOR="#eeeeee" COLSPAN="3"><B>cars</B></TD></TR><TR><TD><B>Поле</B></TD><TD><B>Тип</B></TD><TD><B>Модификаторы</B></TD></TR><TR><TD ALIGN="LEFT">id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">PK, NOT NULL, DEFAULT nextval(&#x27;cars_id_seq&#x27;::regclass)</TD></TR><TR><TD ALIGN="LEFT">client_id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">NOT NULL, UNIQUE, FK → users.id</TD></TR><TR><TD ALIGN="LEFT">brand</TD><TD ALIGN="LEFT">character varying(80)</TD><TD ALIGN="LEFT">NOT NULL</TD></TR><TR><TD ALIGN="LEFT">model</TD><TD ALIGN="LEFT">character varying(80)</TD><TD ALIGN="LEFT">NOT NULL</TD></TR><TR><TD ALIGN="LEFT">car_year</TD><TD ALIGN="LEFT">integer(32,0)</TD><TD ALIGN="LEFT">NOT NULL</TD></TR><TR><TD ALIGN="LEFT">plate_number</TD><TD ALIGN="LEFT">character varying(20)</TD><TD ALIGN="LEFT">NOT NULL, UNIQUE</TD></TR><TR><TD ALIGN="LEFT">color</TD><TD ALIGN="LEFT">character varying(50)</TD><TD ALIGN="LEFT"></TD></TR><TR><TD ALIGN="LEFT">notes</TD><TD ALIGN="LEFT">text</TD><TD ALIGN="LEFT"></TD></TR></TABLE>>];
+}

@@ -1,0 +1,7 @@
+digraph single_table {
+  graph [rankdir=TB, fontsize=18];
+  node [shape=plain, fontname="Arial"];
+  label="belkin-detailing-booking — master_shifts";
+  labelloc=t;
+  "master_shifts" [label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6"><TR><TD BGCOLOR="#eeeeee" COLSPAN="3"><B>master_shifts</B></TD></TR><TR><TD><B>Поле</B></TD><TD><B>Тип</B></TD><TD><B>Модификаторы</B></TD></TR><TR><TD ALIGN="LEFT">id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">PK, NOT NULL, DEFAULT nextval(&#x27;master_shifts_id_seq&#x27;::regclass)</TD></TR><TR><TD ALIGN="LEFT">master_id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">NOT NULL, UNIQUE, FK → masters.id</TD></TR><TR><TD ALIGN="LEFT">shift_date</TD><TD ALIGN="LEFT">date</TD><TD ALIGN="LEFT">NOT NULL, UNIQUE</TD></TR><TR><TD ALIGN="LEFT">start_time</TD><TD ALIGN="LEFT">time without time zone</TD><TD ALIGN="LEFT">NOT NULL, UNIQUE</TD></TR><TR><TD ALIGN="LEFT">end_time</TD><TD ALIGN="LEFT">time without time zone</TD><TD ALIGN="LEFT">NOT NULL</TD></TR></TABLE>>];
+}

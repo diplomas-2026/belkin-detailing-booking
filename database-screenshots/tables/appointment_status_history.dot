@@ -1,0 +1,7 @@
+digraph single_table {
+  graph [rankdir=TB, fontsize=18];
+  node [shape=plain, fontname="Arial"];
+  label="belkin-detailing-booking — appointment_status_history";
+  labelloc=t;
+  "appointment_status_history" [label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6"><TR><TD BGCOLOR="#eeeeee" COLSPAN="3"><B>appointment_status_history</B></TD></TR><TR><TD><B>Поле</B></TD><TD><B>Тип</B></TD><TD><B>Модификаторы</B></TD></TR><TR><TD ALIGN="LEFT">id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">PK, NOT NULL, DEFAULT nextval(&#x27;appointment_status_history_id_seq&#x27;::regclass)</TD></TR><TR><TD ALIGN="LEFT">appointment_id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">NOT NULL, FK → appointments.id</TD></TR><TR><TD ALIGN="LEFT">from_status</TD><TD ALIGN="LEFT">character varying(30)</TD><TD ALIGN="LEFT"></TD></TR><TR><TD ALIGN="LEFT">to_status</TD><TD ALIGN="LEFT">character varying(30)</TD><TD ALIGN="LEFT">NOT NULL</TD></TR><TR><TD ALIGN="LEFT">changed_by</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">NOT NULL, FK → users.id</TD></TR><TR><TD ALIGN="LEFT">changed_at</TD><TD ALIGN="LEFT">timestamp without time zone</TD><TD ALIGN="LEFT">NOT NULL, DEFAULT now()</TD></TR><TR><TD ALIGN="LEFT">comment</TD><TD ALIGN="LEFT">character varying(300)</TD><TD ALIGN="LEFT"></TD></TR></TABLE>>];
+}

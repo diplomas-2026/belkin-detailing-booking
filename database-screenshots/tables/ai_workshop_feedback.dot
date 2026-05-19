@@ -1,0 +1,7 @@
+digraph single_table {
+  graph [rankdir=TB, fontsize=18];
+  node [shape=plain, fontname="Arial"];
+  label="belkin-detailing-booking — ai_workshop_feedback";
+  labelloc=t;
+  "ai_workshop_feedback" [label=<<TABLE BORDER="1" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6"><TR><TD BGCOLOR="#eeeeee" COLSPAN="3"><B>ai_workshop_feedback</B></TD></TR><TR><TD><B>Поле</B></TD><TD><B>Тип</B></TD><TD><B>Модификаторы</B></TD></TR><TR><TD ALIGN="LEFT">workshop_id</TD><TD ALIGN="LEFT">bigint(64,0)</TD><TD ALIGN="LEFT">PK, NOT NULL, FK → workshops.id</TD></TR><TR><TD ALIGN="LEFT">summary</TD><TD ALIGN="LEFT">character varying(2000)</TD><TD ALIGN="LEFT">NOT NULL</TD></TR><TR><TD ALIGN="LEFT">based_on_review_created_at</TD><TD ALIGN="LEFT">timestamp without time zone</TD><TD ALIGN="LEFT"></TD></TR><TR><TD ALIGN="LEFT">updated_at</TD><TD ALIGN="LEFT">timestamp without time zone</TD><TD ALIGN="LEFT">NOT NULL, DEFAULT now()</TD></TR></TABLE>>];
+}
