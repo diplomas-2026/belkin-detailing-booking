@@ -98,7 +98,7 @@ INSERT INTO appointments (
     3600.00,
     'Нужна чистка дисков и чернение шин',
     'Работа выполнена, клиент доволен',
-    'NOW',
+    'CARD',
     'PAID',
     NOW() - INTERVAL '8 days' + INTERVAL '95 minutes',
     NULL,
