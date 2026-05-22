@@ -160,7 +160,7 @@ public class AdminController {
 
         ServiceItemKind kind;
         try {
-            kind = ServiceItemKind.fromExternal(request.kind());
+            kind = ServiceItemKind.valueOf(request.kind().trim().toUpperCase(java.util.Locale.ROOT));
         } catch (Exception e) {
             throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Некорректный тип пункта услуги");
         }
