@@ -1,5 +1,0 @@
-[
-  {"clientEmail":"client1@detailing.local", "brand":"BMW", "model":"X5", "year":2021, "plateNumber":"A111AA163", "color":"Черный", "notes":"Нужна аккуратная мойка дисков"},
-  {"clientEmail":"client2@detailing.local", "brand":"Toyota", "model":"Camry", "year":2020, "plateNumber":"B222BB163", "color":"Белый", "notes":"Есть детское кресло"},
-  {"clientEmail":"client3@detailing.local", "brand":"Kia", "model":"Sportage", "year":2022, "plateNumber":"C333CC163", "color":"Серый", "notes":"Запах в салоне"}
-]
